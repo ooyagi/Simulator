@@ -1,0 +1,187 @@
+{
+    "commit-message-editor.staticTemplate": [
+        "feat: Short description",
+        "",
+        "Message body",
+        "",
+        "Message footer"
+    ],
+    "commit-message-editor.dynamicTemplate": [
+        "[{type}]{scope}: {description}",
+        "",
+        "{body}",
+        "",
+        "{breaking_change}"
+    ],
+    "commit-message-editor.tokens": [
+        {
+            "label": "Type",
+            "name": "type",
+            "type": "enum",
+            "description": "Type of changes",
+            "options": [
+                {
+                    "label": "---",
+                    "value": ""
+                },
+                {
+                    "label": "build",
+                    "description": "ビルド環境の変更"
+                },
+                {
+                    "label": "chore",
+                    "description": "プロダクションコードの変更を含まない変更"
+                },
+                {
+                    "label": "docs",
+                    "description": "ドキュメントのみの変更"
+                },
+                {
+                    "label": "feat",
+                    "description": "機能追加"
+                },
+                {
+                    "label": "fix",
+                    "description": "バグ修正"
+                },
+                {
+                    "label": "refactor",
+                    "description": "リファクタリング"
+                },
+                {
+                    "label": "style",
+                    "description": "コーディングスタイルの変更"
+                },
+                {
+                    "label": "test",
+                    "description": "テストの追加"
+                }
+            ]
+        },
+        {
+            "label": "Scope",
+            "name": "scope",
+            "type": "enum",
+            "options": [
+                {
+                    "label": "WebSystem",
+                    "value": "Web",
+                    "description": "Webサーバプロジェクト"
+                },
+                {
+                    "label": "Operation",
+                    "value": "OP",
+                    "description": "出荷作業制御"
+                },
+                {
+                    "label": "InventoryPallete",
+                    "value": "IP",
+                    "description": "在庫パレット制御"
+                },
+                {
+                    "label": "ShippingPlallet",
+                    "value": "SP",
+                    "description": "出荷パレット制御"
+                },
+                {
+                    "label": "WorkOrder",
+                    "value": "WO",
+                    "description": "作業指示書管理"
+                },
+                {
+                    "label": "Plan",
+                    "value": "Plan",
+                    "description": "生産計画管理"
+                },
+                {
+                    "label": "Common",
+                    "value": "Common",
+                    "description": "共通部"
+                },
+                {
+                    "label": "Other",
+                    "value": "Other",
+                    "description": "コード修正以外"
+                }
+            ]
+        },
+        {
+            "label": "Short description",
+            "name": "description",
+            "description": "Short description in the subject line.",
+            "type": "text",
+            "multiline": false
+        },
+        {
+            "label": "Body",
+            "name": "body",
+            "description": "Optional body",
+            "type": "text",
+            "multiline": true,
+            "lines": 5,
+            "maxLines": 10
+        },
+        {
+            "label": "Breaking change",
+            "name": "breaking_change",
+            "type": "boolean",
+            "value": "BREAKING CHANGE: ",
+            "default": false
+        }
+    ],
+    "accessibility.signals.chatRequestSent": {
+        "sound": "off"
+    },
+    "accessibility.signals.chatResponseReceived": {
+        "sound": "off"
+    },
+    "accessibility.signals.clear": {
+        "sound": "off"
+    },
+    "accessibility.signals.diffLineDeleted": {
+        "sound": "off"
+    },
+    "accessibility.signals.diffLineInserted": {
+        "sound": "off"
+    },
+    "accessibility.signals.diffLineModified": {
+        "sound": "off"
+    },
+    "accessibility.signals.lineHasBreakpoint": {
+        "sound": "off",
+        "announcement": "off"
+    },
+    "accessibility.signals.lineHasFoldedArea": {
+        "sound": "off"
+    },
+    "accessibility.signals.lineHasWarning": {
+        "sound": "off"
+    },
+    "accessibility.signals.noInlayHints": {
+        "sound": "off"
+    },
+    "accessibility.signals.onDebugBreak": {
+        "sound": "off"
+    },
+    "accessibility.signals.notebookCellFailed": {
+        "sound": "off"
+    },
+    "accessibility.signals.notebookCellCompleted": {
+        "sound": "off"
+    },
+    "accessibility.signals.lineHasInlineSuggestion": {
+        "sound": "off"
+    },
+    "accessibility.signals.lineHasError": {
+        "sound": "off"
+    },
+    "accessibility.signals.terminalQuickFix": {
+        "sound": "off"
+    },
+    "accessibility.signals.voiceRecordingStarted": {
+        "sound": "off"
+    },
+    "accessibility.signals.progress": {
+        "sound": "off"
+    }
+}

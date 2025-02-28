@@ -1,0 +1,78 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Simulator.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "rebuild",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Simulator.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary",
+                "--no-incremental"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "ef add migration",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "ef",
+                "migrations",
+                "add",
+                "${input:migration-name}",
+                "--project",
+                "Simulator\\Simulator.csproj"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ef migration list",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "ef",
+                "migrations",
+                "list",
+                "--project",
+                "Simulator\\Simulator.csproj"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ef db update",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "ef",
+                "database",
+                "update",
+                "--project",
+                "Simulator\\Simulator.csproj"
+            ],
+            "problemMatcher": []
+        },
+    ],
+    "inputs": [
+        {
+            "id": "migration-name",
+            "description": "migration name:",
+            "default": "",
+            "type": "promptString"
+        }
+    ]
+}

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using CommonItems.Models;
-using ShippingOperationCoordinator.Models;
 using ShippingOperationCoordinator.Interfaces;
 
 namespace ShippingOperationCoordinator.Services;

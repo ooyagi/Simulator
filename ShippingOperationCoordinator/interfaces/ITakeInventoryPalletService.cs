@@ -2,7 +2,7 @@ using CommonItems.Models;
 
 namespace ShippingOperationCoordinator.Interfaces;
 
-public interface ITakePickupInventoryPalletService
+public interface ITakeInventoryPalletService
 {
     void Request(LocationCode locationCode, Hinban hinban);
 }

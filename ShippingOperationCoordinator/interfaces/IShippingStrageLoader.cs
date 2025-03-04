@@ -5,8 +5,8 @@ namespace ShippingOperationCoordinator.Interfaces;
 public interface IShippingStrageLoader
 {
     IEnumerable<IShippingPalletInfo> All(ShippingStationCode stationCode);
-    IEnumerable<ICompletablePalletInfo> FilterCompletableBy(IEnumerable<ITransferablePalletInfo> pallets);
-    IEnumerable<IShippingPalletLoadableHinbanInfo> GetLoadableFrom(IEnumerable<ITransferablePalletInfo> pallets);
+    IEnumerable<ICompletablePalletInfo> FilterCompletableBy(ShippingStationCode stationCode, IEnumerable<ITransferablePalletInfo> pallets);
+    IEnumerable<IShippingPalletLoadableHinbanInfo> GetLoadableFrom(ShippingStationCode stationCode, IEnumerable<ITransferablePalletInfo> pallets);
 }
 
 // Returns

@@ -29,24 +29,24 @@ class DetermineTransferItemService
     /// <summary>
     /// 与えられた在庫パレットのリストから、積替え指示に基づいて転送対象の品番 (Hinban) を決定する
     /// </summary>
-    public TransferDirection DetermineTransferHinban()
+    public TransferDirection DetermineTransferHinban(ShippingStationCode stationCode)
     {
         _logger.LogInformation("積替え対象の品番を決定します");
         try {
-            var availableHinbans = _tempStorageLoader.GetAvarableHinbans().Select(x => new TemporaryStoragePalletInfo(x.LocationCode, x.Hinban, x.Quantity)).ToList();
-            var shippingPalletCompletedCandidate = FilterShippingPalletsCompletedByTempInventory(availableHinbans);
+            var availableHinbans = _tempStorageLoader.GetAvarableHinbans(stationCode).Select(x => new TemporaryStoragePalletInfo(x.LocationCode, x.Hinban, x.Quantity)).ToList();
+            var shippingPalletCompletedCandidate = FilterShippingPalletsCompletedByTempInventory(stationCode, availableHinbans);
             if (shippingPalletCompletedCandidate != null) {
                 return shippingPalletCompletedCandidate;
             }
-            var inventoryPalletEmptiableCandidates = FilterInventoryPalletsThatCanBeEmptied(availableHinbans);
+            var inventoryPalletEmptiableCandidates = FilterInventoryPalletsThatCanBeEmptied(stationCode, availableHinbans);
             if (inventoryPalletEmptiableCandidates != null) {
                 return inventoryPalletEmptiableCandidates;
             }
-            var inventoryPalletNotUsedCandidates = FilterInventoryPalletsNotUsedInShikakariStorage(availableHinbans);
+            var inventoryPalletNotUsedCandidates = FilterInventoryPalletsNotUsedInShikakariStorage(stationCode, availableHinbans);
             if (inventoryPalletNotUsedCandidates != null) {
                 return inventoryPalletNotUsedCandidates;
             }
-            var shippingPalletFewTransferCandidates = FilterShippingPalletsWithFewTransfers(availableHinbans);
+            var shippingPalletFewTransferCandidates = FilterShippingPalletsWithFewTransfers(stationCode, availableHinbans);
             if (shippingPalletFewTransferCandidates != null) {
                 return shippingPalletFewTransferCandidates;
             }
@@ -64,8 +64,8 @@ class DetermineTransferItemService
     /// 完了可能な出荷パレットが複数ある場合は、積替えステップが最も小さいものを選択する。
     /// </summary>
     /// <remarks>積替え先の品番が見つからない場合はnullを返す</remarks>
-    private TransferDirection? FilterShippingPalletsCompletedByTempInventory(IEnumerable<TemporaryStoragePalletInfo> pallets) {
-        var completablePallets = _shippingStrageLoader.FilterCompletableBy(pallets);
+    private TransferDirection? FilterShippingPalletsCompletedByTempInventory(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
+        var completablePallets = _shippingStrageLoader.FilterCompletableBy(stationCode, pallets);
         if (!completablePallets.Any()) {
             return null;
         }
@@ -86,8 +86,8 @@ class DetermineTransferItemService
     /// - 積替え先の出荷パレットが複数ある場合は積替えステップが最も小さいものを選択する
     /// </summary>
     /// <remarks>積替え元の在庫パレット／積替え先の出荷パレットが見つからない場合はnullを返す</remarks>
-    private TransferDirection? FilterInventoryPalletsThatCanBeEmptied(IEnumerable<TemporaryStoragePalletInfo> pallets) {
-        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(pallets);
+    private TransferDirection? FilterInventoryPalletsThatCanBeEmptied(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
+        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
             return null;
         }
@@ -114,8 +114,8 @@ class DetermineTransferItemService
     /// - 積替え先の品番が複数ある場合は積替えステップが最も小さいものを選択する
     /// </summary>
     /// <remarks>積替え先の品番が見つからない場合はnullを返す</remarks>
-    private TransferDirection? FilterInventoryPalletsNotUsedInShikakariStorage(IEnumerable<TemporaryStoragePalletInfo> pallets) {
-        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(pallets);
+    private TransferDirection? FilterInventoryPalletsNotUsedInShikakariStorage(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
+        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
             return null;
         }
@@ -148,8 +148,8 @@ class DetermineTransferItemService
     /// 良いと思われるが、レアケースであるため同じデータソースで並べ替え可能な Step が最も小さいパレットを選択する
     /// 積替え先の品番が見つからない場合はnullを返す
     /// </remarks>
-    private TransferDirection? FilterShippingPalletsWithFewTransfers(IEnumerable<TemporaryStoragePalletInfo> pallets) {
-        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(pallets);
+    private TransferDirection? FilterShippingPalletsWithFewTransfers(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
+        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
             return null;
         }

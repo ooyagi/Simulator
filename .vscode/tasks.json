@@ -66,6 +66,17 @@
             ],
             "problemMatcher": []
         },
+        {
+            "label": "test_all",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "test",
+                "${workspaceFolder}/Simulator.sln",
+                "--logger:\"console;verbosity=nomal\""
+            ],
+            "problemMatcher": "$msCompile"
+        },
     ],
     "inputs": [
         {

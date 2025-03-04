@@ -5,6 +5,7 @@ namespace ShippingOperationCoordinator.Interfaces;
 public interface IInventoryStorageLoader
 {
     IEnumerable<IStoragedHinban> GetStoragedItems();
+    bool IsPickable(ShippingStationCode stationCode, Hinban hinban, int quantity = 1);
 }
 
 public interface IStoragedHinban

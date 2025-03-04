@@ -1,9 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using Xunit;
 using Moq;
 using CommonItems.Models;
 using ShippingOperationCoordinator.Interfaces;
-using ShippingOperationCoordinator.Services;
 
 namespace ShippingOperationCoordinator.Services.Tests;
 
@@ -431,7 +429,6 @@ public class DetermineTransferItemServiceTests
     }
 }
 
-// テスト用の簡易実装
 public record TestAvarableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IAvarableHinban;
 public record TestCompletablePalletInfo(LocationCode LocationCode, Hinban NextHinban, int Step): ICompletablePalletInfo;
 public record TestShippingPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int LoadableItemCount, int Step, bool IsLoadableQuantityGreaterThanResult): IShippingPalletLoadableHinbanInfo

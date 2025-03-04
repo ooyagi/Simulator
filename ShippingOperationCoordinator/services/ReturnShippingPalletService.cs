@@ -5,14 +5,14 @@ using ShippingOperationCoordinator.Interfaces;
 
 namespace ShippingOperationCoordinator.Services;
 
-class ShippingPalletRotationService
+class ReturnShippingPalletService
 {
-    private readonly ILogger<ShippingPalletRotationService> _logger;
+    private readonly ILogger<ReturnShippingPalletService> _logger;
     private readonly IReturnShippingPalletSelector _returnShippingPalletSelector;
     private readonly IReturnShippingPalletService _returnShippingPalletService;
 
-    public ShippingPalletRotationService(
-        ILogger<ShippingPalletRotationService> logger,
+    public ReturnShippingPalletService(
+        ILogger<ReturnShippingPalletService> logger,
         IReturnShippingPalletSelector returnShippingPalletSelector,
         IReturnShippingPalletService returnShippingPalletService
     ) {

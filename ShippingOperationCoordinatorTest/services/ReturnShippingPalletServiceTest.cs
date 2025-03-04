@@ -5,27 +5,26 @@ using ShippingOperationCoordinator.Interfaces;
 
 namespace ShippingOperationCoordinator.Services.Tests;
 
-public class ShippingPalletRotationServiceTest
+public class ReturnShippingPalletServiceTest
 {
-    private static ShippingPalletRotationService CreateService(
+    private static ReturnShippingPalletService CreateService(
         IReturnShippingPalletSelector? returnShippingPalletSelectorParam = null,
         IReturnShippingPalletService? returnShippingPalletServiceParam = null
     ) {
-        var logger = new NullLogger<ShippingPalletRotationService>();
+        var logger = new NullLogger<ReturnShippingPalletService>();
 
         var returnShippingPalletSelector = returnShippingPalletSelectorParam ?? ((Func<IReturnShippingPalletSelector>)(() => {
             var mock = new Mock<IReturnShippingPalletSelector>();
             mock.Setup(m => m.SelectReturnShippingPallet(It.IsAny<ShippingStationCode>())).Returns((LocationCode?)null);
             return mock.Object;
         }))();
-
         var returnShippingPalletService = returnShippingPalletServiceParam ?? ((Func<IReturnShippingPalletService>)(() => {
             var mock = new Mock<IReturnShippingPalletService>();
             mock.Setup(m => m.Request(It.IsAny<LocationCode>()));
             return mock.Object;
         }))();
 
-        return new ShippingPalletRotationService(logger, returnShippingPalletSelector, returnShippingPalletService);
+        return new ReturnShippingPalletService(logger, returnShippingPalletSelector, returnShippingPalletService);
     }
 
     public class Return

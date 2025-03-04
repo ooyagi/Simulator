@@ -2,12 +2,12 @@ using CommonItems.Models;
 
 namespace ShippingOperationCoordinator.Interfaces;
 
-public interface IShippingStrageLoader
+public interface IShippingStorageLoader
 {
     IEnumerable<LocationCode> GetEmptyLocationCodes(ShippingStationCode stationCode);
     IEnumerable<IShippingPalletInfo> All(ShippingStationCode stationCode);
-    IEnumerable<ICompletablePalletInfo> FilterCompletableBy(ShippingStationCode stationCode, IEnumerable<ITransferablePalletInfo> pallets);
-    IEnumerable<IShippingPalletLoadableHinbanInfo> GetLoadableFrom(ShippingStationCode stationCode, IEnumerable<ITransferablePalletInfo> pallets);
+    IEnumerable<ICompletablePalletInfo> FilterCompletableBy(ShippingStationCode stationCode, IEnumerable<IInventoryPalletInfo> pallets);
+    IEnumerable<IShippingPalletLoadableHinbanInfo> GetLoadableFrom(ShippingStationCode stationCode, IEnumerable<IInventoryPalletInfo> pallets);
 }
 
 // Returns
@@ -21,6 +21,7 @@ public interface IShippingPalletInfo
 public interface ICompletablePalletInfo
 {
     LocationCode LocationCode { get; }
+    ShippingPalletID ShippingPalletID { get; }
     Hinban NextHinban { get; }
     int Step { get; }
 }
@@ -42,7 +43,7 @@ public interface ILoadableHinbanInfo
 }
 
 // Params
-public interface ITransferablePalletInfo
+public interface IInventoryPalletInfo
 {
     LocationCode LocationCode { get; }
     Hinban Hinban { get; }

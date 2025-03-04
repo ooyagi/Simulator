@@ -4,8 +4,9 @@ namespace ShippingOperationCoordinator.Interfaces;
 
 public interface IInventoryStorageLoader
 {
+    bool IsExists(Hinban hinban);
+    bool IsUseup(Hinban hinban, int loadableCount);
     IEnumerable<IStoragedHinban> GetStoragedItems();
-    bool IsPickable(ShippingStationCode stationCode, Hinban hinban, int quantity = 1);
 }
 
 public interface IStoragedHinban
@@ -14,3 +15,4 @@ public interface IStoragedHinban
     Hinban Hinban { get; }
     int Quantity { get; }
 }
+

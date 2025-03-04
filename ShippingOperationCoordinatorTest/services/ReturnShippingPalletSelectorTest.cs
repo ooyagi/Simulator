@@ -9,22 +9,22 @@ namespace ShippingOperationCoordinator.Services.Tests;
 public class ReturnShippingPalletSelectorTest
 {
     private static ReturnShippingPalletSelector CreateService(
-        IShippingStrageLoader? shippingStrageLoaderParam = null,
-        IInventoryStorageLoader? inventoryStorageLoaderParam = null
+        IShippingStorageLoader? shippingStorageLoaderParam = null,
+        ITempStorageLoader? TempStorageLoaderParam = null
     ) {
         var logger = new NullLogger<ReturnShippingPalletSelector>();
 
-        var shippingStrageLoader = shippingStrageLoaderParam ?? ((Func<IShippingStrageLoader>)(() => {
-            var mock = new Mock<IShippingStrageLoader>();
+        var shippingStorageLoader = shippingStorageLoaderParam ?? ((Func<IShippingStorageLoader>)(() => {
+            var mock = new Mock<IShippingStorageLoader>();
             mock.Setup(m => m.All(It.IsAny<ShippingStationCode>())).Returns(new List<IShippingPalletInfo>());
             return mock.Object;
         }))();
-        var inventoryStorageLoader = inventoryStorageLoaderParam ?? ((Func<IInventoryStorageLoader>)(() => {
-            var mock = new Mock<IInventoryStorageLoader>();
+        var TempStorageLoader = TempStorageLoaderParam ?? ((Func<ITempStorageLoader>)(() => {
+            var mock = new Mock<ITempStorageLoader>();
             mock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), It.IsAny<Hinban>(), 1)).Returns(true);
             return mock.Object;
         }))();
-        return new ReturnShippingPalletSelector(logger, shippingStrageLoader, inventoryStorageLoader);
+        return new ReturnShippingPalletSelector(logger, TempStorageLoader, shippingStorageLoader);
     }
 
     public class SelectReturnShippingPalletTests
@@ -40,9 +40,9 @@ public class ReturnShippingPalletSelectorTest
                 new TestShippingPalletInfo(location1, ShippingPalletID.CustomPaletteID, testHinban1, false),
                 new TestShippingPalletInfo(location2, ShippingPalletID.CustomPaletteID, testHinban2, false)
             };
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(m => m.All(It.IsAny<ShippingStationCode>())).Returns(shippingPallets);
-            var selector = CreateService(shippingStrageLoaderMock.Object);
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(m => m.All(It.IsAny<ShippingStationCode>())).Returns(shippingPallets);
+            var selector = CreateService(shippingStorageLoaderMock.Object);
 
             var result = selector.SelectReturnShippingPallet(stationCode);
 
@@ -65,9 +65,9 @@ public class ReturnShippingPalletSelectorTest
                 new TestShippingPalletInfo(location1, ShippingPalletID.CustomPaletteID, testHinban1, isCompleted1),
                 new TestShippingPalletInfo(location2, ShippingPalletID.CustomPaletteID, testHinban2, isCompleted2)
             };
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(m => m.All(It.IsAny<ShippingStationCode>())).Returns(shippingPallets);
-            var selector = CreateService(shippingStrageLoaderMock.Object);
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(m => m.All(It.IsAny<ShippingStationCode>())).Returns(shippingPallets);
+            var selector = CreateService(shippingStorageLoaderMock.Object);
 
             var result = selector.SelectReturnShippingPallet(stationCode);
 
@@ -92,12 +92,12 @@ public class ReturnShippingPalletSelectorTest
                 new TestShippingPalletInfo(location1, ShippingPalletID.CustomPaletteID, testHinban1, false),
                 new TestShippingPalletInfo(location2, ShippingPalletID.CustomPaletteID, testHinban2, false)
             };
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(m => m.All(It.IsAny<ShippingStationCode>())).Returns(shippingPallets);
-            var inventoryStorageLoaderMock = new Mock<IInventoryStorageLoader>();
-            inventoryStorageLoaderMock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), testHinban1, It.IsAny<int>())).Returns(IsPickable1);
-            inventoryStorageLoaderMock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), testHinban2, It.IsAny<int>())).Returns(IsPickable2);
-            var selector = CreateService(shippingStrageLoaderMock.Object, inventoryStorageLoaderMock.Object);
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(m => m.All(It.IsAny<ShippingStationCode>())).Returns(shippingPallets);
+            var TempStorageLoaderMock = new Mock<ITempStorageLoader>();
+            TempStorageLoaderMock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), testHinban1, It.IsAny<int>())).Returns(IsPickable1);
+            TempStorageLoaderMock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), testHinban2, It.IsAny<int>())).Returns(IsPickable2);
+            var selector = CreateService(shippingStorageLoaderMock.Object, TempStorageLoaderMock.Object);
 
             var result = selector.SelectReturnShippingPallet(stationCode);
 

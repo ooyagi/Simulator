@@ -10,7 +10,7 @@ public class DetermineTransferItemServiceTests
     private static DetermineTransferItemService CreateService(
         ShippingStationCode stationCode,
         ITempStorageLoader? tempStorageLoaderParam = null,
-        IShippingStrageLoader? shippingStrageLoaderParam = null,
+        IShippingStorageLoader? shippingStorageLoaderParam = null,
         IShikakariStorageLoader? ShikakariStorageLoaderParam = null
     ) {
         var logger = NullLogger<DetermineTransferItemService>.Instance;
@@ -20,9 +20,9 @@ public class DetermineTransferItemServiceTests
                 mock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(Enumerable.Empty<IAvarableHinban>());
                 return mock.Object;
             }))();
-        IShippingStrageLoader shippingStrageLoader = shippingStrageLoaderParam
-            ?? ((Func<IShippingStrageLoader>)(() => {
-                var mock = new Mock<IShippingStrageLoader>();
+        IShippingStorageLoader shippingStorageLoader = shippingStorageLoaderParam
+            ?? ((Func<IShippingStorageLoader>)(() => {
+                var mock = new Mock<IShippingStorageLoader>();
                 return mock.Object;
             }))();
         IShikakariStorageLoader ShikakariStorageLoader = ShikakariStorageLoaderParam
@@ -33,7 +33,7 @@ public class DetermineTransferItemServiceTests
         return new DetermineTransferItemService(
             logger,
             tempStorageLoader,
-            shippingStrageLoader,
+            shippingStorageLoader,
             ShikakariStorageLoader
         );
     }
@@ -55,16 +55,17 @@ public class DetermineTransferItemServiceTests
             ShippingStationCode stationCode = new ShippingStationCode("S01");
             var testHinban = new Hinban("FA-1609P(8)BV/U61");
             var testTempItem = new TestAvarableHinban(new LocationCode("T01"), testHinban, 10);
+            var shippingPalletId = new ShippingPalletID("20250101", "N", 1);
     
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(new List<IAvarableHinban> { testTempItem });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
-                .Returns(new List<ICompletablePalletInfo> { new TestCompletablePalletInfo(new LocationCode("SP01"), testHinban, 1) });
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
+                .Returns(new List<ICompletablePalletInfo> { new TestCompletablePalletInfo(new LocationCode("SP01"), shippingPalletId, testHinban, 1) });
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object
             );
     
             var result = service.DetermineTransferHinban(stationCode);
@@ -85,19 +86,21 @@ public class DetermineTransferItemServiceTests
             var testHinban2 = new Hinban("FA-1611P(6)BV/Y71");
             var testTempPallet1 = new TestAvarableHinban(new LocationCode("T01"), testHinban1, 10);
             var testTempPallet2 = new TestAvarableHinban(new LocationCode("T02"), testHinban2, 10);
-            var testShipPallet1 = new TestCompletablePalletInfo(new LocationCode("SP01"), testHinban1, step1);
-            var testShipPallet2 = new TestCompletablePalletInfo(new LocationCode("SP02"), testHinban2, step2);
+            var shippingPalletId1 = new ShippingPalletID("20250101", "N", 1);
+            var shippingPalletId2 = new ShippingPalletID("20250101", "N", 2);
+            var testShipPallet1 = new TestCompletablePalletInfo(new LocationCode("SP01"), shippingPalletId1, testHinban1, step1);
+            var testShipPallet2 = new TestCompletablePalletInfo(new LocationCode("SP02"), shippingPalletId2, testHinban2, step2);
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo> { testShipPallet1, testShipPallet2 });
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object
             );
         
             var result = service.DetermineTransferHinban(stationCode);
@@ -129,15 +132,15 @@ public class DetermineTransferItemServiceTests
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
-            shippingStrageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object
             );
         
             var result = service.DetermineTransferHinban(stationCode);
@@ -168,15 +171,15 @@ public class DetermineTransferItemServiceTests
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
-            shippingStrageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object
             );
         
             var result = service.DetermineTransferHinban(stationCode);
@@ -207,15 +210,15 @@ public class DetermineTransferItemServiceTests
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
-            shippingStrageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object
             );
         
             var result = service.DetermineTransferHinban(stationCode);
@@ -237,31 +240,31 @@ public class DetermineTransferItemServiceTests
             var testTempPallet2 = new TestAvarableHinban(new LocationCode("T02"), testHinban2, 10);
             var testShipPalletInfo1 = new TestShippingPalletLoadableHinbanInfo(new LocationCode("SP01"), ShippingPalletID.CustomPaletteID, testHinban1, 0, 0, false);
             var testShipPalletInfo2 = new TestShippingPalletLoadableHinbanInfo(new LocationCode("SP02"), ShippingPalletID.CustomPaletteID, testHinban2, 0, 0, false);
-            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, 0, 0, true);
-            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, 0, 0, false);
+            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, true, 0);
+            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, false, 0);
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
-            shippingStrageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
             var shikakariStorageLoaderMock = new Mock<IShikakariStorageLoader>();
-            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShikakariPalletLoadableHinbanInfo> { testShikakariPalletInfo1, testShikakariPalletInfo2 });
         
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object,
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
                 ShikakariStorageLoaderParam: shikakariStorageLoaderMock.Object
             );
         
             var result = service.DetermineTransferHinban(stationCode);
         
-            shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<ITransferablePalletInfo>>()), Times.Once);
+            shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Once);
             Assert.Equal(testHinban2, result.Hinban);
             Assert.Equal(testTempPallet2.LocationCode, result.From);
             Assert.Equal(testShipPalletInfo2.LocationCode, result.To);
@@ -282,25 +285,25 @@ public class DetermineTransferItemServiceTests
             var testTempPallet2 = new TestAvarableHinban(new LocationCode("T02"), testHinban2, quantity2);
             var testShipPalletInfo1 = new TestShippingPalletLoadableHinbanInfo(new LocationCode("SP01"), ShippingPalletID.CustomPaletteID, testHinban1, 0, 0, false);
             var testShipPalletInfo2 = new TestShippingPalletLoadableHinbanInfo(new LocationCode("SP02"), ShippingPalletID.CustomPaletteID, testHinban2, 0, 0, false);
-            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, 0, 0, false);
-            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, 0, 0, false);
+            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, false, 0);
+            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, false, 0);
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
-            shippingStrageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
             var shikakariStorageLoaderMock = new Mock<IShikakariStorageLoader>();
-            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShikakariPalletLoadableHinbanInfo> { testShikakariPalletInfo1, testShikakariPalletInfo2 });
         
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object,
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
                 ShikakariStorageLoaderParam: shikakariStorageLoaderMock.Object
             );
         
@@ -309,7 +312,7 @@ public class DetermineTransferItemServiceTests
             Hinban expectedHinban = expected == 1 ? testHinban1 : testHinban2;
             LocationCode expectedFrom = expected == 1 ? testTempPallet1.LocationCode : testTempPallet2.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
-            shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<ITransferablePalletInfo>>()), Times.Once);
+            shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Once);
             Assert.Equal(expectedHinban, result.Hinban);
             Assert.Equal(expectedFrom, result.From);
             Assert.Equal(expectedTo, result.To);
@@ -334,18 +337,18 @@ public class DetermineTransferItemServiceTests
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
             var shikakariStorageLoaderMock = new Mock<IShikakariStorageLoader>();
             // 仕掛パレットが無い場合も仕掛パレットで使用しないと言う判断になる
-            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShikakariPalletLoadableHinbanInfo> {});
         
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object,
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
                 ShikakariStorageLoaderParam: shikakariStorageLoaderMock.Object
             );
         
@@ -354,7 +357,7 @@ public class DetermineTransferItemServiceTests
             Hinban expectedHinban = testHinban;
             LocationCode expectedFrom = testTempPallet.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
-            shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<ITransferablePalletInfo>>()), Times.Once);
+            shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Once);
             Assert.Equal(expectedHinban, result.Hinban);
             Assert.Equal(expectedFrom, result.From);
             Assert.Equal(expectedTo, result.To);
@@ -374,25 +377,25 @@ public class DetermineTransferItemServiceTests
             var testTempPallet2 = new TestAvarableHinban(new LocationCode("T02"), testHinban2, 14);
             var testShipPalletInfo1 = new TestShippingPalletLoadableHinbanInfo(new LocationCode("SP01"), ShippingPalletID.CustomPaletteID, testHinban1, step1, 0, false);
             var testShipPalletInfo2 = new TestShippingPalletLoadableHinbanInfo(new LocationCode("SP02"), ShippingPalletID.CustomPaletteID, testHinban2, step2, 0, false);
-            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, 0, 0, true);
-            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, 0, 0, true);
+            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, true, 0);
+            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, true, 0);
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
-            shippingStrageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
             var shikakariStorageLoaderMock = new Mock<IShikakariStorageLoader>();
-            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShikakariPalletLoadableHinbanInfo> { testShikakariPalletInfo1, testShikakariPalletInfo2 });
         
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object,
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
                 ShikakariStorageLoaderParam: shikakariStorageLoaderMock.Object
             );
         
@@ -400,7 +403,7 @@ public class DetermineTransferItemServiceTests
             Hinban expectedHinban = expected == 1 ? testHinban1 : testHinban2;
             LocationCode expectedFrom = expected == 1 ? testTempPallet1.LocationCode : testTempPallet2.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
-            shippingStrageLoaderMock.Verify(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()), Times.Exactly(3));
+            shippingStorageLoaderMock.Verify(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Exactly(3));
             Assert.Equal(expectedHinban, result.Hinban);
             Assert.Equal(expectedFrom, result.From);
             Assert.Equal(expectedTo, result.To);
@@ -420,31 +423,31 @@ public class DetermineTransferItemServiceTests
                 new LocationCode("SP01"), ShippingPalletID.CustomPaletteID, testHinban, 4, step1, false);
             var testShipPalletInfo2 = new TestShippingPalletLoadableHinbanInfo(
                 new LocationCode("SP02"), ShippingPalletID.CustomPaletteID, testHinban, 4, step2, false);
-            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban, 0, 0, true);
+            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban, Hinban.Default, 0, 0, true, 0);
             
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
                 .Returns(new List<IAvarableHinban> { testTempPallet });
-            var shippingStrageLoaderMock = new Mock<IShippingStrageLoader>();
-            shippingStrageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
+            shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
-            shippingStrageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
             var shikakariStorageLoaderMock = new Mock<IShikakariStorageLoader>();
-            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<ITransferablePalletInfo>>()))
+            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShikakariPalletLoadableHinbanInfo> { testShikakariPalletInfo1 });
             
             var service = CreateService(
                 stationCode,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
-                shippingStrageLoaderParam: shippingStrageLoaderMock.Object,
+                shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
                 ShikakariStorageLoaderParam: shikakariStorageLoaderMock.Object
             );
             
             var result = service.DetermineTransferHinban(stationCode);
             
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
-            shippingStrageLoaderMock.Verify(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<ITransferablePalletInfo>>()), Times.Exactly(3));
+            shippingStorageLoaderMock.Verify(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Exactly(3));
             Assert.Equal(testHinban, result.Hinban);
             Assert.Equal(testTempPallet.LocationCode, result.From);
             Assert.Equal(expectedTo, result.To);
@@ -453,14 +456,17 @@ public class DetermineTransferItemServiceTests
 }
 
 public record TestAvarableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IAvarableHinban;
-public record TestCompletablePalletInfo(LocationCode LocationCode, Hinban NextHinban, int Step): ICompletablePalletInfo;
+public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int Step): ICompletablePalletInfo;
 public record TestShippingPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int LoadableItemCount, int Step, bool IsLoadableQuantityGreaterThanResult): IShippingPalletLoadableHinbanInfo
 {
     // 実際にはNextHinbanは IsLoadableQuantityGreaterThan の判定に使用しないが、テストの際に複数の候補がある場合にどの候補が選ばれるかを確認するために使用する
     public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => hinban == NextHinban && IsLoadableQuantityGreaterThanResult;
 }
-public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int LoadableItemCount, int Step, bool IsLoadableQuantityGreaterThanResult): IShikakariPalletLoadableHinbanInfo
+public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int FutureLoadableHinbanTypeCount, int RemainStep, bool IsLoadableQuantityGreaterThanResult, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
 {
     // 実際にはNextHinbanは IsLoadableQuantityGreaterThan の判定に使用しないが、テストの際に複数の候補がある場合にどの候補が選ばれるかを確認するために使用する
     public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => hinban == NextHinban && IsLoadableQuantityGreaterThanResult;
+    public IEnumerable<IEmptiablePalletInfo> GetEmptiablePallets(IEnumerable<IInventoryPalletInfo> inventoryPallets) {
+        return new List<IEmptiablePalletInfo>();
+    }
 }

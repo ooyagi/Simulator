@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using CommonItems.Models;
 using ShippingOperationCoordinator.Interfaces;
+using ShippingOperationCoordinator.Models;
 
 namespace ShippingOperationCoordinator.Services;
 
@@ -11,18 +12,18 @@ class DetermineTransferItemService
 {
     ILogger<DetermineTransferItemService> _logger;
     private readonly ITempStorageLoader _tempStorageLoader;
-    private readonly IShippingStrageLoader _shippingStrageLoader;
+    private readonly IShippingStorageLoader _shippingStorageLoader;
     private readonly IShikakariStorageLoader _ShikakariStorageLoader;
 
     public DetermineTransferItemService(
         ILogger<DetermineTransferItemService> logger,
         ITempStorageLoader tempStorageLoader,
-        IShippingStrageLoader shippingStrageLoader,
+        IShippingStorageLoader shippingStorageLoader,
         IShikakariStorageLoader ShikakariStorageLoader)
     {
         _logger = logger;
         _tempStorageLoader = tempStorageLoader;
-        _shippingStrageLoader = shippingStrageLoader;
+        _shippingStorageLoader = shippingStorageLoader;
         _ShikakariStorageLoader = ShikakariStorageLoader;
     }
 
@@ -65,7 +66,7 @@ class DetermineTransferItemService
     /// </summary>
     /// <remarks>積替え先の品番が見つからない場合はnullを返す</remarks>
     private TransferDirection? FilterShippingPalletsCompletedByTempInventory(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
-        var completablePallets = _shippingStrageLoader.FilterCompletableBy(stationCode, pallets);
+        var completablePallets = _shippingStorageLoader.FilterCompletableBy(stationCode, pallets);
         if (!completablePallets.Any()) {
             return null;
         }
@@ -77,7 +78,7 @@ class DetermineTransferItemService
     /// 使い切れる在庫パレットの積替え判断
     /// 
     /// 以下の手順で積替え品番、積替え元、積み替え先を求める。
-    /// 1. 一時置き場から出荷パレットの積み込み情報のリストを取得する
+    /// 1. 出荷パレット置き場から出荷パレットの積み込み情報のリストを取得する
     /// 2. 取得した積み込み情報のリストに問い合わせ、使い切れる在庫パレットのリストを取得する
     /// 
     /// 積み替え元の選択
@@ -87,7 +88,7 @@ class DetermineTransferItemService
     /// </summary>
     /// <remarks>積替え元の在庫パレット／積替え先の出荷パレットが見つからない場合はnullを返す</remarks>
     private TransferDirection? FilterInventoryPalletsThatCanBeEmptied(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
-        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(stationCode, pallets);
+        var shippingPallets = _shippingStorageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
             return null;
         }
@@ -115,7 +116,7 @@ class DetermineTransferItemService
     /// </summary>
     /// <remarks>積替え先の品番が見つからない場合はnullを返す</remarks>
     private TransferDirection? FilterInventoryPalletsNotUsedInShikakariStorage(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
-        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(stationCode, pallets);
+        var shippingPallets = _shippingStorageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
             return null;
         }
@@ -149,7 +150,7 @@ class DetermineTransferItemService
     /// 積替え先の品番が見つからない場合はnullを返す
     /// </remarks>
     private TransferDirection? FilterShippingPalletsWithFewTransfers(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
-        var shippingPallets = _shippingStrageLoader.GetLoadableFrom(stationCode, pallets);
+        var shippingPallets = _shippingStorageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
             return null;
         }
@@ -157,7 +158,4 @@ class DetermineTransferItemService
         var nextTransferSource = pallets.First(x => x.Hinban == nextTransferDistination.NextHinban);
         return new TransferDirection(nextTransferDistination.NextHinban, nextTransferSource.LocationCode, nextTransferDistination.LocationCode);
     }
-
-    public record TransferDirection(Hinban Hinban, LocationCode From, LocationCode To);
-    public record TemporaryStoragePalletInfo(LocationCode LocationCode, Hinban Hinban, int Quantity): ITransferablePalletInfo;
 }

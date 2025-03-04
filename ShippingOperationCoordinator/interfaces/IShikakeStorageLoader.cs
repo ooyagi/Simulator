@@ -4,7 +4,8 @@ namespace ShippingOperationCoordinator.Interfaces;
 
 public interface IShikakariStorageLoader
 {
-    IEnumerable<IShikakariPalletLoadableHinbanInfo> GetLoadableFrom(IEnumerable<ITransferablePalletInfo> pallets);
+    IEnumerable<IShikakariPalletLoadableHinbanInfo> GetLoadableFrom(IEnumerable<IInventoryPalletInfo> pallets);
+    IEnumerable<ICompletablePalletInfo> FilterCompletableBy(IEnumerable<IInventoryPalletInfo> pallets);
 }
 
 public interface IShikakariPalletLoadableHinbanInfo
@@ -12,7 +13,18 @@ public interface IShikakariPalletLoadableHinbanInfo
     LocationCode LocationCode { get; }
     ShippingPalletID ShippingPalletID { get; }
     Hinban NextHinban { get; }
-    int Step { get; }
+    Hinban BlockHinban { get; }
+    int RemainStep { get; }
+    int FutureLoadableHinbanTypeCount { get; }  // 積み込める品番の種類数
+    int BlockHinbanLoadableCount { get; }       // 積み込めるブロック品番の個数
 
     bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity);
+
+    IEnumerable<IEmptiablePalletInfo> GetEmptiablePallets(IEnumerable<IInventoryPalletInfo> inventoryPallets);
+}
+public interface IEmptiablePalletInfo
+{
+    LocationCode LocationCode { get; }
+    Hinban Hinban { get; }
+    int EmptiableStep { get; }
 }

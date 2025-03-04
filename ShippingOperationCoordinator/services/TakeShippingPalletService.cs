@@ -8,25 +8,25 @@ namespace ShippingOperationCoordinator.Services;
 class TakeShippingPalletService
 {
     private readonly ILogger<TakeShippingPalletService> _logger;
-    private readonly IShippingStrageLoader _shippingStrageLoader;
+    private readonly IShippingStorageLoader _shippingStorageLoader;
     private readonly ITakeShippingPalletSelector _takeShippingPalletSelector;
     private readonly ITakeShippingPalletService _takeShippingPalletService;
 
     public TakeShippingPalletService(
         ILogger<TakeShippingPalletService> logger,
-        IShippingStrageLoader shippingStrageLoader,
+        IShippingStorageLoader shippingStorageLoader,
         ITakeShippingPalletSelector takeShippingPalletSelector,
         ITakeShippingPalletService takeShippingPalletService
     ) {
         _logger = logger;
-        _shippingStrageLoader = shippingStrageLoader;
+        _shippingStorageLoader = shippingStorageLoader;
         _takeShippingPalletSelector = takeShippingPalletSelector;
         _takeShippingPalletService = takeShippingPalletService;
     }
 
     public void Take(ShippingStationCode stationCode) {
         _logger.LogInformation($"出荷パレット取り寄せ： 出荷作業場所[{stationCode}]");
-        var emptyLocations = _shippingStrageLoader.GetEmptyLocationCodes(stationCode);
+        var emptyLocations = _shippingStorageLoader.GetEmptyLocationCodes(stationCode);
         foreach (var emptyLocation in emptyLocations) {
             TakePallet(stationCode, emptyLocation);
         }

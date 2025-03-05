@@ -2,7 +2,7 @@ using CommonItems.Models;
 
 namespace ShippingOperationCoordinator.Interfaces;
 
-public interface IReturnPickupInventoryPalletService
+public interface IReturnInventoryPalletService
 {
     void Request(LocationCode locationCode);
 }

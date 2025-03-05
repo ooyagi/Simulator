@@ -17,7 +17,7 @@ public class DetermineTransferItemServiceTests
         ITempStorageLoader tempStorageLoader = tempStorageLoaderParam
             ?? ((Func<ITempStorageLoader>)(() => {
                 var mock = new Mock<ITempStorageLoader>();
-                mock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(Enumerable.Empty<IAvarableHinban>());
+                mock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(Enumerable.Empty<IInventoryPalletInfo>());
                 return mock.Object;
             }))();
         IShippingStorageLoader shippingStorageLoader = shippingStorageLoaderParam
@@ -58,7 +58,7 @@ public class DetermineTransferItemServiceTests
             var shippingPalletId = new ShippingPalletID("20250101", "N", 1);
     
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
-            tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(new List<IAvarableHinban> { testTempItem });
+            tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(new List<IInventoryPalletInfo> { testTempItem });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo> { new TestCompletablePalletInfo(new LocationCode("SP01"), shippingPalletId, testHinban, 1) });
@@ -93,7 +93,7 @@ public class DetermineTransferItemServiceTests
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet1, testTempPallet2 });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo> { testShipPallet1, testShipPallet2 });
@@ -131,7 +131,7 @@ public class DetermineTransferItemServiceTests
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet1, testTempPallet2 });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
@@ -170,7 +170,7 @@ public class DetermineTransferItemServiceTests
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet1, testTempPallet2 });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
@@ -209,7 +209,7 @@ public class DetermineTransferItemServiceTests
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet1, testTempPallet2 });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
@@ -245,7 +245,7 @@ public class DetermineTransferItemServiceTests
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet1, testTempPallet2 });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
@@ -290,7 +290,7 @@ public class DetermineTransferItemServiceTests
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet1, testTempPallet2 });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
@@ -336,7 +336,7 @@ public class DetermineTransferItemServiceTests
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<IShippingPalletLoadableHinbanInfo> { testShipPalletInfo1, testShipPalletInfo2 });
@@ -382,7 +382,7 @@ public class DetermineTransferItemServiceTests
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet1, testTempPallet2 });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet1, testTempPallet2 });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
@@ -427,7 +427,7 @@ public class DetermineTransferItemServiceTests
             
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { testTempPallet });
+                .Returns(new List<IInventoryPalletInfo> { testTempPallet });
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.FilterCompletableBy(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo>());
@@ -455,7 +455,7 @@ public class DetermineTransferItemServiceTests
     }
 }
 
-public record TestAvarableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IAvarableHinban;
+public record TestAvarableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IInventoryPalletInfo;
 public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int Step): ICompletablePalletInfo;
 public record TestShippingPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int LoadableItemCount, int Step, bool IsLoadableQuantityGreaterThanResult): IShippingPalletLoadableHinbanInfo
 {

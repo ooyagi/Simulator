@@ -19,7 +19,7 @@ public class TakeShippingPalletSelectorTest
         }))();
         var tempStorageLoader = tempStorageLoaderParam ?? ((Func<ITempStorageLoader>)(() => {
             var mock = new Mock<ITempStorageLoader>();
-            mock.Setup(x => x.GetAvarableHinbans(It.IsAny<ShippingStationCode>())).Returns(Enumerable.Empty<IAvarableHinban>());
+            mock.Setup(x => x.GetAvarableHinbans(It.IsAny<ShippingStationCode>())).Returns(Enumerable.Empty<IInventoryPalletInfo>());
             return mock.Object;
         }))();
         var inventoryStorageLoader = inventoryStorageLoaderParam ?? ((Func<IInventoryStorageLoader>)(() => {
@@ -56,7 +56,7 @@ public class TakeShippingPalletSelectorTest
 
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
-                .Returns(new List<IAvarableHinban> { tempStorageItem });
+                .Returns(new List<IInventoryPalletInfo> { tempStorageItem });
             var shikakariStorageLoaderMock = new Mock<IShikakariStorageLoader>();
             shikakariStorageLoaderMock.Setup(x => x.FilterCompletableBy(It.IsAny<IEnumerable<IInventoryPalletInfo>>()))
                 .Returns(new List<ICompletablePalletInfo> { completableShippingPallet });
@@ -91,7 +91,7 @@ public class TakeShippingPalletSelectorTest
             var completableShippingPallet2 = new TestCompletablePalletInfo(testLocationCode2, palletID2, testHinban2, step2);
 
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
-            tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(new List<IAvarableHinban> { tempStorageItem1, tempStorageItem2 });
+            tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(new List<IInventoryPalletInfo> { tempStorageItem1, tempStorageItem2 });
             var shikakariStorageLoaderMock = new Mock<IShikakariStorageLoader>();
             shikakariStorageLoaderMock.Setup(x => x.FilterCompletableBy(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(new List<ICompletablePalletInfo> { completableShippingPallet1, completableShippingPallet2 });
 
@@ -112,7 +112,7 @@ public class TakeShippingPalletSelectorTest
             var tempLocation = new LocationCode("T01");
             var expectedPalletID = new ShippingPalletID("20250101", "N", 10);
             var tempStorageItem = new AvalableHinban(tempLocation, testHinban, 10);
-            var tempStorageItems = new List<IAvarableHinban> { tempStorageItem };
+            var tempStorageItems = new List<IInventoryPalletInfo> { tempStorageItem };
             var testEmptiableInfo = new TestEmptiablePalletInfo(new LocationCode("SP01"), testHinban, 10);
             var testEmptiableInfos = new List<TestEmptiablePalletInfo> { testEmptiableInfo };
             var shikakariLoadableHinbanInfoMock = new Mock<IShikakariPalletLoadableHinbanInfo>();
@@ -149,7 +149,7 @@ public class TakeShippingPalletSelectorTest
             var expectedPalletID1 = new ShippingPalletID("20250101", "N", 10);
             var expectedPalletID2 = new ShippingPalletID("20250101", "A", 10);
             var tempStorageItem = new AvalableHinban(tempLocation, testHinban, 10);
-            var tempStorageItems = new List<IAvarableHinban> { tempStorageItem };
+            var tempStorageItems = new List<IInventoryPalletInfo> { tempStorageItem };
             var testEmptiableInfo1 = new TestEmptiablePalletInfo(new LocationCode("SP01"), testHinban, step1);
             var testEmptiableInfo2 = new TestEmptiablePalletInfo(new LocationCode("SP02"), testHinban, step2);
             var shikakariLoadableHinbanInfoMock1 = new Mock<IShikakariPalletLoadableHinbanInfo>();
@@ -193,7 +193,7 @@ public class TakeShippingPalletSelectorTest
             var palletID2 = new ShippingPalletID("20250101", "A", 10);
             var tempStorageItem1 = new AvalableHinban(new LocationCode("T01"), testHinban1, 10);
             var tempStorageItem2 = new AvalableHinban(new LocationCode("T02"), testHinban2, 8);
-            var tempStorageItems = new List<IAvarableHinban> { tempStorageItem1, tempStorageItem2 };
+            var tempStorageItems = new List<IInventoryPalletInfo> { tempStorageItem1, tempStorageItem2 };
         
             var shikakariPalletInfo1 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariPalletInfo1.Setup(x => x.NextHinban).Returns(testHinban1);
@@ -248,7 +248,7 @@ public class TakeShippingPalletSelectorTest
         
             var tempStorageItem1 = new AvalableHinban(tempLocation1, testHinban1, 10);
             var tempStorageItem2 = new AvalableHinban(tempLocation2, testHinban2, 8);
-            var tempStorageItems = new List<IAvarableHinban> { tempStorageItem1, tempStorageItem2 };
+            var tempStorageItems = new List<IInventoryPalletInfo> { tempStorageItem1, tempStorageItem2 };
             var shikakariMock1 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariMock1.Setup(x => x.NextHinban).Returns(testHinban1);
             shikakariMock1.Setup(x => x.ShippingPalletID).Returns(expectedPalletID1);
@@ -310,7 +310,7 @@ public class TakeShippingPalletSelectorTest
             // testHinban3 が最も積み込み可能な仕掛パレット数が少ないと判定され、testHinban3 が次回積込品番のパレットがないため「対象パレットなし」とならないことの確認
             var tempStorageItem1 = new AvalableHinban(tempLocation1, testHinban1, 10);
             var tempStorageItem2 = new AvalableHinban(tempLocation2, testHinban2, 8);
-            var tempStorageItems = new List<IAvarableHinban> { tempStorageItem1, tempStorageItem2 };
+            var tempStorageItems = new List<IInventoryPalletInfo> { tempStorageItem1, tempStorageItem2 };
             var shikakariMock1 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariMock1.Setup(x => x.NextHinban).Returns(testHinban1);
             shikakariMock1.Setup(x => x.ShippingPalletID).Returns(expectedPalletID1);
@@ -350,7 +350,7 @@ public class TakeShippingPalletSelectorTest
     }
 
     public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int Step): ICompletablePalletInfo;
-    public record AvalableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IAvarableHinban;
+    public record AvalableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IInventoryPalletInfo;
     public record TestEmptiablePalletInfo(LocationCode LocationCode, Hinban Hinban, int EmptiableStep): IEmptiablePalletInfo;
     public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int FutureLoadableHinbanTypeCount, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
     {

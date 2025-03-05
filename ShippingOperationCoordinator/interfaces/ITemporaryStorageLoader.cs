@@ -5,6 +5,10 @@ namespace ShippingOperationCoordinator.Interfaces;
 public interface ITempStorageLoader
 {
     /// <summary>
+    /// 空の一時置き場を取得する
+    /// </summary>
+    IEnumerable<LocationCode> GetEmptyLocationCodes(ShippingStationCode stationCode);
+    /// <summary>
     /// 空パレットを取得する
     /// </summary>
     IEnumerable<IInventoryPalletInfo> GetEmptyPallets(ShippingStationCode stationCode);

@@ -6,6 +6,7 @@ public record ShippingPalletID
     public string Category { get; set; } = "";
     public int PalletNumber { get; set; } = 0;
     public bool IsCustomPalette => DeliveryDate == CUSTOM_DELIVERY_DATE && Category == CUSTOM_CATEGORY && PalletNumber == CUSTOM_PALLET_NUMBER;
+    public string Value => ToString();
 
     public static string CUSTOM_DELIVERY_DATE = "00000000000000";
     public static string CUSTOM_CATEGORY = "SEISANKEIKAKUGAI";

@@ -32,6 +32,11 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
         try {
             // 一時置き場の在庫を取得
             var tempStorageItems = _tempStorageLoader.GetAvarableHinbans(stationCode).Select(x => new TemporaryStoragePalletInfo(x.LocationCode, x.Hinban, x.Quantity)).ToList();
+            //----- 要調整：一時置き場の在庫の絞り込み ----
+            // 余裕があれば仕掛パレットの搬送中に対象の在庫が空になってしまうなどを避けるため
+            // ここで IShippingStorageLoader を用いて出荷作業場所で利用予定の tempStorageItems の在庫数を先に削る
+            //----- 要調整：一時置き場の在庫の絞り込み ----
+
             // 一時置き場の在庫だけで完了する出荷パレット
             var completablePalletId = FilterShippingPalletsCompletedByTempInventory(tempStorageItems);
             if (completablePalletId != null) {
@@ -53,7 +58,13 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
             if (palletIdWhereNextHinbanIsDeterminedByFewLoadableShikakariPallet != null) {
                 return palletIdWhereNextHinbanIsDeterminedByFewLoadableShikakariPallet;
             }
-            // 一時置き場の在庫パレットの内、在庫数が少ない品番が次回積込予定となっている出荷パレット
+
+            //----- 要調整：現状ではここから下には行かない ----
+            // 積み込み可能な仕掛パレット数が同数の場合は積替えステップが最も小さいものを選択するため必ず何れかの仕掛パレットが選択される
+            // 製品版では積替えステップが同数の場合は以下の基準で絞り込むが試算のため簡易化する。
+            //----- 現状ではここから下には行かない ----
+
+            // 仕掛パレットの何れかで次回積込品番になっている一時置き場の在庫パレットの内、在庫数が少ない品番が次回積込予定となっている出荷パレット
             var palletIdWhereNextHinbanIsDeterminedByLowInventoryQuantity = FilterShippingPalletWithLowInventoryQuantity(tempStorageItems, shikakariPallets);
             if (palletIdWhereNextHinbanIsDeterminedByLowInventoryQuantity != null) {
                 return palletIdWhereNextHinbanIsDeterminedByLowInventoryQuantity;
@@ -78,7 +89,7 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
             _logger.LogError(ex, "出荷パレット取り寄せ候補選定中にエラーが発生しました");
         }
         _logger.LogWarning("取り寄せ可能な出荷パレット候補が見つかりませんでした");
-        return ShippingPalletID.CustomPaletteID;
+        return null;
     }
 
     /// <summary>
@@ -120,11 +131,12 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
     /// 複数のパレットが該当する場合は残り積替えステップが最も小さい物を選択する
     /// </summary>
     private ShippingPalletID? FilterShippingPalletWithFewLoadableShikakariPallets(IEnumerable<IInventoryPalletInfo> tempStorageItems, IEnumerable<IShikakariPalletLoadableHinbanInfo> shikakariPallets) {
-        var targetTempPallet = tempStorageItems.Select(x => new { x.Hinban, x.Quantity, Count = shikakariPallets.Count(y => y.IsLoadableQuantityGreaterThan(x.Hinban, 1))})
-            .Where(x => 0 < x.Count)
-            .OrderBy(x => x.Count)
-            .ThenBy(x => x.Quantity)
-            .FirstOrDefault();
+        var nextPickableItems = tempStorageItems.Where(x => shikakariPallets.Any(y => y.NextHinban == x.Hinban));
+        var tmpPalletLoadedInfo = nextPickableItems.Select(x => {
+                var Count = shikakariPallets.Count(y => y.IsLoadableQuantityGreaterThan(x.Hinban, 1));
+                return new { x.Hinban, x.Quantity, Count};
+            });
+        var targetTempPallet = tmpPalletLoadedInfo.OrderBy(x => x.Count).ThenBy(x => x.Quantity).FirstOrDefault();
         var targetPallets = shikakariPallets.Where(x => x.NextHinban == targetTempPallet?.Hinban);
         if (!targetPallets.Any()) {
             return null;

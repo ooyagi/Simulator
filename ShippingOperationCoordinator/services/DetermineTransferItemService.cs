@@ -99,7 +99,7 @@ class DetermineTransferItemService
             return null;
         }
         var nextTrasnferSource = emptiablePallets.OrderBy(x => x.Quantity).First();
-        var nextTransferDestination = shippingPallets.Where(shpPallet => shpPallet.NextHinban == nextTrasnferSource.Hinban).OrderBy(x => x.Step).First();
+        var nextTransferDestination = shippingPallets.Where(shpPallet => shpPallet.NextHinban == nextTrasnferSource.Hinban).OrderBy(x => x.RemainStep).First();
         return new TransferDirection(nextTrasnferSource.Hinban, nextTrasnferSource.LocationCode, nextTransferDestination.LocationCode);
     }
     /// <summary>
@@ -128,7 +128,7 @@ class DetermineTransferItemService
             return null;
         }
         var nextTrasnferSource = notUsedPallets.OrderBy(x => x.Quantity).First();
-        var nextTransferDestination = shippingPallets.Where(shpPallet => shpPallet.NextHinban == nextTrasnferSource.Hinban).OrderBy(x => x.Step).First();
+        var nextTransferDestination = shippingPallets.Where(shpPallet => shpPallet.NextHinban == nextTrasnferSource.Hinban).OrderBy(x => x.RemainStep).First();
         return  new TransferDirection(nextTrasnferSource.Hinban, nextTrasnferSource.LocationCode, nextTransferDestination.LocationCode);
     }
     /// <summary>
@@ -154,7 +154,7 @@ class DetermineTransferItemService
         if (!shippingPallets.Any()) {
             return null;
         }
-        var nextTransferDistination = shippingPallets.OrderBy(x => x.LoadableItemCount).ThenBy(x => x.Step).First();
+        var nextTransferDistination = shippingPallets.OrderBy(x => x.FutureLoadableHinbanTypeCount).ThenBy(x => x.RemainStep).First();
         var nextTransferSource = pallets.First(x => x.Hinban == nextTransferDistination.NextHinban);
         return new TransferDirection(nextTransferDistination.NextHinban, nextTransferSource.LocationCode, nextTransferDistination.LocationCode);
     }

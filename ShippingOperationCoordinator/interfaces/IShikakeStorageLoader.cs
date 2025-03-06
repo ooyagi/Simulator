@@ -19,6 +19,7 @@ public interface IShikakariPalletLoadableHinbanInfo
     int BlockHinbanLoadableCount { get; }       // 積み込めるブロック品番の個数
 
     bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity);
+    bool IsCompletableBy(IInventoryPalletInfo pickableItem);
 
     IEnumerable<IEmptiablePalletInfo> GetEmptiablePallets(IEnumerable<IInventoryPalletInfo> inventoryPallets);
 }

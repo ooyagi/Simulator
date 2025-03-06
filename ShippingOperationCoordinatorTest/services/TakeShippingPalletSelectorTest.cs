@@ -4,6 +4,7 @@ using CommonItems.Models;
 using ShippingOperationCoordinator.Interfaces;
 
 namespace ShippingOperationCoordinator.Services.Tests;
+
 public class TakeShippingPalletSelectorTest
 {
     private static TakeShippingPalletSelector CreateService(
@@ -355,6 +356,7 @@ public class TakeShippingPalletSelectorTest
     public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int FutureLoadableHinbanTypeCount, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
     {
         public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => false;
+        public bool IsCompletableBy(IInventoryPalletInfo inventoryPallet) => false;
         public IEnumerable<IEmptiablePalletInfo> GetEmptiablePallets(IEnumerable<IInventoryPalletInfo> inventoryPallets) {
             return Enumerable.Empty<IEmptiablePalletInfo>();
         }

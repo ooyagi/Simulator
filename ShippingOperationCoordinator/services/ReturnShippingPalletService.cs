@@ -4,7 +4,7 @@ using ShippingOperationCoordinator.Interfaces;
 
 namespace ShippingOperationCoordinator.Services;
 
-class ReturnShippingPalletService
+class ReturnShippingPalletService: IChangeShippingPalletService
 {
     private readonly ILogger<ReturnShippingPalletService> _logger;
     private readonly IReturnShippingPalletSelector _returnShippingPalletSelector;
@@ -20,12 +20,16 @@ class ReturnShippingPalletService
         _returnShippingPalletService = returnShippingPalletService;
     }
 
-    public void Return(ShippingStationCode stationCode) {
+    public bool Change(ShippingStationCode stationCode) {
+        return Return(stationCode);
+    }
+    public bool Return(ShippingStationCode stationCode) {
         _logger.LogInformation($"出荷パレット返却： 出荷作業場所[{stationCode}]");
         var returnableLocation = _returnShippingPalletSelector.SelectReturnShippingPallet(stationCode);
         if (returnableLocation == null) {
-            return;
+            return false;
         }
         _returnShippingPalletService.Request(returnableLocation);
+        return true;
     }
 }

@@ -53,4 +53,15 @@ class ReturnInventoryPalletSelector: IReturnInventoryPalletSelector
             .FirstOrDefault()?
             .LocationCode;
     }
+    /// <summary>
+    /// 空在庫パレット選択
+    /// </summary>
+    public LocationCode? SelectEmptyInventoryPallet(ShippingStationCode stationCode) {
+        _logger.LogInformation($"空在庫パレット選択： 出荷作業場所 [{stationCode}]");
+        var emptyPallets = _tempStorageLoader.GetEmptyPallets(stationCode);
+        if (0 < emptyPallets.Count()) {
+            return emptyPallets.First().LocationCode;
+        }
+        return null;
+    }
 }

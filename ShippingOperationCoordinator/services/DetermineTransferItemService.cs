@@ -8,7 +8,7 @@ namespace ShippingOperationCoordinator.Services;
 /// <summary>
 /// 一時置き場に置かれた在庫パレットから出荷パレット置き場に置かれた出荷パレットに積替える品番を決定する
 /// </summary>
-class DetermineTransferItemService
+class DetermineTransferItemService: IDetermineTransferItemService
 {
     ILogger<DetermineTransferItemService> _logger;
     private readonly ITempStorageLoader _tempStorageLoader;
@@ -30,8 +30,7 @@ class DetermineTransferItemService
     /// <summary>
     /// 与えられた在庫パレットのリストから、積替え指示に基づいて転送対象の品番 (Hinban) を決定する
     /// </summary>
-    public TransferDirection DetermineTransferHinban(ShippingStationCode stationCode)
-    {
+    public TransferDirection DetermineTransferHinban(ShippingStationCode stationCode) {
         _logger.LogInformation("積替え対象の品番を決定します");
         try {
             var availableHinbans = _tempStorageLoader.GetAvarableHinbans(stationCode).Select(x => new TemporaryStoragePalletInfo(x.LocationCode, x.Hinban, x.Quantity)).ToList();

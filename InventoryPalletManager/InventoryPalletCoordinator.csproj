@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommonItems\CommonItems.csproj" />
+    <ProjectReference Include="..\ShippingOperationCoordinator\ShippingOperationCoordinator.csproj" />
+  </ItemGroup>
+
 </Project>

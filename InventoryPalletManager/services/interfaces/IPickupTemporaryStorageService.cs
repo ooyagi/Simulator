@@ -4,5 +4,5 @@ namespace InventoryPalletCoordinator.Services;
 
 interface IPickupTemporaryStorageService
 {
-    InventoryPalletID Pickup(LocationCode locationCode);
+    InventoryPalletID? Pickup(LocationCode locationCode);
 }

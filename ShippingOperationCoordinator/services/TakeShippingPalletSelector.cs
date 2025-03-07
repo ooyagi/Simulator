@@ -104,7 +104,7 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
         if (!completablePallets.Any()) {
             return null;
         }
-        var targetPallet = completablePallets.OrderBy(x => x.Step).First();
+        var targetPallet = completablePallets.OrderBy(x => x.RemainStep).First();
         return targetPallet.ShippingPalletID;
     }
     /// <summary>

@@ -3,24 +3,24 @@ using System.Reactive.Subjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using CommonItems.Models;
-using InventoryPalletCoordinator.Services;
+using ShippingPalletCoordinator.Services;
 
-namespace InventoryPalletCoordinator.Models;
+namespace ShippingPalletCoordinator.Models;
 
 /// <summary>
 /// 一時置き場のイベントを管理するパブリッシャーおよびオブザーバー
 /// </summary>
-class TemporaryStorageEventPublisher: ITemporaryStorageEventPublisher, ShippingOperationCoordinator.Interfaces.ITemporaryStorageEventObserver, IDisposable
+class ShippingStorageEventPublisher: IShippingStorageEventPublisher, ShippingOperationCoordinator.Interfaces.IShippingStorageEventObserver, IDisposable
 {
-    private readonly ILogger<TemporaryStorageEventPublisher> _logger;
+    private readonly ILogger<ShippingStorageEventPublisher> _logger;
     private readonly IServiceProvider _serviceProvider;
-    private readonly Subject<ShippingOperationCoordinator.Interfaces.IInventoryPalletReturnEvent> _pickupEventSubject = new();
+    private readonly Subject<ShippingOperationCoordinator.Interfaces.IShippingPalletReturnEvent> _pickupEventSubject = new();
 
-    public IObservable<ShippingOperationCoordinator.Interfaces.IInventoryPalletReturnEvent> ReturnEvent { get { return _pickupEventSubject.AsObservable(); } }
+    public IObservable<ShippingOperationCoordinator.Interfaces.IShippingPalletReturnEvent> ReturnEvent { get { return _pickupEventSubject.AsObservable(); } }
 
 
-    public TemporaryStorageEventPublisher(
-        ILogger<TemporaryStorageEventPublisher> logger,
+    public ShippingStorageEventPublisher(
+        ILogger<ShippingStorageEventPublisher> logger,
         IServiceProvider serviceProvider
     ) {
         _logger = logger;
@@ -31,8 +31,8 @@ class TemporaryStorageEventPublisher: ITemporaryStorageEventPublisher, ShippingO
         _logger.LogDebug($"[{locationCode.Value}] からのピックアップイベントを発行します");
 
         try {
-            var temporaryStorageLoader = _serviceProvider.GetRequiredService<ITemporaryStorageLoader>();
-            var stationCode = temporaryStorageLoader.ConvertStationCode(locationCode);
+            var shippingStorageLoader = _serviceProvider.GetRequiredService<IShippingStorageLoader>();
+            var stationCode = shippingStorageLoader.ConvertStationCode(locationCode);
             if (stationCode == null) {
                 _logger.LogError($"[{locationCode.Value}] は一時置き場のコードとして不正です");
                 return;
@@ -52,4 +52,4 @@ class TemporaryStorageEventPublisher: ITemporaryStorageEventPublisher, ShippingO
 /// <summary>
 /// 一時置き場のイベントを表す
 /// </summary>
-public record PickupEvent(ShippingStationCode StationCode): ShippingOperationCoordinator.Interfaces.IInventoryPalletReturnEvent;
+public record PickupEvent(ShippingStationCode StationCode): ShippingOperationCoordinator.Interfaces.IShippingPalletReturnEvent;

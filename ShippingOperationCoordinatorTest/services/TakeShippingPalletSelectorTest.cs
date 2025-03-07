@@ -350,7 +350,7 @@ public class TakeShippingPalletSelectorTest
         }
     }
 
-    public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int Step): ICompletablePalletInfo;
+    public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int RemainStep): ICompletablePalletInfo;
     public record AvalableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IInventoryPalletInfo;
     public record TestEmptiablePalletInfo(LocationCode LocationCode, Hinban Hinban, int EmptiableStep): IEmptiablePalletInfo;
     public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int FutureLoadableHinbanTypeCount, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo

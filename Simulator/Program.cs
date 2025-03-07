@@ -3,8 +3,10 @@ using NLog.Web;
 using Simulator.Models;
 using CommonItems;
 using ProductionPlanManagement;
+using WorkOrderManagement;
 using ShippingOperationCoordinator;
 using InventoryPalletCoordinator;
+using ShippingPalletCoordinator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +20,10 @@ builder.Services.AddDbContext<DefaultDbContext>((options) => options.UseSqlServe
 
 builder.Services.AddCommonItems<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
 builder.Services.AddProductionPlan<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
+builder.Services.AddWorkOrderManagement<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
 builder.Services.AddShippingOperationCoordinator<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
 builder.Services.AddInventoryPalletCoordinator<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
+builder.Services.AddShippingPalletCoordinator<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

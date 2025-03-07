@@ -14,8 +14,8 @@ public interface IShippingStorageLoader
 public interface IShippingPalletInfo
 {
     LocationCode LocationCode { get; }
-    ShippingPalletID ShippingPalletID { get; }
-    Hinban NextHinban { get; }
+    ShippingPalletID? ShippingPalletID { get; }
+    Hinban? NextHinban { get; }
     bool IsCompleted { get; }
 }
 public interface ICompletablePalletInfo
@@ -23,7 +23,7 @@ public interface ICompletablePalletInfo
     LocationCode LocationCode { get; }
     ShippingPalletID ShippingPalletID { get; }
     Hinban NextHinban { get; }
-    int Step { get; }
+    int RemainStep { get; }
 }
 public interface IShippingPalletLoadableHinbanInfo
 {

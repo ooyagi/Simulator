@@ -42,11 +42,17 @@ class TransportRequestService: ITransportRequestService
     }
     private void TemporaryToInventory(LocationCode from, LocationCode to) {
         var palletId = _pickupTemporaryStorageService.Pickup(from);
+        if (palletId == null) {
+            throw new InvalidOperationException($"一時置き場 [{from.Value}] からのパレット取り出しに失敗しました");
+        }
         _placeInventoryStorageService.Place(to, palletId);
         _transportRecordRegister.Register(TransportType.ReturnInventoryPallet, from, to);
     }
     private void InventoryToTemporary(LocationCode from, LocationCode to) {
         var palletId = _pickupInventoryStorageService.Pickup(from);
+        if (palletId == null) {
+            throw new InvalidOperationException($"在庫パレット置き場 [{from.Value}] からのパレット取り出しに失敗しました");
+        }
         _placeTemporaryStorageService.Place(to, palletId);
         _transportRecordRegister.Register(TransportType.TakeInventoryPallet, from, to);
     }

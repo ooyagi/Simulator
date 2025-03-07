@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using InventoryPalletCoordinator.Interfaces;
 using InventoryPalletCoordinator.Services;
+using InventoryPalletCoordinator.Models;
+using Microsoft.Win32.SafeHandles;
 
 namespace InventoryPalletCoordinator;
 
@@ -14,6 +16,11 @@ public static class AddInventoryPalletCoordinatorExtensions
         Action<DbContextOptionsBuilder> action
     ) where T : DbContext, IInventoryPalletCoordinatorDbContext {
         services.AddDbContext<IInventoryPalletCoordinatorDbContext, T>(action, ServiceLifetime.Scoped);
+
+        // Sigleton
+        services.AddSingleton<TemporaryStorageEventPublisher>();
+        services.AddSingleton<ITemporaryStorageEventPublisher>(x => x.GetRequiredService<TemporaryStorageEventPublisher>());
+        services.AddSingleton<ShippingOperationCoordinator.Interfaces.ITemporaryStorageEventObserver>(x => x.GetRequiredService<TemporaryStorageEventPublisher>());
 
         // 公開
         services.AddScoped<IInventoryStorageManagementService, InventoryStorageManagementService>();
@@ -28,7 +35,13 @@ public static class AddInventoryPalletCoordinatorExtensions
         // 内部向け
         services.AddScoped<IInventoryPalletLoader, InventoryPalletLoader>();
         services.AddScoped<ITemporaryStorageLoader, TemporaryStorageLoader>();
+        services.AddScoped<IInventoryStorageLoader, InventoryStorageLoader>();
         services.AddScoped<IInboundInventoryPalletServices, InboundInventoryPalletServices>();
+        services.AddScoped<IPickupTemporaryStorageService, PickupTemporaryStorageService>();
+        services.AddScoped<IPickupInventoryStorageService, PickupInventoryStorageService>();
+        services.AddScoped<IPlaceTemporaryStorageService, PlaceTemporaryStorageService>();
+        services.AddScoped<IPlaceInventoryStorageService, PlaceInventoryStorageService>();
+        services.AddScoped<ITransportRequestService, TransportRequestService>();
 
         return services;
     }

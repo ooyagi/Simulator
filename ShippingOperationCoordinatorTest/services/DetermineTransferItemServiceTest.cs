@@ -455,7 +455,7 @@ public class DetermineTransferItemServiceTests
 }
 
 public record TestAvarableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IInventoryPalletInfo;
-public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int Step): ICompletablePalletInfo;
+public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int RemainStep): ICompletablePalletInfo;
 public record TestShippingPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int LoadableItemCount, int RemainStep, int FutureLoadableHinbanTypeCount, bool IsLoadableQuantityGreaterThanResult): IShippingPalletLoadableHinbanInfo
 {
     // 実際にはNextHinbanは IsLoadableQuantityGreaterThan の判定に使用しないが、テストの際に複数の候補がある場合にどの候補が選ばれるかを確認するために使用する

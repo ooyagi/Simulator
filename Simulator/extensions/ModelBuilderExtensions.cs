@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using CommonItems.Models;
 using ProductionPlanManagement.Models;
 using InventoryPalletCoordinator.Models;
+using ShippingPalletCoordinator.Models;
 
 namespace Simulator.Extensions;
 
@@ -23,6 +24,14 @@ public static class ModelBuilderExtensions
         // CommonItems
         modelBuilder.Entity<TransportRecord>().Property(typeof(TransportType), "Type").HasConversion(conversion);
     }
+    public static void ApplyShippingStationCodeConversion(this ModelBuilder modelBuilder) {
+        var conversion = new ValueConverter<ShippingStationCode, string>(v => v.Value, v => new ShippingStationCode(v));
+
+        // inventoryPalletCoordinator
+        modelBuilder.Entity<TemporaryStorage>().Property(typeof(ShippingStationCode), "ShippingStationCode").HasConversion(conversion);
+        // ShippingPalletCoordinator
+        modelBuilder.Entity<ShippingStorage>().Property(typeof(ShippingStationCode), "ShippingStationCode").HasConversion(conversion);
+    }
     public static void ApplyLocationCodeConversion(this ModelBuilder modelBuilder) {
         var conversion = new ValueConverter<LocationCode, string>(v => v.Value, v => new LocationCode(v));
 
@@ -33,15 +42,24 @@ public static class ModelBuilderExtensions
         // InventoryPalletCoordinator
         modelBuilder.Entity<InventoryStorage>().Property(typeof(LocationCode), "LocationCode").HasConversion(conversion);
         modelBuilder.Entity<TemporaryStorage>().Property(typeof(LocationCode), "LocationCode").HasConversion(conversion);
+
+        // ShippingPalletCoordinator
+        modelBuilder.Entity<ShippingStorage>().Property(typeof(LocationCode), "LocationCode").HasConversion(conversion);
+        modelBuilder.Entity<ShikakariStorage>().Property(typeof(LocationCode), "LocationCode").HasConversion(conversion);
     }
     public static void ApplyShippingPalletIDConversion(this ModelBuilder modelBuilder) {
         var conversion = new ValueConverter<ShippingPalletID, string>(v => v.Value, v => new ShippingPalletID(v));
+
+        // ShippingPalletCoordinator
+        modelBuilder.Entity<ShippingPallet>().Property(typeof(ShippingPalletID), "Id").HasConversion(conversion);
+        modelBuilder.Entity<ShippingStorage>().Property(typeof(ShippingPalletID), "ShippingPalletID").HasConversion(conversion);
+        modelBuilder.Entity<ShikakariStorage>().Property(typeof(ShippingPalletID), "ShippingPalletID").HasConversion(conversion);
     }
     public static void ApplyInventoryPalletIDConversion(this ModelBuilder modelBuilder) {
         var conversion = new ValueConverter<InventoryPalletID, string>(v => v.Value, v => new InventoryPalletID(v));
 
         // InventoryPalletCoordinator
-        modelBuilder.Entity<InventoryPallet>().Property(typeof(InventoryPalletID), "InventoryPalletID").HasConversion(conversion);
+        modelBuilder.Entity<InventoryPallet>().Property(typeof(InventoryPalletID), "Id").HasConversion(conversion);
         modelBuilder.Entity<InventoryStorage>().Property(typeof(InventoryPalletID), "InventoryPalletID").HasConversion(conversion);
         modelBuilder.Entity<TemporaryStorage>().Property(typeof(InventoryPalletID), "InventoryPalletID").HasConversion(conversion);
     }

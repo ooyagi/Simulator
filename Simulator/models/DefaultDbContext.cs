@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Simulator.Extensions;
 using CommonItems.Interfaces;
-using InventoryPalletCoordinator.Interfaces;
 using CommonItems.Models;
+using InventoryPalletCoordinator.Interfaces;
+using InventoryPalletCoordinator.Models;
 using ProductionPlanManagement.Interfaces;
 using ProductionPlanManagement.Models;
-using InventoryPalletCoordinator.Models;
+using ShippingPalletCoordinator.Interfaces;
+using ShippingPalletCoordinator.Models;
 
 namespace Simulator.Models;
 
@@ -13,6 +15,7 @@ public class DefaultDbContext : DbContext
     , ICommonItemsDbContext
     , IProductionPlanmanagementDbContext
     , IInventoryPalletCoordinatorDbContext
+    , IShippingPalletCoordinatorDbContext
 {
     public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options) { }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -28,9 +31,15 @@ public class DefaultDbContext : DbContext
     public DbSet<InventoryStorage> InventoryStorages { get; set; }
     public DbSet<TemporaryStorage> TemporaryStorages { get; set; }
 
+    // IShippingPalletCoordinatorDbContext
+    public DbSet<ShippingPallet> ShippingPallets { get; set; }
+    public DbSet<ShippingStorage> ShippingStorages { get; set; }
+    public DbSet<ShikakariStorage> ShikakariStorages { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.ApplyHinbanConversion();
         modelBuilder.ApplyTransportTypeConversion();
+        modelBuilder.ApplyShippingStationCodeConversion();
         modelBuilder.ApplyLocationCodeConversion();
         modelBuilder.ApplyShippingPalletIDConversion();
         modelBuilder.ApplyInventoryPalletIDConversion();

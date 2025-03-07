@@ -69,7 +69,7 @@ class DetermineTransferItemService: IDetermineTransferItemService
         if (!completablePallets.Any()) {
             return null;
         }
-        var targetPallet = completablePallets.OrderBy(x => x.Step).First();
+        var targetPallet = completablePallets.OrderBy(x => x.RemainStep).First();
         var pickupTarget = pallets.First(x => x.Hinban == targetPallet.NextHinban);
         return new TransferDirection(targetPallet.NextHinban, pickupTarget.LocationCode, targetPallet.LocationCode);
     }

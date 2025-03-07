@@ -4,6 +4,11 @@ using InventoryPalletCoordinator.Interfaces;
 
 namespace InventoryPalletCoordinator.Services;
 
+/// <summary>
+/// 一時置き場から在庫パレットを取り出すサービス
+/// 
+/// 一時置き場の在庫パレットから在庫を取り出すサービスではないので注意
+/// </summary>
 class PickupTemporaryStorageService: IPickupTemporaryStorageService
 {
     private readonly ILogger<PickupTemporaryStorageService> _logger;

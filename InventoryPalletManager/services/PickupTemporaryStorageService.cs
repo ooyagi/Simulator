@@ -23,14 +23,15 @@ class PickupTemporaryStorageService: IPickupTemporaryStorageService
         _eventPublisher = eventPublisher;
     }
 
-    public void Pickup(LocationCode locationCode, InventoryPalletID inventoryPalletID) {
+    public InventoryPalletID? Pickup(LocationCode locationCode) {
         var temporaryStorage = _temporaryStorageLoader.Find(locationCode);
         if (temporaryStorage == null) {
             _logger.LogError($"一時置き場 [{locationCode.Value}] が見つかりませんでした");
-            return;
+            return null;
         }
-        temporaryStorage.Pickup();
+        var inventoryPalletID = temporaryStorage.Pickup();
         _context.SaveChanges();
         _eventPublisher.PublishPickupEvent(locationCode);
+        return inventoryPalletID;
     }
 }

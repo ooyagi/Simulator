@@ -4,5 +4,5 @@ namespace InventoryPalletCoordinator.Services;
 
 interface ITransportRequestService
 {
-    void Request(TransportType transportType, LocationCode from, LocationCode to, InventoryPalletID inventoryPalletID);
+    void Request(TransportType transportType, LocationCode from, LocationCode to);
 }

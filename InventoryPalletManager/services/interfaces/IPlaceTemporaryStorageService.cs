@@ -2,7 +2,7 @@ using CommonItems.Models;
 
 namespace InventoryPalletCoordinator.Services;
 
-interface IPlaceInventoryStorageService
+interface IPlaceTemporaryStorageService
 {
     void Place(LocationCode locationCode, InventoryPalletID inventoryPalletID);
 }

@@ -27,6 +27,10 @@ public class InventoryStorage: IInventoryStorageInfo
         Index = index;
     }
 
+    public void Pickup() {
+        Status = StorageStatus.Empty;
+        InventoryPalletID = null;
+    }
     public void Place(InventoryPalletID inventoryPalletID) {
         Status = StorageStatus.InUse;
         InventoryPalletID = inventoryPalletID;

@@ -20,8 +20,14 @@ public class TemporaryStorage: ITemporaryStorageInfo
 
     public TemporaryStorage() { }
 
-    public void Pickup() {
+    public InventoryPalletID? Pickup() {
         Status = StorageStatus.Empty;
+        var tmp = InventoryPalletID;
         InventoryPalletID = null;
+        return tmp;
+    }
+    public void Place(InventoryPalletID inventoryPalletID) {
+        Status = StorageStatus.InUse;
+        InventoryPalletID = inventoryPalletID;
     }
 }

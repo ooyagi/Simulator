@@ -2,7 +2,7 @@ using CommonItems.Models;
 
 namespace InventoryPalletCoordinator.Services;
 
-interface IPickupTemporaryStorageService
+interface IPickupInventoryStorageService
 {
     InventoryPalletID Pickup(LocationCode locationCode);
 }

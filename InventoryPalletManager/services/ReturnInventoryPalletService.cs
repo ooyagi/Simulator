@@ -60,7 +60,7 @@ class ReturnInventoryPalletService: ShippingOperationCoordinator.Interfaces.IRet
                 _logger.LogError("空きロケーションが見つかりませんでした");
                 return;
             }
-            _transportRequestService.Request(TransportType.ReturnInventoryPallet, tempLocationCode, emptyLocationCode, temporaryStorageInfo.InventoryPalletID);
+            _transportRequestService.Request(TransportType.ReturnInventoryPallet, tempLocationCode, emptyLocationCode);
         } catch (Exception ex) {
             _logger.LogError(ex, "在庫パレット返却処理中にエラーが発生しました");
         }

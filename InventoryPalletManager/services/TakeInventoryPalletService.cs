@@ -8,59 +8,60 @@ namespace InventoryPalletCoordinator.Services;
 /// <summary>
 /// 在庫パレット返却サービス
 /// </summary>
-class ReturnInventoryPalletService: ShippingOperationCoordinator.Interfaces.IReturnInventoryPalletService
+class TakeInventoryPalletService: ShippingOperationCoordinator.Interfaces.ITakeInventoryPalletService
 {
     private readonly ILogger<ReturnInventoryPalletService> _logger;
     private readonly ITemporaryStorageLoader _temporaryStorageLoader;
     private readonly IInventoryStorageLoader _inventoryStorageLoader;
     private readonly IInventoryPalletLoader _inventoryPalletLoader;
+    private readonly IInboundInventoryPalletServices _inboundInventoryPalletServices;
     private readonly ITransportRequestService _transportRequestService;
 
-    public ReturnInventoryPalletService(
+    public TakeInventoryPalletService(
         ILogger<ReturnInventoryPalletService> logger,
         ITemporaryStorageLoader temporaryStorageLoader,
         IInventoryStorageLoader inventoryStorageLoader,
         IInventoryPalletLoader inventoryPalletLoader,
+        IInboundInventoryPalletServices inboundInventoryPalletServices,
         ITransportRequestService transportRequestService
     ) {
         _logger = logger;
         _temporaryStorageLoader = temporaryStorageLoader;
         _inventoryPalletLoader = inventoryPalletLoader;
         _inventoryStorageLoader = inventoryStorageLoader;
+        _inboundInventoryPalletServices = inboundInventoryPalletServices;
         _transportRequestService = transportRequestService;
     }
 
     /// <summary>
-    /// 搬送数試算用の在庫パレット返却サービス
+    /// 搬送数試算用の在庫パレット取り寄せサービス
+    /// 
+    /// 本番システムでは指定された品番の在庫パレットがない場合はエラーとなる
+    /// 今回は搬送回数の試算が目的のため自動的に在庫は補充されるものとし、パレットを作成する
     /// 
     /// 本番システムでは搬送先、搬送元のロケーションをロックしてAMRへの搬送指示を出す
     /// AMRからの通知を受け、搬送開始でPickup・搬送完了でPlaceを行う
     /// 今回は搬送回数の試算のため搬送は瞬時に終わり失敗しない想定で進めるため Pickupと Placeを直接呼び出す
     /// </summary>
-    /// <param name="tempLocationCode"></param>
-    public void Request(LocationCode tempLocationCode) {
-        _logger.LogInformation($"在庫パレット返却要求を受け付けました: 一時置き場 [{tempLocationCode.Value}]");
+    public void Request(LocationCode tempLocationCode, Hinban hinban) {
+        _logger.LogInformation($"在庫パレット取り寄せ要求を受け付けました: 一時置き場 [{tempLocationCode.Value}] 品番 [{hinban.Value}]");
         try {
+            var inventoryPallet = _inventoryPalletLoader.FliterByHinban(hinban).FirstOrDefault() ?? _inboundInventoryPalletServices.Inbound(hinban);
+            var sourceLocationCode = _inventoryStorageLoader.FindStoredLocation(inventoryPallet.Id);
+            if (sourceLocationCode == null) {
+                _logger.LogError($"在庫パレット [{inventoryPallet.Id.Value}] が保管されているロケーションが見つかりませんでした");
+                return;
+            }
             var temporaryStorageInfo = _temporaryStorageLoader.Find(tempLocationCode);
             if (temporaryStorageInfo == null) {
                 _logger.LogError($"一時置き場 [{tempLocationCode.Value}] が見つかりませんでした");
                 return;
             }
-            if (temporaryStorageInfo.Status != StorageStatus.InUse || temporaryStorageInfo.InventoryPalletID == null) {
-                _logger.LogError($"一時置き場 [{tempLocationCode.Value}] は使用中ではありません");
+            if (temporaryStorageInfo.Status == StorageStatus.Empty) {
+                _logger.LogError($"一時置き場 [{tempLocationCode.Value}] は使用中です");
                 return;
             }
-            var inventoryPallet = _inventoryPalletLoader.Find(temporaryStorageInfo.InventoryPalletID);
-            if (inventoryPallet == null) {
-                _logger.LogError($"在庫パレット [{temporaryStorageInfo.InventoryPalletID.Value}] が見つかりませんでした");
-                return;
-            }
-            var emptyLocationCode = _inventoryStorageLoader.FindEmptyLocation()?.LocationCode;
-            if (emptyLocationCode == null) {
-                _logger.LogError("空きロケーションが見つかりませんでした");
-                return;
-            }
-            _transportRequestService.Request(TransportType.ReturnInventoryPallet, tempLocationCode, emptyLocationCode, temporaryStorageInfo.InventoryPalletID);
+            _transportRequestService.Request(TransportType.TakeInventoryPallet, sourceLocationCode, tempLocationCode, inventoryPallet.Id);
         } catch (Exception ex) {
             _logger.LogError(ex, "在庫パレット返却処理中にエラーが発生しました");
         }

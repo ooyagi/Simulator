@@ -19,6 +19,9 @@ public static class AddShippingOperationCoordinatorExtensions
         services.AddScoped<IChangeInventoryPalletService, ReturnInventoryPalletService>();
         services.AddScoped<IChangeShippingPalletService, ReturnShippingPalletService>();
 
+        // 本来は外部サービスだが搬送回数の試算にあたっては該当ドメインを作成しないのでここに定義
+        services.AddScoped<ITransferService, TransferService>();
+
         // 内部利用
         services.AddSingleton<ShippingStorageEventSubscriber>();
         services.AddSingleton<TemporaryStorageEventSubscriber>();

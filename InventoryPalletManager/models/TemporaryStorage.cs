@@ -8,12 +8,15 @@ public class TemporaryStorage: ITemporaryStorageInfo
 {
     [Key]
     public LocationCode LocationCode { get; set; } = LocationCode.Default;
+    public ShippingStationCode ShippingStationCode { get; set; } = ShippingStationCode.Default;
     public StorageStatus Status { get; set; } = StorageStatus.Empty;
     public InventoryPalletID? InventoryPalletID { get; set; }
 
     # nullable disable
     public InventoryPallet StoredPallet { get; set; } 
     # nullable enable
+
+    public Hinban? Hinban { get { return StoredPallet?.Hinban; } }
 
     public TemporaryStorage() { }
 

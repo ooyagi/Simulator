@@ -6,4 +6,5 @@ namespace InventoryPalletCoordinator.Services;
 interface IInventoryPalletLoader
 {
     InventoryPallet? Find(InventoryPalletID palletId);
+    IEnumerable<InventoryPallet> FliterByHinban(Hinban hinban);
 }

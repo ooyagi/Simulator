@@ -23,8 +23,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonItems\CommonItems.csproj" />
+    <ProjectReference Include="..\InventoryPalletManager\InventoryPalletCoordinator.csproj" />
     <ProjectReference Include="..\ProductionPlan\ProductionPlanManagement.csproj" />
     <ProjectReference Include="..\ShippingOperationCoordinator\ShippingOperationCoordinator.csproj" />
+    <ProjectReference Include="..\ShippingPalletCoordinator\ShippingPalletCoordinator.csproj" />
     <ProjectReference Include="..\WorkOrderManagement\WorkOrderManagement.csproj" />
   </ItemGroup>
 

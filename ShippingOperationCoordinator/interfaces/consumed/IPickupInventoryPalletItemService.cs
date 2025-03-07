@@ -4,7 +4,7 @@ namespace ShippingOperationCoordinator.Interfaces;
 
 public interface IPickupInventoryPalletItemService
 {
-    IPickupItemResult Pickup(LocationCode locationCode);
+    IPickupItemResult? Pickup(LocationCode locationCode);
 }
 
 public interface IPickupItemResult

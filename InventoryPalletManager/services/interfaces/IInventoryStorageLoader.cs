@@ -6,7 +6,9 @@ namespace InventoryPalletCoordinator.Services;
 interface IInventoryStorageLoader
 {
     InventoryStorage? Find(LocationCode locationCode);
-    LocationCode? FindEmptyLocation();
+    InventoryStorage? FindEmptyLocation();
+    LocationCode? FindStoredLocation(InventoryPalletID inventoryPalletID);
+    int GetLastIndex();
 }
 
 interface IInventoryStorageInfo

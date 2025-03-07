@@ -21,4 +21,7 @@ class InventoryPalletLoader: IInventoryPalletLoader
     public InventoryPallet? Find(InventoryPalletID palletId) {
         return _context.InventoryPallets.FirstOrDefault(x => x.Id == palletId);
     }
+    public IEnumerable<InventoryPallet> FliterByHinban(Hinban hinban) {
+        return _context.InventoryPallets.Where(x => x.Hinban == hinban).OrderBy(x => x.Quantity).ToList();
+    }
 }

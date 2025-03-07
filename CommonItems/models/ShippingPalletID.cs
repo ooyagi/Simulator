@@ -13,6 +13,12 @@ public record ShippingPalletID
     public static int CUSTOM_PALLET_NUMBER = -1;
 
     public ShippingPalletID() { }
+    public ShippingPalletID(string id) {
+        var parts = id.Split('-');
+        DeliveryDate = parts[0];
+        Category = parts[1];
+        PalletNumber = int.Parse(parts[2]);
+    }
     public ShippingPalletID(
         string deliveryDate,
         string category,

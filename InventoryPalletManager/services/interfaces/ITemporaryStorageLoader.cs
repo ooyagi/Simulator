@@ -9,19 +9,13 @@ namespace InventoryPalletCoordinator.Services;
 interface ITemporaryStorageLoader
 {
     ShippingStationCode? ConvertStationCode(LocationCode locationCode);
-    ITemporaryStorageInfo? Find(LocationCode locationCode);
+    TemporaryStorage? Find(LocationCode locationCode);
 }
 
 interface ITemporaryStorageInfo
 {
     LocationCode LocationCode { get; }
-    TemporaryStorageStatus Status { get; }
-    InventoryPalletID InventoryPalletID { get; }
+    StorageStatus Status { get; }
+    InventoryPalletID? InventoryPalletID { get; }
 }
 
-enum TemporaryStorageStatus: int {
-    Empty = 0,
-    Orderd = 1,
-    InUse = 2,
-    Return = 3
-}

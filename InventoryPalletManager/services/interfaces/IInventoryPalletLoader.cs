@@ -1,3 +1,4 @@
+using CommonItems.Models;
 using InventoryPalletCoordinator.Models;
 
 namespace InventoryPalletCoordinator.Services;

@@ -45,6 +45,11 @@ class RotateShippingPalletService: IRotateShippingPalletService
             _pickupShikakariStorageService.Pickup(targetLocationCode);
             _outboundShippingPalletService.Outbound(shippingPalletID);
             var nextOrder = _workOrderLoader.GetNextOrder();
+            if (nextOrder == null) {
+                // 最後は指示書が切れて終わるので異常ではない
+                _logger.LogDebug("次の作業指示が見つかりませんでした");
+                return;
+            }
             var nextShippingPallet = new ShippingPallet(nextOrder.ShippingPalletID);
             _inboundShippingPalletService.Inbound(nextShippingPallet);
             _placeShikakariStorageService.Place(targetLocationCode, nextShippingPallet.Id);

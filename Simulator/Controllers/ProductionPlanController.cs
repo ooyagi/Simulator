@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CommonItems.Models;
 using Microsoft.AspNetCore.Mvc;
 using ProductionPlanManagement.Interfaces;
+using WorkOrderManagement.Interfaces;
 
 namespace Simulator.Controllers;
 
@@ -9,16 +10,22 @@ namespace Simulator.Controllers;
 public class ProductionPlanController : ControllerBase
 {
     private readonly ILoadProductionPlanService _loadProductionPlanService;
+    private readonly IWorkOrderRegister _workOrderRegister;
 
     public ProductionPlanController(
-        ILoadProductionPlanService loadProductionPlanService
+        ILoadProductionPlanService loadProductionPlanService,
+        IWorkOrderRegister workOrderRegister
     ) {
         _loadProductionPlanService = loadProductionPlanService;
+        _workOrderRegister = workOrderRegister;
     }
 
     [HttpPost("load")]
     public IActionResult Load() {
-        _loadProductionPlanService.LoadProductionPlans();
+        var loadedPlans = _loadProductionPlanService.LoadProductionPlans();
+        var paramPlans = loadedPlans.Select(x => new ProductionPlan(x.DeliveryDate, x.Line, x.Size, x.PalletNumber, x.Priority, x.Hinban)).ToList();
+        _workOrderRegister.Register(paramPlans);
         return Ok();
     }
+    record ProductionPlan(string DeliveryDate, string Line, string Size, int PalletNumber, int Priority, Hinban Hinban): WorkOrderManagement.Interfaces.IProductPlan;
 }

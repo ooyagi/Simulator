@@ -16,10 +16,17 @@ class LoadProductionPlanService: ILoadProductionPlanService
         _reader = reader;
     }
 
-    public void LoadProductionPlans() {
+    public IEnumerable<IProductionPlan> LoadProductionPlans() {
+        Clear();
+
         IEnumerable<ProductionPlanFileRecord> records = _reader.LoadCsvFiles();
         var productionPlans = records.Select(x => ProductionPlanConverter.Convert(x)).ToList();
         _context.ProductionPlans.AddRange(productionPlans);
+        _context.SaveChanges();
+        return productionPlans;
+    }
+    private void Clear() {
+        _context.ProductionPlans.RemoveRange(_context.ProductionPlans);
         _context.SaveChanges();
     }
 }

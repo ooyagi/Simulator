@@ -4,6 +4,7 @@ using CommonItems.Models;
 using ProductionPlanManagement.Models;
 using InventoryPalletCoordinator.Models;
 using ShippingPalletCoordinator.Models;
+using WorkOrderManagement.Models;
 
 namespace Simulator.Extensions;
 
@@ -11,6 +12,9 @@ public static class ModelBuilderExtensions
 {
     public static void ApplyHinbanConversion(this ModelBuilder modelBuilder) {
         var conversion = new ValueConverter<Hinban, string>(v => v.Value, v => new Hinban(v));
+
+        // WorkOrderManagement
+        modelBuilder.Entity<OrderedItem>().Property(typeof(Hinban), "Hinban").HasConversion(conversion);
 
         // ProductionPlanManagement
         modelBuilder.Entity<ProductionPlan>().Property(typeof(Hinban), "Hinban").HasConversion(conversion);
@@ -49,6 +53,10 @@ public static class ModelBuilderExtensions
     }
     public static void ApplyShippingPalletIDConversion(this ModelBuilder modelBuilder) {
         var conversion = new ValueConverter<ShippingPalletID, string>(v => v.Value, v => new ShippingPalletID(v));
+
+        // WorkOrderManagement
+        modelBuilder.Entity<WorkOrder>().Property(typeof(ShippingPalletID), "PalletID").HasConversion(conversion);
+        modelBuilder.Entity<OrderedItem>().Property(typeof(ShippingPalletID), "PalletID").HasConversion(conversion);
 
         // ShippingPalletCoordinator
         modelBuilder.Entity<ShippingPallet>().Property(typeof(ShippingPalletID), "Id").HasConversion(conversion);

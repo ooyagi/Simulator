@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Simulator.Extensions;
 using CommonItems.Interfaces;
 using CommonItems.Models;
+using WorkOrderManagement.Interfaces;
+using WorkOrderManagement.Models;
 using InventoryPalletCoordinator.Interfaces;
 using InventoryPalletCoordinator.Models;
 using ProductionPlanManagement.Interfaces;
@@ -13,6 +15,7 @@ namespace Simulator.Models;
 
 public class DefaultDbContext : DbContext
     , ICommonItemsDbContext
+    , IWorkOrderDbContext
     , IProductionPlanmanagementDbContext
     , IInventoryPalletCoordinatorDbContext
     , IShippingPalletCoordinatorDbContext
@@ -20,8 +23,12 @@ public class DefaultDbContext : DbContext
     public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options) { }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
+    // WorkOrderDbContext
+    public DbSet<WorkOrder> WorkOrders { get; set; }
+    public DbSet<OrderedItem> OrderedItems { get; set; }
+
     // ProductionPlanmanagementDbContext
-    public DbSet<ProductionPlan> ProductionPlans { get; set; } = null!;
+    public DbSet<ProductionPlan> ProductionPlans { get; set; }
 
     // ICommonItemsDbContext
     public DbSet<TransportRecord> TransportRecords { get; set; }
@@ -46,5 +53,7 @@ public class DefaultDbContext : DbContext
 
         modelBuilder.Entity<ProductionPlan>().HasKey(x => new { x.DeliveryDate, x.Line, x.Size, x.PalletNumber, x.Priority });
         modelBuilder.Entity<ProductionPlan>().HasIndex(x => new { x.DeliveryDate, x.Line, x.Size, x.PalletNumber });
+        modelBuilder.Entity<WorkOrder>().HasMany(x => x.OrderedItems).WithOne().HasForeignKey(x => x.PalletID);
+        modelBuilder.Entity<OrderedItem>().HasKey(x => new { x.PalletID, x.Index });
     }
 }

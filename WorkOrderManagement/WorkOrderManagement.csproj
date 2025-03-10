@@ -9,5 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CommonItems\CommonItems.csproj" />
     <ProjectReference Include="..\ShippingOperationCoordinator\ShippingOperationCoordinator.csproj" />
+    <ProjectReference Include="..\ShippingPalletCoordinator\ShippingPalletCoordinator.csproj" />
   </ItemGroup>
 </Project>

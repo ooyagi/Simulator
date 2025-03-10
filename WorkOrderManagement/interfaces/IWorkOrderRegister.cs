@@ -1,13 +1,13 @@
 using CommonItems.Models;
 
-namespace ProductionPlanManagement.Interfaces;
+namespace WorkOrderManagement.Interfaces;
 
-public interface ILoadProductionPlanService
+public interface IWorkOrderRegister
 {
-    IEnumerable<IProductionPlan> LoadProductionPlans();
+    void Register(IEnumerable<IProductPlan> plans);
 }
 
-public interface IProductionPlan
+public interface IProductPlan
 {
     string DeliveryDate { get; }
     string Line { get; }

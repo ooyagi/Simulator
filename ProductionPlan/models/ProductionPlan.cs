@@ -1,8 +1,9 @@
 using CommonItems.Models;
+using ProductionPlanManagement.Interfaces;
 
 namespace ProductionPlanManagement.Models;
 
-public class ProductionPlan
+public class ProductionPlan: IProductionPlan
 {
     public string DeliveryDate { get; set; } = "";
     public string Line { get; set; } = "";

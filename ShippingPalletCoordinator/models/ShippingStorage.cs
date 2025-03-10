@@ -25,6 +25,12 @@ public class ShippingStorage
         Index = index;
     }
 
+    public ShippingPalletID? Pickup() {
+        var tmp = ShippingPalletID;
+        Status = StorageStatus.Empty;
+        ShippingPalletID = null;
+        return tmp;
+    }
     public void Place(ShippingPalletID shippingPalletID) {
         Status = StorageStatus.InUse;
         ShippingPalletID = shippingPalletID;

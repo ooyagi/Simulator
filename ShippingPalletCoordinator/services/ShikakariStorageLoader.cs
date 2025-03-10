@@ -15,6 +15,9 @@ class ShikakariStorageLoader: Services.IShikakariStorageLoader, ShippingOperatio
         _context = context;
     }
 
+    public ShikakariStorage? Find(LocationCode locationCode) {
+        return _context.ShikakariStorages.FirstOrDefault(s => s.LocationCode == locationCode);
+    }
     public LocationCode? FindStoredLocation(ShippingPalletID palletId) {
         var storage = _context.ShikakariStorages.FirstOrDefault(s => s.ShippingPalletID == palletId);
         return storage?.LocationCode;

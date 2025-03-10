@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using CommonItems.Interfaces;
 using CommonItems.Models;
 
@@ -5,6 +6,7 @@ namespace InventoryPalletCoordinator.Services;
 
 class TransportRequestService: ITransportRequestService
 {
+    private readonly ILogger<TransportRequestService> _logger;
     private readonly IPickupTemporaryStorageService _pickupTemporaryStorageService;
     private readonly IPickupInventoryStorageService _pickupInventoryStorageService;
     private readonly IPlaceTemporaryStorageService _placeTemporaryStorageService;
@@ -12,12 +14,14 @@ class TransportRequestService: ITransportRequestService
     private readonly ITransportRecordRegister _transportRecordRegister;
 
     public TransportRequestService(
+        ILogger<TransportRequestService> logger,
         IPickupTemporaryStorageService pickupTemporaryStorageService,
         IPickupInventoryStorageService pickupInventoryStorageService,
         IPlaceTemporaryStorageService placeTemporaryStorageService,
         IPlaceInventoryStorageService placeInventoryStorageService,
         ITransportRecordRegister transportRecordRegister
     ) {
+        _logger = logger;
         _pickupTemporaryStorageService = pickupTemporaryStorageService;
         _pickupInventoryStorageService = pickupInventoryStorageService;
         _placeTemporaryStorageService = placeTemporaryStorageService;
@@ -41,6 +45,7 @@ class TransportRequestService: ITransportRequestService
         }
     }
     private void TemporaryToInventory(LocationCode from, LocationCode to) {
+        _logger.LogInformation($"在庫パレット返却要求を受け付けました: 一時置き場 [{from.Value}] 在庫ロケーション [{to.Value}]");
         var palletId = _pickupTemporaryStorageService.Pickup(from);
         if (palletId == null) {
             throw new InvalidOperationException($"一時置き場 [{from.Value}] からのパレット取り出しに失敗しました");
@@ -49,6 +54,7 @@ class TransportRequestService: ITransportRequestService
         _transportRecordRegister.Register(TransportType.ReturnInventoryPallet, from, to);
     }
     private void InventoryToTemporary(LocationCode from, LocationCode to) {
+        _logger.LogInformation($"在庫パレット取り寄せ要求を受け付けました: 在庫ロケーション [{from.Value}] 一時置き場 [{to.Value}]");
         var palletId = _pickupInventoryStorageService.Pickup(from);
         if (palletId == null) {
             throw new InvalidOperationException($"在庫パレット置き場 [{from.Value}] からのパレット取り出しに失敗しました");

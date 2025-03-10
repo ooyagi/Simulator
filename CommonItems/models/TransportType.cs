@@ -8,9 +8,9 @@ public record TransportType(string Value)
     public static TransportType ReturnShippingPallet => new TransportType("ReturnShippingPallet");
     public static TransportType TakeShippingPallet => new TransportType("TakeShippingPallet");
 
-    public static string _unnown = "Unknown";
-    public static string _returnInventoryPallet = "ReturnInventoryPallet";
-    public static string _takeInventoryPallet = "TakeInventoryPallet";
-    public static string _returnShippingPallet = "ReturnShippingPallet";
-    public static string _takeShippingPallet = "TakeShippingPallet";
+    private static string _unnown = "Unknown";
+    private static string _returnInventoryPallet = "ReturnInventoryPallet";
+    private static string _takeInventoryPallet = "TakeInventoryPallet";
+    private static string _returnShippingPallet = "ReturnShippingPallet";
+    private static string _takeShippingPallet = "TakeShippingPallet";
 }

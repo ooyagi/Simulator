@@ -28,10 +28,14 @@ class ReturnShippingPalletSelector: IReturnShippingPalletSelector
         if (completedPallet != null) {
             return completedPallet.LocationCode;
         }
-        var returnablePallets = shippingPallets.FirstOrDefault(p => {
-            var tmp = _tempStorageLoader.IsPickable(stationCode, p.NextHinban);
-            return !tmp;
-        });
+        var returnablePallets = shippingPallets
+            .FirstOrDefault(p => {
+                if (p.NextHinban == null) {
+                    return false;
+                }
+                var tmp = _tempStorageLoader.IsPickable(stationCode, p.NextHinban);
+                return !tmp;
+            });
         if (returnablePallets != null) {
             return returnablePallets.LocationCode;
         }

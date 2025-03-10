@@ -35,8 +35,14 @@ public static class AddShippingPalletCoordinatorExtensions
         services.AddScoped<IShippingPalletLoader, ShippingPalletLoader>();
         services.AddScoped<IShippingStorageLoader, ShippingStorageLoader>();
         services.AddScoped<IShikakariStorageLoader, ShikakariStorageLoader>();
-        // services.AddScoped<IInboundShippingPalletServices, InboundShippingPalletServices>();
         services.AddScoped<ITransportRequestService, TransportRequestService>();
+        services.AddScoped<IPickupShippingStorageService, PickupShippingStorageService>();
+        services.AddScoped<IPlaceShippingStorageService, PlaceShippingStorageService>();
+        services.AddScoped<IPickupShikakariStorageService, PickupShikakariStorageService>();
+        services.AddScoped<IPlaceShikakariStorageService, PlaceShikakariStorageService>();
+        services.AddScoped<IRotateShippingPalletService, RotateShippingPalletService>();
+        services.AddScoped<IInboundShippingPalletService, InboundShippingPalletService>();
+        services.AddScoped<IOutboundShippingPalletService, OutboundShippingPalletService>();
 
         return services;
     }

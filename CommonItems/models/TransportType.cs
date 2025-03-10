@@ -2,11 +2,11 @@ namespace CommonItems.Models;
 
 public record TransportType(string Value)
 {
-    public static TransportType Unknown => new TransportType("Unknown");
-    public static TransportType ReturnInventoryPallet => new TransportType("ReturnInventoryPallet");
-    public static TransportType TakeInventoryPallet => new TransportType("TakeInventoryPallet");
-    public static TransportType ReturnShippingPallet => new TransportType("ReturnShippingPallet");
-    public static TransportType TakeShippingPallet => new TransportType("TakeShippingPallet");
+    public static TransportType Unknown => new TransportType(_unnown);
+    public static TransportType ReturnInventoryPallet => new TransportType(_returnInventoryPallet);
+    public static TransportType TakeInventoryPallet => new TransportType(_takeInventoryPallet);
+    public static TransportType ReturnShippingPallet => new TransportType(_returnShippingPallet);
+    public static TransportType TakeShippingPallet => new TransportType(_takeShippingPallet);
 
     private static string _unnown = "Unknown";
     private static string _returnInventoryPallet = "ReturnInventoryPallet";

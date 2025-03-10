@@ -14,19 +14,22 @@ class ReturnShippingPalletService: ShippingOperationCoordinator.Interfaces.IRetu
     private readonly IShikakariStorageLoader _shikakariStorageLoader;
     private readonly IShippingPalletLoader _shippingPalletLoader;
     private readonly ITransportRequestService _transportRequestService;
+    private readonly IRotateShippingPalletService _rotateShippingPalletService;
 
     public ReturnShippingPalletService(
         ILogger<ReturnShippingPalletService> logger,
         IShippingStorageLoader shippingStorageLoader,
         IShikakariStorageLoader shikakariStorageLoader,
         IShippingPalletLoader shippingPalletLoader,
-        ITransportRequestService transportRequestService
+        ITransportRequestService transportRequestService,
+        IRotateShippingPalletService rotateShippingPalletService
     ) {
         _logger = logger;
         _shippingStorageLoader = shippingStorageLoader;
         _shikakariStorageLoader = shikakariStorageLoader;
         _shippingPalletLoader = shippingPalletLoader;
         _transportRequestService = transportRequestService;
+        _rotateShippingPalletService = rotateShippingPalletService;
     }
 
     /// <summary>
@@ -55,6 +58,10 @@ class ReturnShippingPalletService: ShippingOperationCoordinator.Interfaces.IRetu
                 return;
             }
             _transportRequestService.Request(TransportType.ReturnShippingPallet, shippingLocationCode, emptyLocationCode);
+            // 返却した出荷パレットが完了していれば入れ替え
+            if(shippingPallet.IsCompleted) {
+                _rotateShippingPalletService.Rotate(shippingPallet.Id);
+            }
         } catch (Exception ex) {
             _logger.LogError(ex, "出荷パレット返却処理中にエラーが発生しました");
         }

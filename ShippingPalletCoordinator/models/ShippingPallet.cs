@@ -14,6 +14,11 @@ public class ShippingPallet
     [NotMapped]
     public bool IsCompleted { get { throw new NotImplementedException(); } }
 
+    public ShippingPallet() { }
+    public ShippingPallet(ShippingPalletID id) {
+        Id = id;
+    }
+
     /// <summary>
     /// 出荷作業完了までのステップ数を返す
     /// 

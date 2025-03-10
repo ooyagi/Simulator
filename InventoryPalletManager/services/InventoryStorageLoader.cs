@@ -46,11 +46,14 @@ class InventoryStorageLoader: IInventoryStorageLoader, ShippingOperationCoordina
     public bool IsUseup(Hinban hinban, int loadableCount) {
         return _context.InventoryStorages
             .Include(x => x.StoredPallet)
-            .Any(x => x.StoredPallet.Hinban == hinban && x.StoredPallet.Quantity <= loadableCount);
+            .Any(x => x.StoredPallet.Hinban == hinban
+                && 0 < x.StoredPallet.Quantity
+                && x.StoredPallet.Quantity <= loadableCount);
     }
     public IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> GetStoragedItems() {
         return _context.InventoryStorages
             .Include(x => x.StoredPallet)
+            .Where(x => 0 < x.StoredPallet.Quantity)
             .Select(x => new InventoryPalletInfo(x.LocationCode, x.StoredPallet.Hinban, x.StoredPallet.Quantity));
     }
 

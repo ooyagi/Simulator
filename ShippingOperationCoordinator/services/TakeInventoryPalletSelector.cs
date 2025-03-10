@@ -90,8 +90,21 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
     /// 一時置き場に置かれている品番は除外する
     /// 在庫パレットの内、出荷パレット or 仕掛パレットで次回積込品番またはブロック品番に指定されている品番を持つ在庫パレットを抽出
     /// 同一品番を積載したパレットが複数ある場合は在庫数が少ないパレットを優先して抽出
+    /// 
+    /// 本番では上記の動作だが、搬送回数の試算時点では適切な搬入が行われているものとそて試算する
+    /// このため、在庫パレットに必要なパレットが存在しない場合はフル積載のパレットが存在するものとして選定を行う
+    /// ※取り寄せ処理側でも不足しているパレットを自動作成する処理を入れる
     /// </summary>
     private IEnumerable<IInventoryPalletInfo> FilterLoadableItems(IEnumerable<IInventoryPalletInfo> inventoryItems, IEnumerable<IInventoryPalletInfo> tempItems, IEnumerable<IShippingPalletLoadableHinbanInfo> shippingPalletLoadableInfo, IEnumerable<IShikakariPalletLoadableHinbanInfo> shikakariPalletLoadableInfo) {
+        // - 不足品番の自動補充 -
+        var nextItems = shippingPalletLoadableInfo.Select(x => x.NextHinban).Concat(shikakariPalletLoadableInfo.Select(x => x.NextHinban)).Distinct().ToList();
+        var blockItems = shippingPalletLoadableInfo.Select(x => x.BlockHinban).Concat(shikakariPalletLoadableInfo.Select(x => x.BlockHinban)).Distinct().ToList();
+        var neededItems = nextItems.Concat(blockItems).Distinct().ToList();
+        var missingItems = neededItems.Where(x => x != null && !inventoryItems.Any(y => y.Hinban == x));
+        var missingPallets = missingItems.Select(x => new InventoryPalletInfo(LocationCode.Default, x, 14)).ToList();
+        inventoryItems = inventoryItems.Concat(missingPallets);
+        // ----- ここまで -----
+
         var loadableItems = inventoryItems
             .Where(x => !tempItems.Any(y => y.Hinban == x.Hinban))
             .Where(x => shippingPalletLoadableInfo.Any(y => y.NextHinban == x.Hinban)
@@ -168,4 +181,6 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
         var groupedItems = unblockableItems.GroupBy(x => x.Count);
         return groupedItems.OrderByDescending(x => x.Key).First().Select(x => x.item).ToList();
     }
+    // 試算のための仮想在庫パレット
+    record InventoryPalletInfo(LocationCode LocationCode, Hinban Hinban, int Quantity = 14): IInventoryPalletInfo;
 }

@@ -97,8 +97,8 @@ public class TakeInventoryPalletSelectorTest
             var inventoryItem1 = new TestInventoryPalletInfo(LocationCode.Default, testHinban1, hinban1Quantity);
             var inventoryItem2 = new TestInventoryPalletInfo(LocationCode.Default, testHinban2, hinban2Quantity);
             var inventoryItem3 = new TestInventoryPalletInfo(LocationCode.Default, testHinban3, hinban3Quantity);
-            var shippingPalletInfo1 = new TestShippingPalletLoadableHinbanInfo(LocationCode.Default, palletID1, testHinban1, Hinban.Default, 1, 1, 1);
-            var shippingPalletInfo2 = new TestShippingPalletLoadableHinbanInfo(LocationCode.Default, palletID2, testHinban2, Hinban.Default, 1, 1, 1);
+            var shippingPalletInfo1 = new TestShippingPalletLoadableHinbanInfo(LocationCode.Default, palletID1, testHinban1, testHinban1, 1, 1, 1);
+            var shippingPalletInfo2 = new TestShippingPalletLoadableHinbanInfo(LocationCode.Default, palletID2, testHinban2, testHinban2, 1, 1, 1);
 
             var inventoryItems = new List<IInventoryPalletInfo> { inventoryItem1, inventoryItem2, inventoryItem3 };
             var shippingPalletLoadableInfos = new List<IShippingPalletLoadableHinbanInfo> { shippingPalletInfo1, shippingPalletInfo2 };
@@ -114,7 +114,7 @@ public class TakeInventoryPalletSelectorTest
         
             var resultHinban = service.SelectTakeInventoryPallet(stationCode);
 
-            var expectedHinban = expected switch { 1 => testHinban1, 2 => testHinban2, 3 => testHinban3, _ => Hinban.Default };
+            var expectedHinban = expected switch { 1 => testHinban1, 2 => testHinban2, _ => Hinban.Default };
             Assert.Equal(expectedHinban.Value, resultHinban?.Value);
         }
         [Theory]

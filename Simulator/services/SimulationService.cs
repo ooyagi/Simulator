@@ -1,22 +1,17 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using ShippingOperationCoordinator.Interfaces;
 
-namespace Simulator;
-public class SimulatorHostedService: IHostedService, IDisposable
+namespace Simulator.Services;
+
+public class SimulationService: ISimulationService
 {
-    private readonly ILogger<SimulatorHostedService> _logger;
+    private readonly ILogger<SimulationService> _logger;
     private readonly IShippingStationLoader _shippingStationLoader;
     private readonly ITransferService _transferService;
     private readonly IChangeInventoryPalletService _changeInventoryPalletService;
     private readonly IChangeShippingPalletService _changeShippingPalletService;
-    private Timer? _timer;
 
-    public SimulatorHostedService(
-        ILogger<SimulatorHostedService> logger,
+    public SimulationService(
+        ILogger<SimulationService> logger,
         IShippingStationLoader shippingStationLoader,
         ITransferService transferService,
         IChangeInventoryPalletService changeInventoryPalletService,
@@ -29,14 +24,12 @@ public class SimulatorHostedService: IHostedService, IDisposable
         _changeShippingPalletService = changeShippingPalletService;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken) {
-        _logger.LogInformation("Simulator hosted service starting.");
-        _timer = new Timer(ExecuteCycle, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
-        return Task.CompletedTask;
-    }
-    private void ExecuteCycle(object? state) {
+    public void Step() {
+        _logger.LogInformation("シミュレーションステップを実行します");
+
         var stations = _shippingStationLoader.All();
         foreach (var station in stations) {
+            _logger.LogInformation($"出荷作業場所 [{station.Code}] の処理を実行します");
             bool transfer = _transferService.ExecuteTransfer(station.Code);
             bool changeShippingPallet = _changeShippingPalletService.Change(station.Code);
             bool changeEmptyPallet = _changeInventoryPalletService.ChangeEmptyPallet(station.Code);
@@ -44,14 +37,5 @@ public class SimulatorHostedService: IHostedService, IDisposable
                 _changeInventoryPalletService.Change(station.Code);
             }
         }
-    }
-    public Task StopAsync(CancellationToken cancellationToken) {
-        _logger.LogInformation("Simulator hosted service stopping.");
-        _timer?.Change(Timeout.Infinite, 0);
-        return Task.CompletedTask;
-    }
-
-    public void Dispose() {
-        _timer?.Dispose();
     }
 }

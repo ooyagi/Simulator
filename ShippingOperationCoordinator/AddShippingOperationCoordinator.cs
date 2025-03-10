@@ -12,10 +12,12 @@ public static class AddShippingOperationCoordinatorExtensions
         this IServiceCollection services,
         IConfiguration configuration,
         Action<DbContextOptionsBuilder> action
-    ) where T : DbContext  {
+    ) where T : DbContext, IShippingOperationCoordinatorDbContext {
+        services.AddDbContext<IShippingOperationCoordinatorDbContext, T>(action, ServiceLifetime.Scoped);
 
         // 公開
         services.AddScoped<ITransferService, TransferService>();
+        services.AddScoped<IShippingStationLoader, ShippingStationLoader>();
         services.AddScoped<IChangeInventoryPalletService, ReturnInventoryPalletService>();
         services.AddScoped<IChangeShippingPalletService, ReturnShippingPalletService>();
 
@@ -32,6 +34,7 @@ public static class AddShippingOperationCoordinatorExtensions
         services.AddScoped<ITakeInventoryPalletSelector, TakeInventoryPalletSelector>();
         services.AddScoped<ITakeShippingPalletSelector, TakeShippingPalletSelector>();
 
+        services.AddHostedService<SubscriveWorker>();
         return services;
     }
 }

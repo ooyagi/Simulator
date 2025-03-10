@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
+using Simulator;
 using Simulator.Models;
+using Simulator.Services;
 using CommonItems;
 using ProductionPlanManagement;
 using WorkOrderManagement;
@@ -24,6 +26,9 @@ builder.Services.AddWorkOrderManagement<DefaultDbContext>(builder.Configuration,
 builder.Services.AddShippingOperationCoordinator<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
 builder.Services.AddInventoryPalletCoordinator<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
 builder.Services.AddShippingPalletCoordinator<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
+
+builder.Services.AddScoped<ISimulationService, SimulationService>();
+builder.Services.AddHostedService<SimulationWorker>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

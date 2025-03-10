@@ -2,9 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using CommonItems.Models;
 using ProductionPlanManagement.Models;
+using WorkOrderManagement.Models;
+using ShippingOperationCoordinator.Models;
 using InventoryPalletCoordinator.Models;
 using ShippingPalletCoordinator.Models;
-using WorkOrderManagement.Models;
 
 namespace Simulator.Extensions;
 
@@ -31,7 +32,10 @@ public static class ModelBuilderExtensions
     public static void ApplyShippingStationCodeConversion(this ModelBuilder modelBuilder) {
         var conversion = new ValueConverter<ShippingStationCode, string>(v => v.Value, v => new ShippingStationCode(v));
 
-        // inventoryPalletCoordinator
+        // ShippingOperationCoordinator
+        modelBuilder.Entity<ShippingStation>().Property(typeof(ShippingStationCode), "Code").HasConversion(conversion);
+
+        // InventoryPalletCoordinator
         modelBuilder.Entity<TemporaryStorage>().Property(typeof(ShippingStationCode), "ShippingStationCode").HasConversion(conversion);
         // ShippingPalletCoordinator
         modelBuilder.Entity<ShippingStorage>().Property(typeof(ShippingStationCode), "ShippingStationCode").HasConversion(conversion);

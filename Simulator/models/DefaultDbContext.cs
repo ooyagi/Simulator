@@ -6,6 +6,8 @@ using WorkOrderManagement.Interfaces;
 using WorkOrderManagement.Models;
 using InventoryPalletCoordinator.Interfaces;
 using InventoryPalletCoordinator.Models;
+using ShippingOperationCoordinator.Interfaces;
+using ShippingOperationCoordinator.Models;
 using ProductionPlanManagement.Interfaces;
 using ProductionPlanManagement.Models;
 using ShippingPalletCoordinator.Interfaces;
@@ -17,11 +19,15 @@ public class DefaultDbContext : DbContext
     , ICommonItemsDbContext
     , IWorkOrderDbContext
     , IProductionPlanmanagementDbContext
+    , IShippingOperationCoordinatorDbContext
     , IInventoryPalletCoordinatorDbContext
     , IShippingPalletCoordinatorDbContext
 {
     public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options) { }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+
+    // ICommonItemsDbContext
+    public DbSet<TransportRecord> TransportRecords { get; set; }
 
     // WorkOrderDbContext
     public DbSet<WorkOrder> WorkOrders { get; set; }
@@ -30,8 +36,8 @@ public class DefaultDbContext : DbContext
     // ProductionPlanmanagementDbContext
     public DbSet<ProductionPlan> ProductionPlans { get; set; }
 
-    // ICommonItemsDbContext
-    public DbSet<TransportRecord> TransportRecords { get; set; }
+    // IShippingOperationCoordinatorDbContext
+    public DbSet<ShippingStation> ShippingStations { get; set; }
 
     // IInventoryPalletCoordinatorDbContext
     public DbSet<InventoryPallet> InventoryPallets { get; set; }

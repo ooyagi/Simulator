@@ -25,6 +25,9 @@ class ShikakariStorageLoader: Services.IShikakariStorageLoader, ShippingOperatio
     public ShikakariStorage? FindEmptyLocation() {
         return _context.ShikakariStorages.FirstOrDefault(s => s.Status == StorageStatus.Empty);
     }
+    public IEnumerable<ShikakariStorage> GetEmptyLocations() {
+        return _context.ShikakariStorages.Where(s => s.Status == StorageStatus.Empty).ToList();
+    }
     public IEnumerable<ShippingOperationCoordinator.Interfaces.ICompletablePalletInfo> FilterCompletableBy(IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> loadablePallets) {
         var shikakariStorages = _context.ShikakariStorages
             .Include(x => x.StoredPallet)
@@ -33,8 +36,8 @@ class ShikakariStorageLoader: Services.IShikakariStorageLoader, ShippingOperatio
         var loadableItems = loadablePallets.Select(x => new LoadableItem(x.Hinban, x.Quantity)).ToList();
         return shikakariStorages
             .Select(x => new { Pallet = x, Step = x.StoredPallet.GetStepToCompletion(loadableItems) })
-            .Where(x => 0 < x.Step)
-            .Select(x => new CompletablePalletInfo(x.Pallet.LocationCode, x.Pallet.ShippingPalletID!, x.Pallet.StoredPallet.NextHinban, x.Step))
+            .Where(x => 0 < x.Step && x.Pallet.StoredPallet.NextHinban != null)
+            .Select(x => new CompletablePalletInfo(x.Pallet.LocationCode, x.Pallet.ShippingPalletID!, x.Pallet.StoredPallet.NextHinban!, x.Step))
             .ToList();
 
     }

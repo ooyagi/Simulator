@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShippingOperationCoordinato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShippingOperationCoordinatorTest", "ShippingOperationCoordinatorTest\ShippingOperationCoordinatorTest.csproj", "{905832ED-63A4-4E42-ACB6-D3810367EBE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShippingPalletCoordinatorTest", "ShippingPalletCoordinatorTest\ShippingPalletCoordinatorTest.csproj", "{BDE5A01F-95B2-4E95-B2D6-8F66F582307B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{905832ED-63A4-4E42-ACB6-D3810367EBE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{905832ED-63A4-4E42-ACB6-D3810367EBE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{905832ED-63A4-4E42-ACB6-D3810367EBE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDE5A01F-95B2-4E95-B2D6-8F66F582307B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDE5A01F-95B2-4E95-B2D6-8F66F582307B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDE5A01F-95B2-4E95-B2D6-8F66F582307B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDE5A01F-95B2-4E95-B2D6-8F66F582307B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

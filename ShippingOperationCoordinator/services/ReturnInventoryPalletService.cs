@@ -48,6 +48,7 @@ class ReturnInventoryPalletService: IChangeInventoryPalletService
 
     void IChangeInventoryPalletService.Change(ShippingStationCode stationCode)
     {
-        throw new NotImplementedException();
+        // 試算中は在庫パレット置き場は無限に拡張するため
+        // 搬入・搬出は行わない
     }
 }

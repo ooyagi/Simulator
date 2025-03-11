@@ -7,5 +7,6 @@ interface IShikakariStorageLoader
 {
     ShikakariStorage? Find(LocationCode locationCode);
     ShikakariStorage? FindEmptyLocation();
+    IEnumerable<ShikakariStorage> GetEmptyLocations();
     LocationCode? FindStoredLocation(ShippingPalletID palletId);
 }

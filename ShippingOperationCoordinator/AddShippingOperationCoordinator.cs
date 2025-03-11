@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShippingOperationCoordinator.Interfaces;
+using ShippingOperationCoordinator.Models;
 using ShippingOperationCoordinator.Services;
 
 namespace ShippingOperationCoordinator;
@@ -13,9 +14,11 @@ public static class AddShippingOperationCoordinatorExtensions
         IConfiguration configuration,
         Action<DbContextOptionsBuilder> action
     ) where T : DbContext, IShippingOperationCoordinatorDbContext {
+        services.Configure<ShippingOperationSettings>(configuration.GetSection("ShippingOperationSettings"));
         services.AddDbContext<IShippingOperationCoordinatorDbContext, T>(action, ServiceLifetime.Scoped);
 
         // 公開
+        services.AddScoped<IInitializationService, InitializationService>();
         services.AddScoped<ITransferService, TransferService>();
         services.AddScoped<IShippingStationLoader, ShippingStationLoader>();
         services.AddScoped<IChangeInventoryPalletService, ReturnInventoryPalletService>();
@@ -28,6 +31,7 @@ public static class AddShippingOperationCoordinatorExtensions
         services.AddSingleton<ShippingStorageEventSubscriber>();
         services.AddSingleton<TemporaryStorageEventSubscriber>();
 
+        services.AddScoped<IShippingStationManagementService, ShippingStationManagementService>();
         services.AddScoped<IDetermineTransferItemService, DetermineTransferItemService>();
         services.AddScoped<IReturnInventoryPalletSelector, ReturnInventoryPalletSelector>();
         services.AddScoped<IReturnShippingPalletSelector, ReturnShippingPalletSelector>();

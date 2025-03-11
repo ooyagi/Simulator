@@ -5,6 +5,7 @@ namespace ShippingPalletCoordinator.Services;
 
 interface IShippingStorageLoader
 {
+    int GetLastIndex(ShippingStationCode shippingStationCode);
     ShippingStationCode? ConvertStationCode(LocationCode locationCode);
     ShippingStorage? Find(LocationCode locationCode);
 }

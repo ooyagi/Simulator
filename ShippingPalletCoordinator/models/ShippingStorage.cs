@@ -18,9 +18,11 @@ public class ShippingStorage
 
     public ShippingStorage() { }
     public ShippingStorage(
+        ShippingStationCode shippingStationCode,
         LocationCode locationCode,
         int index
     ) {
+        ShippingStationCode = shippingStationCode;
         LocationCode = locationCode;
         Index = index;
     }

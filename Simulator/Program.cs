@@ -28,6 +28,7 @@ builder.Services.AddInventoryPalletCoordinator<DefaultDbContext>(builder.Configu
 builder.Services.AddShippingPalletCoordinator<DefaultDbContext>(builder.Configuration, (options) => options.UseSqlServer(connection, sqlServerOptions => sqlServerOptions.CommandTimeout(60)));
 
 builder.Services.AddScoped<ISimulationService, SimulationService>();
+builder.Services.AddScoped<InitializationService>();
 builder.Services.AddHostedService<SimulationWorker>();
 
 var app = builder.Build();
@@ -41,5 +42,10 @@ app.UseAuthorization();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.MapControllers();
+
+// 初期化
+using var scope = app.Services.CreateScope();
+var initializationService = scope.ServiceProvider.GetRequiredService<InitializationService>();
+initializationService.Initialize();
 
 app.Run();

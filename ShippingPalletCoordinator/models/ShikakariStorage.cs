@@ -7,7 +7,6 @@ public class ShikakariStorage
 {
     [Key]
     public LocationCode LocationCode { get; set; } = LocationCode.Default;
-    public int Index { get; set; } = 0;
     public StorageStatus Status { get; set; } = StorageStatus.Empty;
     public ShippingPalletID? ShippingPalletID { get; set; }
 
@@ -17,11 +16,9 @@ public class ShikakariStorage
 
     public ShikakariStorage() { }
     public ShikakariStorage(
-        LocationCode locationCode,
-        int index
+        LocationCode locationCode
     ) {
         LocationCode = locationCode;
-        Index = index;
     }
 
     public ShippingPalletID? Pickup() {

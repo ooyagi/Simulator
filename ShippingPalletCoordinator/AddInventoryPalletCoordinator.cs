@@ -14,6 +14,7 @@ public static class AddShippingPalletCoordinatorExtensions
         IConfiguration configuration,
         Action<DbContextOptionsBuilder> action
     ) where T : DbContext, IShippingPalletCoordinatorDbContext {
+        services.Configure<ShippingStorageConfig>(configuration.GetSection("ShippingStorageSettings"));
         services.AddDbContext<IShippingPalletCoordinatorDbContext, T>(action, ServiceLifetime.Scoped);
 
         // Sigleton
@@ -22,6 +23,7 @@ public static class AddShippingPalletCoordinatorExtensions
         services.AddSingleton<ShippingOperationCoordinator.Interfaces.IShippingStorageEventObserver>(x => x.GetRequiredService<ShippingStorageEventPublisher>());
 
         // 公開
+        services.AddScoped<IInitializationService, InitializationService>();
         // services.AddScoped<IInventoryStorageManagementService, InventoryStorageManagementService>();
 
         // ShippingOperatonCoordinator向け
@@ -32,6 +34,8 @@ public static class AddShippingPalletCoordinatorExtensions
         services.AddScoped<ShippingOperationCoordinator.Interfaces.ITakeShippingPalletService, TakeShippingPalletService>();
 
         // 内部向け
+        services.AddScoped<IShippingStorageManagementService, ShippingStorageManagementService>();
+        services.AddScoped<IShikakariStorageManagementService, ShikakariStorageManagementService>();
         services.AddScoped<IShippingPalletLoader, ShippingPalletLoader>();
         services.AddScoped<IShippingStorageLoader, ShippingStorageLoader>();
         services.AddScoped<IShikakariStorageLoader, ShikakariStorageLoader>();

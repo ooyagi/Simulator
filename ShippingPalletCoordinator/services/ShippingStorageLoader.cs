@@ -2,6 +2,7 @@ using CommonItems.Models;
 using Microsoft.EntityFrameworkCore;
 using ShippingPalletCoordinator.Interfaces;
 using ShippingPalletCoordinator.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ShippingPalletCoordinator.Services;
 
@@ -15,6 +16,13 @@ class ShippingStorageLoader: Services.IShippingStorageLoader, ShippingOperationC
         _context = context;
     }
 
+    public int GetLastIndex(ShippingStationCode shippingStationCode) {
+        var storage = _context.ShippingStorages.Where(x => x.ShippingStationCode == shippingStationCode);
+        if (storage.Count() == 0) {
+            return 0;
+        }
+        return storage.Max(x => x.Index);
+    }
     public ShippingStationCode? ConvertStationCode(LocationCode locationCode) {
         return _context.ShippingStorages.FirstOrDefault(x => x.LocationCode == locationCode)?.ShippingStationCode;
     }

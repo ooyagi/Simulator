@@ -19,6 +19,13 @@ public class TemporaryStorage: ITemporaryStorageInfo
     public Hinban? Hinban { get { return StoredPallet?.Hinban; } }
 
     public TemporaryStorage() { }
+    public TemporaryStorage(
+        ShippingStationCode shippingStationCode,
+        LocationCode locationCode
+    ) {
+        ShippingStationCode = shippingStationCode;
+        LocationCode = locationCode;
+    }
 
     public InventoryPalletID? Pickup() {
         Status = StorageStatus.Empty;

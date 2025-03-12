@@ -8,4 +8,5 @@ interface IShippingStorageLoader
     int GetLastIndex(ShippingStationCode shippingStationCode);
     ShippingStationCode? ConvertStationCode(LocationCode locationCode);
     ShippingStorage? Find(LocationCode locationCode);
+    IEnumerable<ShippingStorage> GetEmptyLocations();
 }

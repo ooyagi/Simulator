@@ -36,6 +36,7 @@ public static class AddShippingPalletCoordinatorExtensions
         // 内部向け
         services.AddScoped<IShippingStorageManagementService, ShippingStorageManagementService>();
         services.AddScoped<IShikakariStorageManagementService, ShikakariStorageManagementService>();
+        services.AddScoped<IShippingPalletManagementService, ShippingPalletManagementService>();
         services.AddScoped<IShippingPalletLoader, ShippingPalletLoader>();
         services.AddScoped<IShippingStorageLoader, ShippingStorageLoader>();
         services.AddScoped<IShikakariStorageLoader, ShikakariStorageLoader>();

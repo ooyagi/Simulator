@@ -1,5 +1,4 @@
 using CommonItems.Models;
-using Microsoft.EntityFrameworkCore;
 using ShippingPalletCoordinator.Interfaces;
 using ShippingPalletCoordinator.Models;
 

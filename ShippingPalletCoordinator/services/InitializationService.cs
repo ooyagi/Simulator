@@ -14,6 +14,7 @@ class InitializationService: IInitializationService
     private readonly IRotateShippingPalletService _rotateShippingPalletService;
     private readonly IShippingStorageManagementService _shippingStorageManagementService;
     private readonly IShikakariStorageManagementService _shikakariStorageManagementService;
+    private readonly IShippingPalletManagementService _shippingPalletManagementService;
 
     public InitializationService(
         ILogger<InitializationService> logger,
@@ -21,7 +22,8 @@ class InitializationService: IInitializationService
         IShikakariStorageLoader shikakariStorageLoader,
         IRotateShippingPalletService rotateShippingPalletService,
         IShippingStorageManagementService shippingStorageManagementService,
-        IShikakariStorageManagementService shikakariStorageManagementService
+        IShikakariStorageManagementService shikakariStorageManagementService,
+        IShippingPalletManagementService shippingPalletManagementService 
     ) {
         _logger = logger;
         _config = config.Value;
@@ -29,6 +31,7 @@ class InitializationService: IInitializationService
         _rotateShippingPalletService = rotateShippingPalletService;
         _shippingStorageManagementService = shippingStorageManagementService;
         _shikakariStorageManagementService = shikakariStorageManagementService;
+        _shippingPalletManagementService = shippingPalletManagementService;
     }
 
     /// <summary>
@@ -40,13 +43,14 @@ class InitializationService: IInitializationService
         _logger.LogInformation("在庫パレット制御初期化処理");
         InitializeShippingStorage();
         InitializeShikakariStorage();
+        InitializeShippingPallet();
     }
     public void SetInitialShippingPallet() {
         _logger.LogInformation($"初期出荷パレット設定開始");
         try {
-            var locations = _shikakariStorageLoader.GetEmptyLocations();
-            foreach(var location in locations) {
-                _logger.LogDebug($"初期出荷パレット設定: 仕掛パレット置き場 [{location.LocationCode}]");
+            var shikakariLocations = _shikakariStorageLoader.GetEmptyLocations();
+            foreach(var location in shikakariLocations) {
+                _logger.LogDebug($"初期仕掛パレット設定: 仕掛パレット置き場 [{location.LocationCode}]");
                 _rotateShippingPalletService.InboundNextPallet(location.LocationCode);
             }
         } catch (Exception ex) {
@@ -80,6 +84,15 @@ class InitializationService: IInitializationService
             }
         } catch (Exception ex) {
             _logger.LogError(ex, "仕掛パレット制御初期化処理でエラーが発生しました");
+            throw;
+        }
+    }
+    private void InitializeShippingPallet() {
+        _logger.LogInformation("出荷パレット初期化");
+        try {
+            _shippingPalletManagementService.Clear();
+        } catch (Exception ex) {
+            _logger.LogError(ex, "出荷パレット制御初期化処理でエラーが発生しました");
             throw;
         }
     }

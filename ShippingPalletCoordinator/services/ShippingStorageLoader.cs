@@ -32,7 +32,11 @@ class ShippingStorageLoader: Services.IShippingStorageLoader, ShippingOperationC
     public IEnumerable<LocationCode> GetEmptyLocationCodes(ShippingStationCode stationCode) {
         return _context.ShippingStorages
             .Where(x => x.ShippingStationCode == stationCode && x.Status == StorageStatus.Empty)
-            .Select(x => x.LocationCode);
+            .Select(x => x.LocationCode)
+            .ToList();
+    }
+    public IEnumerable<ShippingStorage> GetEmptyLocations() {
+        return _context.ShippingStorages.Where(x => x.Status == StorageStatus.Empty).ToList();
     }
     public IEnumerable<ShippingOperationCoordinator.Interfaces.IShippingPalletInfo> All(ShippingStationCode stationCode) {
         return _context.ShippingStorages

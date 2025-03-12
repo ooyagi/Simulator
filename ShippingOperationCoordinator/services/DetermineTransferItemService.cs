@@ -30,7 +30,7 @@ class DetermineTransferItemService: IDetermineTransferItemService
     /// <summary>
     /// 与えられた在庫パレットのリストから、積替え指示に基づいて転送対象の品番 (Hinban) を決定する
     /// </summary>
-    public TransferDirection DetermineTransferHinban(ShippingStationCode stationCode) {
+    public TransferDirection? DetermineTransferHinban(ShippingStationCode stationCode) {
         _logger.LogInformation("積替え対象の品番を決定します");
         try {
             var availableHinbans = _tempStorageLoader.GetAvarableHinbans(stationCode).Select(x => new TemporaryStoragePalletInfo(x.LocationCode, x.Hinban, x.Quantity)).ToList();
@@ -54,7 +54,7 @@ class DetermineTransferItemService: IDetermineTransferItemService
             _logger.LogError(ex, "積替え対象の品番を決定する際にエラーが発生しました");
         }
         _logger.LogWarning("積替え可能な品番が見つかりませんでした");
-        return new TransferDirection(Hinban.Default, LocationCode.Default, LocationCode.Default);
+        return null;
     }
 
     /// <summary>
@@ -67,6 +67,7 @@ class DetermineTransferItemService: IDetermineTransferItemService
     private TransferDirection? FilterShippingPalletsCompletedByTempInventory(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
         var completablePallets = _shippingStorageLoader.FilterCompletableBy(stationCode, pallets);
         if (!completablePallets.Any()) {
+            _logger.LogTrace($"出荷作業場所 [{stationCode.Value}] に一時置き場の在庫で完了できる出荷パレットが見つかりませんでした");
             return null;
         }
         var targetPallet = completablePallets.OrderBy(x => x.RemainStep).First();
@@ -89,12 +90,14 @@ class DetermineTransferItemService: IDetermineTransferItemService
     private TransferDirection? FilterInventoryPalletsThatCanBeEmptied(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
         var shippingPallets = _shippingStorageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
+            _logger.LogTrace($"出荷作業場所 [{stationCode.Value}] の出荷パレット置き場に積み込み可能な出荷パレットが見つかりませんでした");
             return null;
         }
         var emptiablePallets = pallets.Where(tmpPallet => {
             return shippingPallets.Any(shpPallet => shpPallet.IsLoadableQuantityGreaterThan(tmpPallet.Hinban, tmpPallet.Quantity));
         });
         if (!emptiablePallets.Any()) {
+            _logger.LogTrace($"出荷作業場所 [{stationCode.Value}] に使い切れる在庫パレットが見つかりませんでした");
             return null;
         }
         var nextTrasnferSource = emptiablePallets.OrderBy(x => x.Quantity).First();
@@ -117,6 +120,7 @@ class DetermineTransferItemService: IDetermineTransferItemService
     private TransferDirection? FilterInventoryPalletsNotUsedInShikakariStorage(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
         var shippingPallets = _shippingStorageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
+            _logger.LogTrace($"出荷作業場所 [{stationCode.Value}] の出荷パレット置き場に積み込み可能な出荷パレットが見つかりませんでした");
             return null;
         }
         var shikakariPallets = _ShikakariStorageLoader.GetLoadableFrom(pallets);
@@ -124,6 +128,7 @@ class DetermineTransferItemService: IDetermineTransferItemService
             return shikakariPallets.Any(shkPallet => shkPallet.IsLoadableQuantityGreaterThan(tmpPallet.Hinban, 0)) == false;
         });
         if (!notUsedPallets.Any()) {
+            _logger.LogTrace($"出荷作業場所 [{stationCode.Value}] に仕掛パレットで使用しない在庫パレットが見つかりませんでした");
             return null;
         }
         var nextTrasnferSource = notUsedPallets.OrderBy(x => x.Quantity).First();
@@ -151,6 +156,7 @@ class DetermineTransferItemService: IDetermineTransferItemService
     private TransferDirection? FilterShippingPalletsWithFewTransfers(ShippingStationCode stationCode, IEnumerable<TemporaryStoragePalletInfo> pallets) {
         var shippingPallets = _shippingStorageLoader.GetLoadableFrom(stationCode, pallets);
         if (!shippingPallets.Any()) {
+            _logger.LogTrace($"出荷作業場所 [{stationCode.Value}] の出荷パレット置き場に積み込み可能な出荷パレットが見つかりませんでした");
             return null;
         }
         var nextTransferDistination = shippingPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First();

@@ -44,14 +44,14 @@ public class DetermineTransferItemServiceTests
             return new TestShippingPalletLoadableHinbanInfo(locationCode, shippingPalletID, hinban, Hinban.Default, 4, remainStep, 1, isLoadableQuantityGreaterThanResult1);
         }
         [Fact]
-        public void 利用可能な品番が存在しない場合_デフォルトを返す() {
+        public void 利用可能な品番が存在しない場合_nullを返す() {
             ShippingStationCode stationCode = new ShippingStationCode("S01");
 
             var service = CreateService(stationCode);
 
             var result = service.DetermineTransferHinban(stationCode);
 
-            Assert.Equal(Hinban.Default, result.Hinban);
+            Assert.Null(result);
         }
         [Fact]
         public void 出荷パレット完了候補が1つだけある場合_その候補を返す() {
@@ -73,7 +73,7 @@ public class DetermineTransferItemServiceTests
     
             var result = service.DetermineTransferHinban(stationCode);
 
-            Assert.Equal(testHinban, result.Hinban);
+            Assert.Equal(testHinban, result?.Hinban);
         }
         [Theory]
         [InlineData(3, 1, 2)]
@@ -111,9 +111,9 @@ public class DetermineTransferItemServiceTests
             Hinban expectedHinban = expected == 1 ? testHinban1 : testHinban2;
             LocationCode expectedFrom = expected == 1 ? testTempPallet1.LocationCode : testTempPallet2.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPallet1.LocationCode : testShipPallet2.LocationCode;
-            Assert.Equal(expectedHinban, result.Hinban);
-            Assert.Equal(expectedFrom, result.From);
-            Assert.Equal(expectedTo, result.To);
+            Assert.Equal(expectedHinban, result?.Hinban);
+            Assert.Equal(expectedFrom, result?.From);
+            Assert.Equal(expectedTo, result?.To);
         }
 
         [Theory]
@@ -151,9 +151,9 @@ public class DetermineTransferItemServiceTests
             Hinban expectedHinban = expected == 1 ? testHinban1 : testHinban2;
             LocationCode exceptedFrom = expected == 1 ? testTempPallet1.LocationCode : testTempPallet2.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
-            Assert.Equal(expectedHinban, result.Hinban);
-            Assert.Equal(exceptedFrom, result.From);
-            Assert.Equal(expectedTo, result.To);
+            Assert.Equal(expectedHinban, result?.Hinban);
+            Assert.Equal(exceptedFrom, result?.From);
+            Assert.Equal(expectedTo, result?.To);
         }
         [Theory]
         [InlineData(10, 14, 1)]
@@ -190,9 +190,9 @@ public class DetermineTransferItemServiceTests
             Hinban expectedHinban = expected == 1 ? testHinban1 : testHinban2;
             LocationCode expectedFrom = expected == 1 ? testTempPallet1.LocationCode : testTempPallet2.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
-            Assert.Equal(expectedHinban, result.Hinban);
-            Assert.Equal(expectedFrom, result.From);
-            Assert.Equal(expectedTo, result.To);
+            Assert.Equal(expectedHinban, result?.Hinban);
+            Assert.Equal(expectedFrom, result?.From);
+            Assert.Equal(expectedTo, result?.To);
         }
         [Theory]
         [InlineData(5, 3, 2)]
@@ -229,9 +229,9 @@ public class DetermineTransferItemServiceTests
             Hinban expectedHinban = testHinban1;
             LocationCode expectedFrom = testTempPallet1.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
-            Assert.Equal(expectedHinban, result.Hinban);
-            Assert.Equal(expectedFrom, result.From);
-            Assert.Equal(expectedTo, result.To);
+            Assert.Equal(expectedHinban, result?.Hinban);
+            Assert.Equal(expectedFrom, result?.From);
+            Assert.Equal(expectedTo, result?.To);
         }
 
         [Fact]
@@ -268,9 +268,9 @@ public class DetermineTransferItemServiceTests
             var result = service.DetermineTransferHinban(stationCode);
         
             shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Once);
-            Assert.Equal(testHinban2, result.Hinban);
-            Assert.Equal(testTempPallet2.LocationCode, result.From);
-            Assert.Equal(testShipPalletInfo2.LocationCode, result.To);
+            Assert.Equal(testHinban2, result?.Hinban);
+            Assert.Equal(testTempPallet2.LocationCode, result?.From);
+            Assert.Equal(testShipPalletInfo2.LocationCode, result?.To);
         }
 
         [Theory]
@@ -316,9 +316,9 @@ public class DetermineTransferItemServiceTests
             LocationCode expectedFrom = expected == 1 ? testTempPallet1.LocationCode : testTempPallet2.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
             shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Once);
-            Assert.Equal(expectedHinban, result.Hinban);
-            Assert.Equal(expectedFrom, result.From);
-            Assert.Equal(expectedTo, result.To);
+            Assert.Equal(expectedHinban, result?.Hinban);
+            Assert.Equal(expectedFrom, result?.From);
+            Assert.Equal(expectedTo, result?.To);
         }
         
         [Theory]
@@ -359,9 +359,9 @@ public class DetermineTransferItemServiceTests
             LocationCode expectedFrom = testTempPallet.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
             shikakariStorageLoaderMock.Verify(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Once);
-            Assert.Equal(expectedHinban, result.Hinban);
-            Assert.Equal(expectedFrom, result.From);
-            Assert.Equal(expectedTo, result.To);
+            Assert.Equal(expectedHinban, result?.Hinban);
+            Assert.Equal(expectedFrom, result?.From);
+            Assert.Equal(expectedTo, result?.To);
         }
         [Theory]
         [InlineData(5, 3, 2)]
@@ -405,9 +405,9 @@ public class DetermineTransferItemServiceTests
             LocationCode expectedFrom = expected == 1 ? testTempPallet1.LocationCode : testTempPallet2.LocationCode;
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
             shippingStorageLoaderMock.Verify(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Exactly(3));
-            Assert.Equal(expectedHinban, result.Hinban);
-            Assert.Equal(expectedFrom, result.From);
-            Assert.Equal(expectedTo, result.To);
+            Assert.Equal(expectedHinban, result?.Hinban);
+            Assert.Equal(expectedFrom, result?.From);
+            Assert.Equal(expectedTo, result?.To);
         }
         [Theory]
         [InlineData(5, 3, 2)]
@@ -447,9 +447,9 @@ public class DetermineTransferItemServiceTests
             
             LocationCode expectedTo = expected == 1 ? testShipPalletInfo1.LocationCode : testShipPalletInfo2.LocationCode;
             shippingStorageLoaderMock.Verify(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>()), Times.Exactly(3));
-            Assert.Equal(testHinban, result.Hinban);
-            Assert.Equal(testTempPallet.LocationCode, result.From);
-            Assert.Equal(expectedTo, result.To);
+            Assert.Equal(testHinban, result?.Hinban);
+            Assert.Equal(testTempPallet.LocationCode, result?.From);
+            Assert.Equal(expectedTo, result?.To);
         }
     }
 }

@@ -5,5 +5,5 @@ namespace ShippingOperationCoordinator.Services;
 
 interface IDetermineTransferItemService
 {
-    TransferDirection DetermineTransferHinban(ShippingStationCode stationCode);
+    TransferDirection? DetermineTransferHinban(ShippingStationCode stationCode);
 }

@@ -24,6 +24,7 @@ public class ProductionPlanController : ControllerBase
     public IActionResult Load() {
         var loadedPlans = _loadProductionPlanService.LoadProductionPlans();
         var paramPlans = loadedPlans.Select(x => new ProductionPlan(x.DeliveryDate, x.Line, x.Size, x.PalletNumber, x.Priority, x.Hinban)).ToList();
+        _workOrderRegister.Clear();
         _workOrderRegister.Register(paramPlans);
         return Ok();
     }

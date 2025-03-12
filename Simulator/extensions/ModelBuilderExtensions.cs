@@ -22,6 +22,9 @@ public static class ModelBuilderExtensions
 
         // InventoryPalletCoordinator
         modelBuilder.Entity<InventoryPallet>().Property(typeof(Hinban), "Hinban").HasConversion(conversion);
+
+        // ShippingPalletCoordinator
+        modelBuilder.Entity<ShippingPalletItem>().Property(typeof(Hinban), "Hinban").HasConversion(conversion);
     }
     public static void ApplyTransportTypeConversion(this ModelBuilder modelBuilder) {
         var conversion = new ValueConverter<TransportType, string>(v => v.Value, v => new TransportType(v));
@@ -64,6 +67,7 @@ public static class ModelBuilderExtensions
 
         // ShippingPalletCoordinator
         modelBuilder.Entity<ShippingPallet>().Property(typeof(ShippingPalletID), "Id").HasConversion(conversion);
+        modelBuilder.Entity<ShippingPalletItem>().Property(typeof(ShippingPalletID), "PalletID").HasConversion(conversion);
         modelBuilder.Entity<ShippingStorage>().Property(typeof(ShippingPalletID), "ShippingPalletID").HasConversion(conversion);
         modelBuilder.Entity<ShikakariStorage>().Property(typeof(ShippingPalletID), "ShippingPalletID").HasConversion(conversion);
     }

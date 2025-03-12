@@ -4,6 +4,7 @@ namespace WorkOrderManagement.Interfaces;
 
 public interface IWorkOrderRegister
 {
+    void Clear();
     void Register(IEnumerable<IProductPlan> plans);
 }
 

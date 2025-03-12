@@ -46,6 +46,7 @@ public class DefaultDbContext : DbContext
 
     // IShippingPalletCoordinatorDbContext
     public DbSet<ShippingPallet> ShippingPallets { get; set; }
+    public DbSet<ShippingPalletItem> ShippingPalletItems { get; set; }
     public DbSet<ShippingStorage> ShippingStorages { get; set; }
     public DbSet<ShikakariStorage> ShikakariStorages { get; set; }
 
@@ -61,5 +62,7 @@ public class DefaultDbContext : DbContext
         modelBuilder.Entity<ProductionPlan>().HasIndex(x => new { x.DeliveryDate, x.Line, x.Size, x.PalletNumber });
         modelBuilder.Entity<WorkOrder>().HasMany(x => x.OrderedItems).WithOne().HasForeignKey(x => x.PalletID);
         modelBuilder.Entity<OrderedItem>().HasKey(x => new { x.PalletID, x.Index });
+        modelBuilder.Entity<ShippingPallet>().HasMany(x => x.Items).WithOne().HasForeignKey(x => x.PalletID);
+        modelBuilder.Entity<ShippingPalletItem>().HasKey(x => new { x.PalletID, x.Index });
     }
 }

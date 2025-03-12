@@ -18,6 +18,16 @@ class WorkOrderRegister: IWorkOrderRegister
         _context = context;
     }
 
+    public void Clear() {
+        _logger.LogInformation("作業指示をクリアします");
+        try {
+            _context.WorkOrders.RemoveRange(_context.WorkOrders);
+            _context.SaveChanges();
+        } catch (Exception e) {
+            _logger.LogError(e, "作業指示のクリアに失敗しました");
+            throw;
+        }
+    }
     public void Register(IEnumerable<IProductPlan> plans) {
         _logger.LogInformation("作業指示を登録します");
         try {

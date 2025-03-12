@@ -99,9 +99,9 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
         // - 不足品番の自動補充 -
         var nextItems = shippingPalletLoadableInfo.Select(x => x.NextHinban).Concat(shikakariPalletLoadableInfo.Select(x => x.NextHinban)).Distinct().ToList();
         var blockItems = shippingPalletLoadableInfo.Select(x => x.BlockHinban).Concat(shikakariPalletLoadableInfo.Select(x => x.BlockHinban)).Distinct().ToList();
-        var neededItems = nextItems.Concat(blockItems).Distinct().ToList();
+        var neededItems = nextItems.Concat(blockItems).Distinct().Where(x => x != null).ToList();
         var missingItems = neededItems.Where(x => x != null && !inventoryItems.Any(y => y.Hinban == x));
-        var missingPallets = missingItems.Select(x => new InventoryPalletInfo(LocationCode.Default, x, 14)).ToList();
+        var missingPallets = missingItems.Select(x => new InventoryPalletInfo(LocationCode.Default, x!, 14)).ToList();
         inventoryItems = inventoryItems.Concat(missingPallets);
         // ----- ここまで -----
 

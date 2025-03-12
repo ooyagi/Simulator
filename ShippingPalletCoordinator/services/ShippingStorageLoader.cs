@@ -48,8 +48,8 @@ class ShippingStorageLoader: Services.IShippingStorageLoader, ShippingOperationC
         var loadableItems = loadablePallets.Select(x => new LoadableItem(x.Hinban, x.Quantity)).ToList();
         return shippingStorages
             .Select(x => new { Pallet = x, Step = x.StoredPallet.GetStepToCompletion(loadableItems) })
-            .Where(x => 0 < x.Step)
-            .Select(x => new CompletablePalletInfo(x.Pallet.LocationCode, x.Pallet.ShippingPalletID!, x.Pallet.StoredPallet.NextHinban, x.Step))
+            .Where(x => 0 < x.Step && x.Pallet.StoredPallet.NextHinban != null)
+            .Select(x => new CompletablePalletInfo(x.Pallet.LocationCode, x.Pallet.ShippingPalletID!, x.Pallet.StoredPallet.NextHinban!, x.Step))
             .ToList();
     }
     public IEnumerable<ShippingOperationCoordinator.Interfaces.IShippingPalletLoadableHinbanInfo> GetLoadableFrom(ShippingStationCode stationCode, IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> loadablePallets) {
@@ -59,7 +59,7 @@ class ShippingStorageLoader: Services.IShippingStorageLoader, ShippingOperationC
             .ToList();
         var loadableItems = loadablePallets.Select(x => new LoadableItem(x.Hinban, x.Quantity)).ToList();
         return shippingStorages
-            .Select(x => new ShippingPalletLoadableHinbanInfo(x.LocationCode, x.StoredPallet))
+            .Select(x => new ShippingPalletLoadableHinbanInfo(x.LocationCode, x.StoredPallet, loadableItems))
             .ToList();
     }
 

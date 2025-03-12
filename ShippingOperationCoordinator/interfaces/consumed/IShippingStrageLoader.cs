@@ -30,9 +30,9 @@ public interface IShippingPalletLoadableHinbanInfo
     LocationCode LocationCode { get; }
     ShippingPalletID ShippingPalletID { get; }
     Hinban NextHinban { get; }
-    Hinban BlockHinban { get; }
+    Hinban? BlockHinban { get; }
     int RemainStep { get; }
-    int FutureLoadableHinbanTypeCount { get; }  // 積み込める品番の種類数
+    int RequiredHinbanTypeCount  { get; }  // 積み込める品番の種類数
 
     // 対象品番の積み込み可能数が指定された数量以上かどうか
     bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity);

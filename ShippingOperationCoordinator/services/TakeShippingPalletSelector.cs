@@ -141,7 +141,7 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
         if (!targetPallets.Any()) {
             return null;
         }
-        return targetPallets.OrderBy(x => x.FutureLoadableHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
+        return targetPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
     }
     /// <summary>
     /// 一時置き場の在庫パレットの内、在庫数が少ない品番が次回積込予定となっている出荷パレットを抽出する
@@ -158,7 +158,7 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
         if (!targetPallets.Any()) {
             return null;
         }
-        return targetPallets.OrderBy(x => x.FutureLoadableHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
+        return targetPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
     }
     /// <summary>
     /// 現在一時置き場に置かれている在庫の次に他の出荷作業場所の一時置き場に存在する品番を利用するパレットを抽出する
@@ -172,38 +172,38 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
         if (!targetPallets.Any()) {
             return null;
         }
-        return targetPallets.OrderBy(x => x.FutureLoadableHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
+        return targetPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
     }
     /// <summary>
     /// 仕掛パレットのブロック要因となる品番の内、在庫のある品番を絞り込む
     /// </summary>
     private IEnumerable<IShikakariPalletLoadableHinbanInfo> FilterBlockHinbanStockExists(IEnumerable<IShikakariPalletLoadableHinbanInfo> shikakariPallets) {
-        return shikakariPallets.Where(x => _inventoryStorageLoader.IsExists(x.BlockHinban)).ToList();
+        return shikakariPallets.Where(x => x.BlockHinban != null && _inventoryStorageLoader.IsExists(x.BlockHinban)).ToList();
     }
     /// <summary>
-    /// ブロック要因となる品番の在庫を使い切れる出荷パレットを抽出する
+    /// ブロック要因となる品番で在庫パレット置き場に使い切れる出荷パレットを抽出する
     /// </summary>
     ShippingPalletID? FilterShippingPalletWhereBlockHinbanStockCanBeExhausted(IEnumerable<IShikakariPalletLoadableHinbanInfo> filterdPallets) {
-        var targetPallets = filterdPallets.Where(x => _inventoryStorageLoader.IsUseup(x.BlockHinban, x.BlockHinbanLoadableCount ));
+        var targetPallets = filterdPallets.Where(x => x.BlockHinban != null && _inventoryStorageLoader.IsUseup(x.BlockHinban, x.BlockHinbanLoadableCount ));
         if (!targetPallets.Any()) {
             return null;
         }
-        return targetPallets.OrderBy(x => x.FutureLoadableHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
+        return targetPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
     }
     /// <summary>
     /// ブロック要因となる品番で（残りの生産計画全体で）該当パレット以外での利用予定が無い品番を使用する
     /// </summary>
     ShippingPalletID? FilterShippingPalletWhereBlockHinbanIsNotUsedElsewhere(IEnumerable<IShikakariPalletLoadableHinbanInfo> filterdPallets) {
-        var targetPallets = filterdPallets.Where(x => _workOrderLoader.GetUsageWorkOrderIdByHinban(x.BlockHinban).Count() == 1);
+        var targetPallets = filterdPallets.Where(x => x.BlockHinban != null && _workOrderLoader.GetUsageWorkOrderIdByHinban(x.BlockHinban).Count() == 1);
         if (!targetPallets.Any()) {
             return null;
         }
-        return targetPallets.OrderBy(x => x.FutureLoadableHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
+        return targetPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
     }
     /// <summary>
     /// 今後積込予定の品番の種類が少なく今後積込予定の数が少ないパレットの抽出
     /// </summary>
     ShippingPalletID? FilterShippingPalletWithFewFutureLoadableHinbanTypes(IEnumerable<IShikakariPalletLoadableHinbanInfo> shikakariPallets) {
-        return shikakariPallets.OrderBy(x => x.FutureLoadableHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
+        return shikakariPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First().ShippingPalletID;
     }
 }

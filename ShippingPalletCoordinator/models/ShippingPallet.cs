@@ -32,21 +32,7 @@ public class ShippingPallet
     /// 指定された items で出荷完了出来ない場合は -1 を返す
     /// </summary>
     internal int GetStepToCompletion(IEnumerable<ILoadableItem> items) {
-        var step = 0;
-        var remainingItems = Items.Where(x => !x.IsCompleted).ToList();
-        var tmpItems = items.Select(x => new LocalLoadableItem(x.Hinban, x.Quantity)).ToList();
-        foreach (var item in remainingItems) {
-            var tmp = tmpItems.FirstOrDefault(x => x.Hinban == item.Hinban && 0 < x.Quantity);
-            if (tmp == null) {
-                return -1;
-            }
-            tmp = tmp with { Quantity = tmp.Quantity - 1 };
-            if (tmp.Quantity == 0) {
-                tmpItems.Remove(tmp);
-            }
-            step++;
-        }
-        return step;
+        return CheckStepToCompletion.GetStepToCompletion(Items, items);
     }
     /// <summary>
     /// 指定された品番を積み込む
@@ -60,7 +46,6 @@ public class ShippingPallet
         }
         NextItem.Complete();
     }
-    record LocalLoadableItem(Hinban Hinban, int Quantity): ILoadableItem;
 }
 
 internal interface ILoadableItem {

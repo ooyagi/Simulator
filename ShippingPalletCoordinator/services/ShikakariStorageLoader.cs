@@ -48,7 +48,7 @@ class ShikakariStorageLoader: Services.IShikakariStorageLoader, ShippingOperatio
             .ToList();
         var loadableItems = loadablePallets.Select(x => new LoadableItem(x.Hinban, x.Quantity)).ToList();
         return shippingStorages
-            .Select(x => new ShippingPalletLoadableHinbanInfo(x.LocationCode, x.StoredPallet))
+            .Select(x => new ShippingPalletLoadableHinbanInfo(x.LocationCode, x.StoredPallet, loadableItems))
             .ToList();
     }
 

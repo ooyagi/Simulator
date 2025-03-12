@@ -199,14 +199,14 @@ public class TakeShippingPalletSelectorTest
             var shikakariPalletInfo1 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariPalletInfo1.Setup(x => x.NextHinban).Returns(testHinban1);
             shikakariPalletInfo1.Setup(x => x.ShippingPalletID).Returns(palletID1);
-            shikakariPalletInfo1.Setup(x => x.FutureLoadableHinbanTypeCount).Returns(futureLoadableCount1);
+            shikakariPalletInfo1.Setup(x => x.RequiredHinbanTypeCount).Returns(futureLoadableCount1);
             shikakariPalletInfo1.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban1, It.IsAny<int>())).Returns(true);
             shikakariPalletInfo1.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban2, It.IsAny<int>())).Returns(false);
             shikakariPalletInfo1.Setup(x => x.GetEmptiablePallets(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(Enumerable.Empty<IEmptiablePalletInfo>());
             var shikakariPalletInfo2 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariPalletInfo2.Setup(x => x.NextHinban).Returns(testHinban1);
             shikakariPalletInfo2.Setup(x => x.ShippingPalletID).Returns(palletID2);
-            shikakariPalletInfo2.Setup(x => x.FutureLoadableHinbanTypeCount).Returns(futureLoadableCount2);
+            shikakariPalletInfo2.Setup(x => x.RequiredHinbanTypeCount).Returns(futureLoadableCount2);
             shikakariPalletInfo2.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban1, It.IsAny<int>())).Returns(true);
             shikakariPalletInfo2.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban2, It.IsAny<int>())).Returns(false);
             shikakariPalletInfo2.Setup(x => x.GetEmptiablePallets(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(Enumerable.Empty<IEmptiablePalletInfo>());
@@ -253,14 +253,14 @@ public class TakeShippingPalletSelectorTest
             var shikakariMock1 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariMock1.Setup(x => x.NextHinban).Returns(testHinban1);
             shikakariMock1.Setup(x => x.ShippingPalletID).Returns(expectedPalletID1);
-            shikakariMock1.Setup(x => x.FutureLoadableHinbanTypeCount).Returns(5);
+            shikakariMock1.Setup(x => x.RequiredHinbanTypeCount).Returns(5);
             shikakariMock1.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban1, It.IsAny<int>())).Returns(pallet1_hinban1_loadable);
             shikakariMock1.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban2, It.IsAny<int>())).Returns(pallet1_hinban2_loadable);
             shikakariMock1.Setup(x => x.GetEmptiablePallets(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(Enumerable.Empty<IEmptiablePalletInfo>());
             var shikakariMock2 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariMock2.Setup(x => x.NextHinban).Returns(testHinban2);
             shikakariMock2.Setup(x => x.ShippingPalletID).Returns(expectedPalletID2);
-            shikakariMock2.Setup(x => x.FutureLoadableHinbanTypeCount).Returns(10);
+            shikakariMock2.Setup(x => x.RequiredHinbanTypeCount).Returns(10);
             shikakariMock2.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban1, It.IsAny<int>())).Returns(pallet2_hinban1_loadable);
             shikakariMock2.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban2, It.IsAny<int>())).Returns(pallet2_hinban2_loadable);
             shikakariMock2.Setup(x => x.GetEmptiablePallets(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(Enumerable.Empty<IEmptiablePalletInfo>());
@@ -315,7 +315,7 @@ public class TakeShippingPalletSelectorTest
             var shikakariMock1 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariMock1.Setup(x => x.NextHinban).Returns(testHinban1);
             shikakariMock1.Setup(x => x.ShippingPalletID).Returns(expectedPalletID1);
-            shikakariMock1.Setup(x => x.FutureLoadableHinbanTypeCount).Returns(5);
+            shikakariMock1.Setup(x => x.RequiredHinbanTypeCount).Returns(5);
             shikakariMock1.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban1, It.IsAny<int>())).Returns(pallet1_hinban1_loadable);
             shikakariMock1.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban2, It.IsAny<int>())).Returns(pallet1_hinban2_loadable);
             shikakariMock1.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban3, It.IsAny<int>())).Returns(pallet1_hinban3_loadable);
@@ -323,7 +323,7 @@ public class TakeShippingPalletSelectorTest
             var shikakariMock2 = new Mock<IShikakariPalletLoadableHinbanInfo>();
             shikakariMock2.Setup(x => x.NextHinban).Returns(testHinban2);
             shikakariMock2.Setup(x => x.ShippingPalletID).Returns(expectedPalletID2);
-            shikakariMock2.Setup(x => x.FutureLoadableHinbanTypeCount).Returns(10);
+            shikakariMock2.Setup(x => x.RequiredHinbanTypeCount).Returns(10);
             shikakariMock2.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban1, It.IsAny<int>())).Returns(pallet2_hinban1_loadable);
             shikakariMock2.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban2, It.IsAny<int>())).Returns(pallet2_hinban2_loadable);
             shikakariMock2.Setup(x => x.IsLoadableQuantityGreaterThan(testHinban3, It.IsAny<int>())).Returns(pallet2_hinban3_loadable);
@@ -353,7 +353,7 @@ public class TakeShippingPalletSelectorTest
     public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int RemainStep): ICompletablePalletInfo;
     public record AvalableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IInventoryPalletInfo;
     public record TestEmptiablePalletInfo(LocationCode LocationCode, Hinban Hinban, int EmptiableStep): IEmptiablePalletInfo;
-    public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int FutureLoadableHinbanTypeCount, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
+    public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int RequiredHinbanTypeCount, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
     {
         public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => false;
         public bool IsCompletableBy(IInventoryPalletInfo inventoryPallet) => false;

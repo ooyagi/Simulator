@@ -153,7 +153,7 @@ class DetermineTransferItemService: IDetermineTransferItemService
         if (!shippingPallets.Any()) {
             return null;
         }
-        var nextTransferDistination = shippingPallets.OrderBy(x => x.FutureLoadableHinbanTypeCount).ThenBy(x => x.RemainStep).First();
+        var nextTransferDistination = shippingPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First();
         var nextTransferSource = pallets.First(x => x.Hinban == nextTransferDistination.NextHinban);
         return new TransferDirection(nextTransferDistination.NextHinban, nextTransferSource.LocationCode, nextTransferDistination.LocationCode);
     }

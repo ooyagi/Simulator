@@ -249,12 +249,12 @@ public class TakeInventoryPalletSelectorTest
     }
 
     public record TestInventoryPalletInfo(LocationCode LocationCode, Hinban Hinban, int Quantity): IInventoryPalletInfo;
-    public record TestShippingPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int FutureLoadableHinbanTypeCount, int BlockHinbanLoadableCount): IShippingPalletLoadableHinbanInfo
+    public record TestShippingPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int RequiredHinbanTypeCount, int BlockHinbanLoadableCount): IShippingPalletLoadableHinbanInfo
     {
         public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => false;
         public bool IsCompletableBy(IInventoryPalletInfo inventoryPallet) => false;
     }
-    public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int FutureLoadableHinbanTypeCount, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
+    public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int RequiredHinbanTypeCount, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
     {
         public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => false;
         public bool IsCompletableBy(IInventoryPalletInfo inventoryPallet) => false;

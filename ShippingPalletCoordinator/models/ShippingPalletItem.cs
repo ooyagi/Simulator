@@ -13,11 +13,13 @@ public class ShippingPalletItem
     public ShippingPalletItem(
         ShippingPalletID palletID,
         Hinban hinban,
-        int index
+        int index,
+        bool isCompleted = false
     ) {
         PalletID = palletID;
         Hinban = hinban;
         Index = index;
+        IsCompleted = isCompleted;
     }
 
     public void Complete() {

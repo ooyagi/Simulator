@@ -22,6 +22,7 @@ class PlaceShippingStorageService: IPlaceShippingStorageService
     }
 
     public void Place(LocationCode locationCode, ShippingPalletID inventoryPalletID) {
+        _logger.LogTrace($"{locationCode.Value} にパレット [{inventoryPalletID.Value}] を配置します");
         var shippingStorage = _shippingStorageLoader.Find(locationCode);
         if (shippingStorage == null) {
             throw new InvalidOperationException($"出荷パレット置き場 [{locationCode.Value}] が見つかりませんでした");

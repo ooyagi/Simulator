@@ -5,9 +5,9 @@ using ShippingPalletCoordinator.Interfaces;
 namespace ShippingPalletCoordinator.Services;
 
 /// <summary>
-/// 出荷パレット置き場から在庫パレットを取り出すサービス
+/// 出荷パレット置き場から出荷パレットを取り出すサービス
 /// 
-/// 出荷パレット置き場の在庫パレットから在庫を取り出すサービスではないので注意
+/// 出荷パレット置き場の出荷パレットから在庫を取り出すサービスではないので注意
 /// </summary>
 class PickupShippingStorageService: IPickupShippingStorageService
 {
@@ -29,6 +29,7 @@ class PickupShippingStorageService: IPickupShippingStorageService
     }
 
     public ShippingPalletID? Pickup(LocationCode locationCode) {
+        _logger.LogTrace($"{locationCode.Value} からパレットを取り出します");
         var shippingStorage = _shippingStorageLoader.Find(locationCode);
         if (shippingStorage == null) {
             _logger.LogError($"出荷パレット置き場 [{locationCode.Value}] が見つかりませんでした");

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using CommonItems.Interfaces;
 using CommonItems.Models;
 
@@ -5,6 +6,7 @@ namespace ShippingPalletCoordinator.Services;
 
 class TransportRequestService: ITransportRequestService
 {
+    private readonly ILogger<TransportRequestService> _logger;
     private readonly IPickupShippingStorageService _pickupShippingStorageService;
     private readonly IPickupShikakariStorageService _pickupShikakariStorageService;
     private readonly IPlaceShippingStorageService _placeShippingStorageService;
@@ -12,12 +14,14 @@ class TransportRequestService: ITransportRequestService
     private readonly ITransportRecordRegister _transportRecordRegister;
 
     public TransportRequestService(
+        ILogger<TransportRequestService> logger,
         IPickupShippingStorageService pickupShippingStorageService,
         IPickupShikakariStorageService pickupShikakariStorageService,
         IPlaceShippingStorageService placeShippingStorageService,
         IPlaceShikakariStorageService placeShikakariStorageService,
         ITransportRecordRegister transportRecordRegister
     ) {
+        _logger = logger;
         _pickupShippingStorageService = pickupShippingStorageService;
         _pickupShikakariStorageService = pickupShikakariStorageService;
         _placeShippingStorageService = placeShippingStorageService;
@@ -37,10 +41,11 @@ class TransportRequestService: ITransportRequestService
         } else if (transportType == TransportType.TakeShippingPallet) {
             ShikakariToShipping(from, to);
         } else {
-            throw new System.Exception($"未対応の搬送種別です: {transportType.Value}");
+            throw new Exception($"未対応の搬送種別です: {transportType.Value}");
         }
     }
     private void ShippingToShikakari(LocationCode from, LocationCode to) {
+        _logger.LogTrace($"パレット出荷パレット置き場 [{from.Value}] から仕掛パレット置き場 [{to.Value}] に搬送します");
         var palletId = _pickupShippingStorageService.Pickup(from);
         if (palletId == null) {
             throw new InvalidOperationException($"出荷パレット置き場 [{from.Value}] からのパレット取り出しに失敗しました");
@@ -49,6 +54,7 @@ class TransportRequestService: ITransportRequestService
         _transportRecordRegister.Register(TransportType.ReturnShippingPallet, from, to);
     }
     private void ShikakariToShipping(LocationCode from, LocationCode to) {
+        _logger.LogTrace($"パレット仕掛パレット置き場 [{from.Value}] から出荷パレット置き場 [{to.Value}] に搬送します");
         var palletId = _pickupShikakariStorageService.Pickup(from);
         if (palletId == null) {
             throw new InvalidOperationException($"仕掛置き場 [{from.Value}] からのパレット取り出しに失敗しました");

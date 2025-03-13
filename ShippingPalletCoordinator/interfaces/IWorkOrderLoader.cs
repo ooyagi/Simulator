@@ -9,6 +9,7 @@ public interface IWorkOrderLoader
 public interface IWorkOrder
 {
     ShippingPalletID ShippingPalletID { get; }
+    int Priority { get; }
     IEnumerable<IWorkItem> WorkItems { get; }
 }
 public interface IWorkItem

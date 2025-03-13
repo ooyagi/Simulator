@@ -33,7 +33,7 @@ class TakeShippingPalletService: ShippingOperationCoordinator.Interfaces.ITakeSh
     /// 搬送数試算用の出荷パレット取り寄せサービス
     /// </summary>
     public void Request(LocationCode locationCode, ShippingPalletID palletId) {
-        _logger.LogInformation($"出荷パレット取り寄せ要求を受け付けました: 出荷パレット置き場 [{locationCode.Value}] 品番 [{palletId.Value}]");
+        _logger.LogInformation($"出荷パレット取り寄せ要求を受け付けました: 出荷パレット置き場 [{locationCode.Value}] パレット [{palletId.Value}]");
         try {
             var shippingPallet = _shippingPalletLoader.Find(palletId);
             if (shippingPallet == null) {

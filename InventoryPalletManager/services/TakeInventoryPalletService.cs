@@ -57,13 +57,13 @@ class TakeInventoryPalletService: ShippingOperationCoordinator.Interfaces.ITakeI
                 _logger.LogError($"一時置き場 [{tempLocationCode.Value}] が見つかりませんでした");
                 return;
             }
-            if (temporaryStorageInfo.Status == StorageStatus.Empty) {
+            if (temporaryStorageInfo.Status != StorageStatus.Empty) {
                 _logger.LogError($"一時置き場 [{tempLocationCode.Value}] は使用中です");
                 return;
             }
             _transportRequestService.Request(TransportType.TakeInventoryPallet, sourceLocationCode, tempLocationCode);
         } catch (Exception ex) {
-            _logger.LogError(ex, "在庫パレット返却処理中にエラーが発生しました");
+            _logger.LogError(ex, "在庫パレット取り寄せ処理中にエラーが発生しました");
         }
     }
 }

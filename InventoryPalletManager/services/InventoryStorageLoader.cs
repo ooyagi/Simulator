@@ -54,7 +54,8 @@ class InventoryStorageLoader: IInventoryStorageLoader, ShippingOperationCoordina
         return _context.InventoryStorages
             .Include(x => x.StoredPallet)
             .Where(x => 0 < x.StoredPallet.Quantity)
-            .Select(x => new InventoryPalletInfo(x.LocationCode, x.StoredPallet.Hinban, x.StoredPallet.Quantity));
+            .Select(x => new InventoryPalletInfo(x.LocationCode, x.StoredPallet.Hinban, x.StoredPallet.Quantity))
+            .ToList();
     }
 
     record InventoryPalletInfo(LocationCode LocationCode, Hinban Hinban, int Quantity): ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo;

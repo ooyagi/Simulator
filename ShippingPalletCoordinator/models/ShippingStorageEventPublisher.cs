@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using CommonItems.Models;
 using ShippingPalletCoordinator.Services;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace ShippingPalletCoordinator.Models;
 
@@ -31,7 +32,8 @@ class ShippingStorageEventPublisher: IShippingStorageEventPublisher, ShippingOpe
         _logger.LogDebug($"[{locationCode.Value}] からのピックアップイベントを発行します");
 
         try {
-            var shippingStorageLoader = _serviceProvider.GetRequiredService<IShippingStorageLoader>();
+            using var scope = _serviceProvider.CreateScope();
+            var shippingStorageLoader = scope.ServiceProvider.GetRequiredService<IShippingStorageLoader>();
             var stationCode = shippingStorageLoader.ConvertStationCode(locationCode);
             if (stationCode == null) {
                 _logger.LogError($"[{locationCode.Value}] は一時置き場のコードとして不正です");

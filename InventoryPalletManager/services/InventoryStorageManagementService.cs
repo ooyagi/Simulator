@@ -32,4 +32,8 @@ class InventoryStorageManagementService: IInventoryStorageManagementService
         _context.SaveChanges();
         return newStorage;
     }
+    public void Clear() {
+        _context.InventoryStorages.RemoveRange(_context.InventoryStorages);
+        _context.SaveChanges();
+    }
 }

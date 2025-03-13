@@ -11,6 +11,7 @@ public class WorkOrder
     public string Line { get; set; } = "";
     public string Size { get; set; } = "";
     public int PalletNumber { get; set; }
+    public int Priority { get; set; } = 0;      // 内部での処理順・入力情報の優先度をそのまま反映しない
     public bool Assigned { get; set; } = false;
     public IEnumerable<OrderedItem> OrderedItems { get; set; } = new List<OrderedItem>();
 
@@ -21,6 +22,7 @@ public class WorkOrder
         string line,
         string size,
         int palletNumber,
+        int priority,
         IEnumerable<OrderedItem> orderedItems
     ) {
         PalletID = palletID;
@@ -28,6 +30,7 @@ public class WorkOrder
         Line = line;
         Size = size;
         PalletNumber = palletNumber;
+        Priority = priority;
         OrderedItems = orderedItems.ToList();
     }
 }

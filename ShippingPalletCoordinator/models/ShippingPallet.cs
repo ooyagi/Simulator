@@ -8,6 +8,7 @@ public class ShippingPallet
 {
     [Key]
     public ShippingPalletID Id { get; set; } = ShippingPalletID.CustomPaletteID;
+    public int Priority { get; set; } = 0;      // 内部での処理順・入力情報の優先度をそのまま反映しない（試算時のみか？）
     public IEnumerable<ShippingPalletItem> Items { get; set; } = new List<ShippingPalletItem>();
 
     [NotMapped]
@@ -20,9 +21,11 @@ public class ShippingPallet
     public ShippingPallet() { }
     public ShippingPallet(
         ShippingPalletID id,
+        int priority,
         IEnumerable<ShippingPalletItem> items
     ) {
         Id = id;
+        Priority = priority;
         Items = items.OrderBy(x => x.Index).ToList();
     }
 

@@ -30,10 +30,15 @@ class InboundInventoryPalletServices: IInboundInventoryPalletServices
     /// 搬送数試算のためロケーションは無制限としている
     /// 空きロケーションが見つからない場合は新規ロケーションを作成する
     /// </summary>
+    /// <remarks>
+    /// 現在は在庫パレット置き場に直接新規パレットを置く形になっているが
+    /// 本番システムでは搬入口に置かれたタイミングで在庫パレットを登録するので状況が異なる
+    /// </remarks>
     public InventoryPallet Inbound(Hinban hinban) {
         var pallets = new InventoryPallet(hinban);
         var emptyStorage = _inventoryStorageLoader.FindEmptyLocation() ?? _inventoryStorageManagementService.AddAuto();
         emptyStorage.Place(pallets.Id);
+        _context.InventoryPallets.Add(pallets);
         _context.SaveChanges();
         return pallets;
     }

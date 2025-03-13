@@ -58,6 +58,7 @@ class RotateShippingPalletService: IRotateShippingPalletService
             }
             var nextShippingPallet = new ShippingPallet(
                 nextOrder.ShippingPalletID,
+                nextOrder.Priority,
                 nextOrder.WorkItems.Select(x => new ShippingPalletItem(nextOrder.ShippingPalletID, x.Hinban, x.Index)).ToList()
             );
             _inboundShippingPalletService.Inbound(nextShippingPallet);

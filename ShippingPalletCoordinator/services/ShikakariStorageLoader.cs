@@ -57,8 +57,8 @@ class ShikakariStorageLoader: Services.IShikakariStorageLoader, ShippingOperatio
         var shikakariStorages = _context.ShikakariStorages
             .Include(x => x.StoredPallet)
             .ThenInclude(x => x.Items)
-            .Where(x => x.Status == StorageStatus.InUse && x.ShippingPalletID != null)
-            .OrderBy(x => x.ShippingPalletID!.Value)
+            .Where(x => x.Status == StorageStatus.InUse && x.StoredPallet != null)
+            .OrderBy(x => x.StoredPallet.Priority)
             .ToList();
         return shikakariStorages
             .Select(x => new ShippingPalletLoadableHinbanInfo(x.LocationCode, x.StoredPallet, new List<LoadableItem>()))

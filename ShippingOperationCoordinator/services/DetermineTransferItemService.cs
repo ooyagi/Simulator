@@ -160,7 +160,11 @@ class DetermineTransferItemService: IDetermineTransferItemService
             return null;
         }
         var nextTransferDistination = shippingPallets.OrderBy(x => x.RequiredHinbanTypeCount).ThenBy(x => x.RemainStep).First();
-        var nextTransferSource = pallets.First(x => x.Hinban == nextTransferDistination.NextHinban);
+        var nextTransferSource = pallets.FirstOrDefault(x => x.Hinban == nextTransferDistination.NextHinban);
+        if (nextTransferSource == null) {
+            _logger.LogTrace($"積替え元の在庫パレットが見つかりませんでした: 出荷作業場所 [{stationCode.Value}]");
+            return null;
+        }
         return new TransferDirection(nextTransferDistination.NextHinban, nextTransferSource.LocationCode, nextTransferDistination.LocationCode);
     }
 }

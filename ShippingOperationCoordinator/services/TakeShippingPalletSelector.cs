@@ -27,6 +27,40 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
         _workOrderLoader = workOrderLoader;
     }
 
+    /// <summary>
+    /// 初回出荷パレット取り寄せ候補選定
+    /// 
+    /// 初回は一時置き場に在庫がないた
+    /// 搬送数の試算では効率化の考慮をせず指示書先頭から順に取り寄せる
+    /// 即座に持ち帰るパレットが発生する可能性はあるが初回のみのため許容する
+    /// </summary>
+    public IEnumerable<(LocationCode, ShippingPalletID)> SelectInitialShippingPallet(ShippingStationCode stationCode, IEnumerable<LocationCode> emptyLocations) {
+        _logger.LogInformation($"出荷パレット初回取り寄せ候補選定開始： 出荷作業場所 [{stationCode}]");
+        try {
+            var emptyLocationCodeQueue = new Queue<LocationCode>(emptyLocations);
+            var shikakariPallets = _shikakariStorageLoader.GetInitialPallets().ToList();
+            if(shikakariPallets.Count() <= emptyLocations.Count()) {
+                return shikakariPallets.Select(x => { 
+                    var emptyLocation = emptyLocationCodeQueue.Dequeue();
+                    return (emptyLocation, x.ShippingPalletID);
+                });
+            } else {
+                return  shikakariPallets.Take(emptyLocations.Count()).Select(x => { 
+                    var emptyLocation = emptyLocationCodeQueue.Dequeue();
+                    return (emptyLocation, x.ShippingPalletID);
+                });
+            }
+        } catch (Exception ex) {
+            _logger.LogError(ex, "出荷パレット初回取り寄せ候補選定中にエラーが発生しました");
+            throw;
+        }
+    }
+    /// <summary>
+    /// 出荷パレット取り寄せ候補選定
+    /// 
+    /// 出荷パレットの取り寄せ候補を選定する
+    /// 選定方法についてはインラインでコメントする
+    /// </summary>
     public ShippingPalletID? SelectTakeShippingPallet(ShippingStationCode stationCode) {
         _logger.LogInformation($"出荷パレット取り寄せ候補選定開始： 出荷作業場所 [{stationCode}]");
         try {

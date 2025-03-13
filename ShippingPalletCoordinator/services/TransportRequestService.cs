@@ -32,12 +32,12 @@ class TransportRequestService: ITransportRequestService
     /// 今回は搬送回数の試算のため搬送は瞬時に終わり失敗しない想定で進めるため Pickupと Placeを直接呼び出す
     /// </summary>
     public void Request(TransportType transportType, LocationCode from, LocationCode to) {
-        if (transportType == TransportType.ReturnInventoryPallet) {
+        if (transportType == TransportType.ReturnShippingPallet) {
             ShippingToShikakari(from, to);
         } else if (transportType == TransportType.TakeShippingPallet) {
             ShikakariToShipping(from, to);
         } else {
-            throw new System.Exception("未対応の搬送種別です");
+            throw new System.Exception($"未対応の搬送種別です: {transportType.Value}");
         }
     }
     private void ShippingToShikakari(LocationCode from, LocationCode to) {

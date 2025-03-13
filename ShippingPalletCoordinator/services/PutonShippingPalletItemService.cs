@@ -25,12 +25,13 @@ class PutonShippingPalletItemService: ShippingOperationCoordinator.Interfaces.IP
     }
 
     public void Puton(LocationCode locationCode, Hinban hinban) {
+        _logger.LogInformation($"出荷パレット置き場 [{locationCode}] に品番 [{hinban}] を積載します");
         var shippingStorageInfo = _shippingStorageLoader.Find(locationCode);
         if (shippingStorageInfo == null) {
             _logger.LogError($"出荷パレット置き場 [{locationCode.Value}] が見つかりませんでした");
             return;
         }
-        if (shippingStorageInfo.Status != StorageStatus.Empty || shippingStorageInfo.ShippingPalletID == null) {
+        if (shippingStorageInfo.Status == StorageStatus.Empty || shippingStorageInfo.ShippingPalletID == null) {
             _logger.LogError($"出荷パレット置き場 [{locationCode.Value}] は使用されていません");
             return;
         }

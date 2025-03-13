@@ -16,7 +16,7 @@ public class ShippingPalletTests
         IEnumerable<ILoadableItem> loadableItems,
         int expectedSteps
     ) {
-        var pallet = new ShippingPallet(palletID1, palletItems);
+        var pallet = new ShippingPallet(palletID1, 0, palletItems);
         var result = pallet.GetStepToCompletion(loadableItems);
 
         Assert.Equal(expectedSteps, result);

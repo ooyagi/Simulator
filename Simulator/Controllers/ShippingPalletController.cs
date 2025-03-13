@@ -8,11 +8,14 @@ namespace Simulator.Controllers;
 public class ShippingPalletController : ControllerBase
 {
     private readonly ShippingPalletCoordinator.Interfaces.IInitializationService _shippingPalletCoordinatorInitializationService;
+    private readonly ShippingOperationCoordinator.Interfaces.IInitializationService _shippingOperationCoordinatorInitializationService;
 
     public ShippingPalletController(
-        ShippingPalletCoordinator.Interfaces.IInitializationService shippingPalletCoordinatorInitializationService
+        ShippingPalletCoordinator.Interfaces.IInitializationService shippingPalletCoordinatorInitializationService,
+        ShippingOperationCoordinator.Interfaces.IInitializationService shippingOperationCoordinatorInitializationService
     ) {
         _shippingPalletCoordinatorInitializationService = shippingPalletCoordinatorInitializationService;
+        _shippingOperationCoordinatorInitializationService = shippingOperationCoordinatorInitializationService;
     }
 
     [HttpPost("SetInitialPallet")]
@@ -22,6 +25,8 @@ public class ShippingPalletController : ControllerBase
     }
     [HttpPost("TakeInitialPallet")] 
     public IActionResult Take() {
+        _shippingOperationCoordinatorInitializationService.TakeInitialShippingPallets();
+        _shippingOperationCoordinatorInitializationService.TakeInitialInventoryPallets();
         return Ok();
     }
     record ProductionPlan(string DeliveryDate, string Line, string Size, int PalletNumber, int Priority, Hinban Hinban): WorkOrderManagement.Interfaces.IProductPlan;

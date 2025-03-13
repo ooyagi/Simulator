@@ -32,7 +32,7 @@ public class WorkOrderLoader: ShippingOperationCoordinator.Interfaces.IWorkOrder
         }
         order.Assigned = true;
         _context.SaveChanges();
-        return new WorkOrder(order.PalletID, order.OrderedItems.Select(x => new WorkItem(x.Hinban, x.Index)));
+        return new WorkOrder(order.PalletID, order.Priority, order.OrderedItems.Select(x => new WorkItem(x.Hinban, x.Index)));
     }
     public IEnumerable<ShippingPalletID> GetUsageWorkOrderIdByHinban(Hinban hinban) {
         return _context.WorkOrders
@@ -40,6 +40,6 @@ public class WorkOrderLoader: ShippingOperationCoordinator.Interfaces.IWorkOrder
             .Select(x => x.PalletID)
             .ToList();
     }
-    record WorkOrder(ShippingPalletID ShippingPalletID, IEnumerable<ShippingPalletCoordinator.Interfaces.IWorkItem> WorkItems): ShippingPalletCoordinator.Interfaces.IWorkOrder;
+    record WorkOrder(ShippingPalletID ShippingPalletID, int Priority, IEnumerable<ShippingPalletCoordinator.Interfaces.IWorkItem> WorkItems): ShippingPalletCoordinator.Interfaces.IWorkOrder;
     record WorkItem(Hinban Hinban, int Index): ShippingPalletCoordinator.Interfaces.IWorkItem;
 }

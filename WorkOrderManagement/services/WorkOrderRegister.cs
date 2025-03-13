@@ -31,18 +31,21 @@ class WorkOrderRegister: IWorkOrderRegister
     public void Register(IEnumerable<IProductPlan> plans) {
         _logger.LogInformation("作業指示を登録します");
         try {
+            var priority = 0;
             var orders = plans
                 .GroupBy(x => new {x.DeliveryDate, x.Line, x.Size, x.PalletNumber})
                 .Select(x => {
                     var id = new ShippingPalletID(x.Key.DeliveryDate, (x.Key.Line + x.Key.Size), x.Key.PalletNumber);
                     var index = 0;
                     var items = x.Select(x => new OrderedItem(id, x.Hinban, index++)).ToList();
+                    priority++;
                     return new WorkOrder(
                         id,
                         x.Key.DeliveryDate,
                         x.Key.Line,
                         x.Key.Size,
                         x.Key.PalletNumber,
+                        priority,
                         items
                     );
                 }).ToList();

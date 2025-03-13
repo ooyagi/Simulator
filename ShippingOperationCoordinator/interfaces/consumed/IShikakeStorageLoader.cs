@@ -4,6 +4,7 @@ namespace ShippingOperationCoordinator.Interfaces;
 
 public interface IShikakariStorageLoader
 {
+    IEnumerable<IShikakariPalletLoadableHinbanInfo> GetInitialPallets();
     IEnumerable<IShikakariPalletLoadableHinbanInfo> GetLoadableFrom(IEnumerable<IInventoryPalletInfo> pallets);
     IEnumerable<ICompletablePalletInfo> FilterCompletableBy(IEnumerable<IInventoryPalletInfo> pallets);
 }

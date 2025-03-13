@@ -23,6 +23,14 @@ class TakeShippingPalletService
         _takeShippingPalletService = takeShippingPalletService;
     }
 
+    public void TakeInitialPallets(ShippingStationCode stationCode) {
+        _logger.LogInformation($"初期出荷パレット取り寄せ： 出荷作業場所[{stationCode}]");
+        var emptyLocations = _shippingStorageLoader.GetEmptyLocationCodes(stationCode);
+        var transportInfo = _takeShippingPalletSelector.SelectInitialShippingPallet(stationCode, emptyLocations);
+        foreach (var info in transportInfo) {
+            _takeShippingPalletService.Request(info.Item1, info.Item2);
+        }
+    }
     public void Take(ShippingStationCode stationCode) {
         _logger.LogInformation($"出荷パレット取り寄せ： 出荷作業場所[{stationCode}]");
         var emptyLocations = _shippingStorageLoader.GetEmptyLocationCodes(stationCode);

@@ -35,7 +35,8 @@ class TemporaryStorageLoader: ITemporaryStorageLoader, ShippingOperationCoordina
     public IEnumerable<LocationCode> GetEmptyLocationCodes(ShippingStationCode stationCode) {
         return _context.TemporaryStorages
             .Where(x => x.ShippingStationCode == stationCode && x.Status == StorageStatus.Empty)
-            .Select(x => x.LocationCode);
+            .Select(x => x.LocationCode)
+            .ToList();
     }
     public TemporaryStorage? Find(LocationCode locationCode) {
         return _context.TemporaryStorages

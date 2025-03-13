@@ -18,4 +18,8 @@ class TransportRecordRegister: ITransportRecordRegister
         _dbContext.TransportRecords.Add(transportRecord);
         _dbContext.SaveChanges();
     }
+    public void Clear() {
+        _dbContext.TransportRecords.RemoveRange(_dbContext.TransportRecords);
+        _dbContext.SaveChanges();
+    }
 }

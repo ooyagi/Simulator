@@ -27,7 +27,7 @@ class ShippingStorageLoader: Services.IShippingStorageLoader, ShippingOperationC
         return _context.ShippingStorages.FirstOrDefault(x => x.LocationCode == locationCode)?.ShippingStationCode;
     }
     public ShippingStorage? Find(LocationCode locationCode) {
-        return _context.ShippingStorages.FirstOrDefault(x => x.LocationCode == locationCode);
+        return _context.ShippingStorages.Include(x => x.StoredPallet).ThenInclude(x => x.Items).FirstOrDefault(x => x.LocationCode == locationCode);
     }
     public IEnumerable<LocationCode> GetEmptyLocationCodes(ShippingStationCode stationCode) {
         return _context.ShippingStorages
@@ -41,12 +41,14 @@ class ShippingStorageLoader: Services.IShippingStorageLoader, ShippingOperationC
     public IEnumerable<ShippingOperationCoordinator.Interfaces.IShippingPalletInfo> All(ShippingStationCode stationCode) {
         return _context.ShippingStorages
             .Include(x => x.StoredPallet)
+            .ThenInclude(x => x.Items)
             .Where(x => x.ShippingStationCode == stationCode && x.ShippingPalletID != null)
             .Select(x => new ShippingPalletInfo(x.LocationCode, x.ShippingPalletID, x.StoredPallet.NextHinban, x.StoredPallet.IsCompleted));
     }
     public IEnumerable<ShippingOperationCoordinator.Interfaces.ICompletablePalletInfo> FilterCompletableBy(ShippingStationCode stationCode, IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> loadablePallets) {
         var shippingStorages = _context.ShippingStorages
             .Include(x => x.StoredPallet)
+            .ThenInclude(x => x.Items)
             .Where(x => x.ShippingStationCode == stationCode && x.Status == StorageStatus.InUse)
             .ToList();
         var loadableItems = loadablePallets.Select(x => new LoadableItem(x.Hinban, x.Quantity)).ToList();
@@ -59,6 +61,7 @@ class ShippingStorageLoader: Services.IShippingStorageLoader, ShippingOperationC
     public IEnumerable<ShippingOperationCoordinator.Interfaces.IShippingPalletLoadableHinbanInfo> GetLoadableFrom(ShippingStationCode stationCode, IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> loadablePallets) {
         var shippingStorages = _context.ShippingStorages
             .Include(x => x.StoredPallet)
+            .ThenInclude(x => x.Items)
             .Where(x => x.ShippingStationCode == stationCode && x.Status == StorageStatus.InUse)
             .ToList();
         var loadableItems = loadablePallets.Select(x => new LoadableItem(x.Hinban, x.Quantity)).ToList();

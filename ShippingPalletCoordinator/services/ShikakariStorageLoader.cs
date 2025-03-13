@@ -16,7 +16,7 @@ class ShikakariStorageLoader: Services.IShikakariStorageLoader, ShippingOperatio
     }
 
     public ShikakariStorage? Find(LocationCode locationCode) {
-        return _context.ShikakariStorages.FirstOrDefault(s => s.LocationCode == locationCode);
+        return _context.ShikakariStorages.Include(x => x.StoredPallet).ThenInclude(x => x.Items).FirstOrDefault(s => s.LocationCode == locationCode);
     }
     public LocationCode? FindStoredLocation(ShippingPalletID palletId) {
         var storage = _context.ShikakariStorages.FirstOrDefault(s => s.ShippingPalletID == palletId);
@@ -31,6 +31,7 @@ class ShikakariStorageLoader: Services.IShikakariStorageLoader, ShippingOperatio
     public IEnumerable<ShippingOperationCoordinator.Interfaces.ICompletablePalletInfo> FilterCompletableBy(IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> loadablePallets) {
         var shikakariStorages = _context.ShikakariStorages
             .Include(x => x.StoredPallet)
+            .ThenInclude(x => x.Items)
             .Where(x => x.Status == StorageStatus.InUse)
             .ToList();
         var loadableItems = loadablePallets.Select(x => new LoadableItem(x.Hinban, x.Quantity)).ToList();
@@ -42,13 +43,25 @@ class ShikakariStorageLoader: Services.IShikakariStorageLoader, ShippingOperatio
 
     }
     public IEnumerable<ShippingOperationCoordinator.Interfaces.IShikakariPalletLoadableHinbanInfo> GetLoadableFrom(IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> loadablePallets) {
-        var shippingStorages = _context.ShippingStorages
+        var shikakariStorages = _context.ShikakariStorages
             .Include(x => x.StoredPallet)
+            .ThenInclude(x => x.Items)
             .Where(x => x.Status == StorageStatus.InUse)
             .ToList();
         var loadableItems = loadablePallets.Select(x => new LoadableItem(x.Hinban, x.Quantity)).ToList();
-        return shippingStorages
+        return shikakariStorages
             .Select(x => new ShippingPalletLoadableHinbanInfo(x.LocationCode, x.StoredPallet, loadableItems))
+            .ToList();
+    }
+    public IEnumerable<ShippingOperationCoordinator.Interfaces.IShikakariPalletLoadableHinbanInfo> GetInitialPallets() {
+        var shikakariStorages = _context.ShikakariStorages
+            .Include(x => x.StoredPallet)
+            .ThenInclude(x => x.Items)
+            .Where(x => x.Status == StorageStatus.InUse && x.ShippingPalletID != null)
+            .OrderBy(x => x.ShippingPalletID!.Value)
+            .ToList();
+        return shikakariStorages
+            .Select(x => new ShippingPalletLoadableHinbanInfo(x.LocationCode, x.StoredPallet, new List<LoadableItem>()))
             .ToList();
     }
 

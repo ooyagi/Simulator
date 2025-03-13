@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using CommonItems.Models;
 using WorkOrderManagement.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorkOrderManagement.Services;
 
@@ -18,7 +19,8 @@ public class WorkOrderLoader: ShippingOperationCoordinator.Interfaces.IWorkOrder
     }
 
     public ShippingPalletCoordinator.Interfaces.IWorkOrder? GetNextOrder() {
-        var order = _context.WorkOrders.Where(x => x.Assigned == false)
+        var order = _context.WorkOrders.Include(x => x.OrderedItems)
+            .Where(x => x.Assigned == false)
             .OrderBy(x => x.DeliveryDate)
             .ThenBy(x => x.Line)
             .ThenBy(x => x.Size)

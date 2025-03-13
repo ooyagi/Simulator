@@ -31,7 +31,8 @@ class TemporaryStorageEventPublisher: ITemporaryStorageEventPublisher, ShippingO
         _logger.LogDebug($"[{locationCode.Value}] からのピックアップイベントを発行します");
 
         try {
-            var temporaryStorageLoader = _serviceProvider.GetRequiredService<ITemporaryStorageLoader>();
+            using var scope = _serviceProvider.CreateScope();
+            var temporaryStorageLoader = scope.ServiceProvider.GetRequiredService<ITemporaryStorageLoader>();
             var stationCode = temporaryStorageLoader.ConvertStationCode(locationCode);
             if (stationCode == null) {
                 _logger.LogError($"[{locationCode.Value}] は一時置き場のコードとして不正です");
@@ -40,7 +41,7 @@ class TemporaryStorageEventPublisher: ITemporaryStorageEventPublisher, ShippingO
             var pickupEvent = new PickupEvent(stationCode);
             _pickupEventSubject.OnNext(pickupEvent);
         } catch (Exception ex) {
-        _logger.LogError(ex, $"[{locationCode.Value}] からのピックアップイベントの発行に失敗しました");
+            _logger.LogError(ex, $"[{locationCode.Value}] からのピックアップイベントの発行に失敗しました");
         }
     }
 

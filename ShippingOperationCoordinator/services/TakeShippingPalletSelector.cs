@@ -45,6 +45,7 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
             // 仕掛パレットの積込情報を取得
             var shikakariPallets = _shikakariStorageLoader.GetLoadableFrom(tempStorageItems);
             if (!shikakariPallets.Any()) {
+                _logger.LogWarning("積込可能な仕掛パレットが見つかりませんでした");
                 return null;
             }
 

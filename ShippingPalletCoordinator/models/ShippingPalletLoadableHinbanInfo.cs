@@ -17,6 +17,7 @@ class ShippingPalletLoadableHinbanInfo: ShippingOperationCoordinator.Interfaces.
     public int RemainStep => _items.Count(x => !x.IsCompleted);
     public int RequiredHinbanTypeCount => _items.Where(x => !x.IsCompleted).Select(x => x.Hinban).Distinct().Count();
     public int BlockHinbanLoadableCount => _blockHinbanLoadableCount;
+    public bool IsLoadable => _loadableItems.Any(x => x.Hinban == NextHinban);
 
     List<ShippingPalletItem> _items;
     List<LocalLoadableItem> _loadableItems;

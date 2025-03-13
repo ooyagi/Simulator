@@ -243,8 +243,8 @@ public class DetermineTransferItemServiceTests
             var testTempPallet2 = new TestAvarableHinban(new LocationCode("T02"), testHinban2, 10);
             var testShipPalletInfo1 = CreateTestShippingPalletLoadableInfo(new LocationCode("SP01"), ShippingPalletID.CustomPaletteID, testHinban1, 0, false);
             var testShipPalletInfo2 = CreateTestShippingPalletLoadableInfo(new LocationCode("SP02"), ShippingPalletID.CustomPaletteID, testHinban2, 0, false);
-            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, true, 0);
-            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, false, 0);
+            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, true, 0, true);
+            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, false, 0, true);
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
@@ -288,8 +288,8 @@ public class DetermineTransferItemServiceTests
             var testTempPallet2 = new TestAvarableHinban(new LocationCode("T02"), testHinban2, quantity2);
             var testShipPalletInfo1 = CreateTestShippingPalletLoadableInfo(new LocationCode("SP01"), ShippingPalletID.CustomPaletteID, testHinban1, 0, false);
             var testShipPalletInfo2 = CreateTestShippingPalletLoadableInfo(new LocationCode("SP02"), ShippingPalletID.CustomPaletteID, testHinban2, 0, false);
-            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, false, 0);
-            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, false, 0);
+            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, false, 0, true);
+            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, false, 0, true);
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
@@ -378,8 +378,8 @@ public class DetermineTransferItemServiceTests
             var testTempPallet2 = new TestAvarableHinban(new LocationCode("T02"), testHinban2, 14);
             var testShipPalletInfo1 = CreateTestShippingPalletLoadableInfo(new LocationCode("SP01"), ShippingPalletID.CustomPaletteID, testHinban1, step1, false);
             var testShipPalletInfo2 = CreateTestShippingPalletLoadableInfo(new LocationCode("SP02"), ShippingPalletID.CustomPaletteID, testHinban2, step2, false);
-            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, true, 0);
-            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, true, 0);
+            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban1, Hinban.Default, 0, 0, true, 0, true);
+            var testShikakariPalletInfo2 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK02"), ShippingPalletID.CustomPaletteID, testHinban2, Hinban.Default, 0, 0, true, 0, true);
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
@@ -422,7 +422,7 @@ public class DetermineTransferItemServiceTests
             var testTempPallet = new TestAvarableHinban(new LocationCode("T01"), testHinban, 10);
             var testShipPalletInfo1 = CreateTestShippingPalletLoadableInfo(new LocationCode("SP01"), ShippingPalletID.CustomPaletteID, testHinban, step1, false);
             var testShipPalletInfo2 = CreateTestShippingPalletLoadableInfo(new LocationCode("SP02"), ShippingPalletID.CustomPaletteID, testHinban, step2, false);
-            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban, Hinban.Default, 0, 0, true, 0);
+            var testShikakariPalletInfo1 = new TestShikakariPalletLoadableHinbanInfo(new LocationCode("SK01"), ShippingPalletID.CustomPaletteID, testHinban, Hinban.Default, 0, 0, true, 0, true);
             
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode))
@@ -462,7 +462,7 @@ public record TestShippingPalletLoadableHinbanInfo(LocationCode LocationCode, Sh
     public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => hinban == NextHinban && IsLoadableQuantityGreaterThanResult;
     public bool IsCompletableBy(IInventoryPalletInfo pickableItem) => false;
 }
-public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RequiredHinbanTypeCount, int RemainStep, bool IsLoadableQuantityGreaterThanResult, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
+public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RequiredHinbanTypeCount, int RemainStep, bool IsLoadableQuantityGreaterThanResult, int BlockHinbanLoadableCount, bool IsLoadable): IShikakariPalletLoadableHinbanInfo
 {
     // 実際にはNextHinbanは IsLoadableQuantityGreaterThan の判定に使用しないが、テストの際に複数の候補がある場合にどの候補が選ばれるかを確認するために使用する
     public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => hinban == NextHinban && IsLoadableQuantityGreaterThanResult;

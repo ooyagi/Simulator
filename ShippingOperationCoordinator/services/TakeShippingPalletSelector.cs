@@ -28,6 +28,25 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
     }
 
     /// <summary>
+    /// 出荷パレットが取り寄せ可能か確認
+    /// 
+    /// 仕掛作業場所のパレットに現在一時置き場に置かれた在庫を利用すして積み込み作業が行えるパレットがあるか確認する
+    /// </summary>
+    /// <param name="stationCode"></param>
+    /// <returns></returns>
+    public bool CheckEnableShippingPalletInShikakariStorage(ShippingStationCode stationCode) {
+        _logger.LogTrace($"出荷パレット取り寄せ可能チェック： 出荷作業場所 [{stationCode}]");
+        try {
+            var tempStorageItems = _tempStorageLoader.GetAvarableHinbans(stationCode).Select(x => new TemporaryStoragePalletInfo(x.LocationCode, x.Hinban, x.Quantity)).ToList();
+            var shikakariPallets = _shikakariStorageLoader.GetLoadableFrom(tempStorageItems);
+            return shikakariPallets.Any(x => x.IsLoadable);
+        } catch (Exception ex) {
+            _logger.LogError(ex, "出荷パレット取り寄せ可能チェック中にエラーが発生しました");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// 初回出荷パレット取り寄せ候補選定
     /// 
     /// 初回は一時置き場に在庫がないた

@@ -353,7 +353,7 @@ public class TakeShippingPalletSelectorTest
     public record TestCompletablePalletInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, int RemainStep): ICompletablePalletInfo;
     public record AvalableHinban(LocationCode LocationCode, Hinban Hinban, int Quantity): IInventoryPalletInfo;
     public record TestEmptiablePalletInfo(LocationCode LocationCode, Hinban Hinban, int EmptiableStep): IEmptiablePalletInfo;
-    public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int RequiredHinbanTypeCount, int BlockHinbanLoadableCount): IShikakariPalletLoadableHinbanInfo
+    public record TestShikakariPalletLoadableHinbanInfo(LocationCode LocationCode, ShippingPalletID ShippingPalletID, Hinban NextHinban, Hinban BlockHinban, int RemainStep, int RequiredHinbanTypeCount, int BlockHinbanLoadableCount, bool IsLoadable): IShikakariPalletLoadableHinbanInfo
     {
         public bool IsLoadableQuantityGreaterThan(Hinban hinban, int quantity) => false;
         public bool IsCompletableBy(IInventoryPalletInfo inventoryPallet) => false;

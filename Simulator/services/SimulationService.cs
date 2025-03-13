@@ -31,11 +31,15 @@ public class SimulationService: ISimulationService
         foreach (var station in stations) {
             _logger.LogInformation($"出荷作業場所 [{station.Code}] の処理を実行します");
             bool transfer = _transferService.ExecuteTransfer(station.Code);
+            if (transfer) {
+                continue;
+            }
             bool changeShippingPallet = _changeShippingPalletService.Change(station.Code);
             bool changeEmptyPallet = _changeInventoryPalletService.ChangeEmptyPallet(station.Code);
-            if (!transfer && !changeShippingPallet && !changeEmptyPallet) {
-                _changeInventoryPalletService.Change(station.Code);
+            if (changeShippingPallet || changeEmptyPallet) {
+                continue;
             }
+            _changeInventoryPalletService.Change(station.Code);
         }
     }
 }

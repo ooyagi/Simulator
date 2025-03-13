@@ -35,7 +35,8 @@ class WorkOrderRegister: IWorkOrderRegister
                 .GroupBy(x => new {x.DeliveryDate, x.Line, x.Size, x.PalletNumber})
                 .Select(x => {
                     var id = new ShippingPalletID(x.Key.DeliveryDate, (x.Key.Line + x.Key.Size), x.Key.PalletNumber);
-                    var items = x.Select(x => new OrderedItem(id, x.Hinban, x.Priority));
+                    var index = 0;
+                    var items = x.Select(x => new OrderedItem(id, x.Hinban, index++)).ToList();
                     return new WorkOrder(
                         id,
                         x.Key.DeliveryDate,

@@ -28,17 +28,15 @@ class ReturnShippingPalletSelector: IReturnShippingPalletSelector
         if (completedPallet != null) {
             return completedPallet.LocationCode;
         }
+        _logger.LogTrace("未完了の出荷パレットが見つかりませんでした");
         var returnablePallets = shippingPallets
             .FirstOrDefault(p => {
                 if (p.NextHinban == null) {
-                    return false;
+                    return true;
                 }
                 var tmp = _tempStorageLoader.IsPickable(stationCode, p.NextHinban);
                 return !tmp;
             });
-        if (returnablePallets != null) {
-            return returnablePallets.LocationCode;
-        }
-        return null;
+        return returnablePallets?.LocationCode;
     }
 }

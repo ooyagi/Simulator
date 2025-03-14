@@ -25,7 +25,7 @@ public class ShippingStorageEventSubscriber: IDisposable
 
         try {
             using var scope = _serviceProvider.CreateScope();
-            var takeService = scope.ServiceProvider.GetRequiredService<TakeShippingPalletService>();
+            var takeService = scope.ServiceProvider.GetRequiredService<ITakeShippingPalletService>();
             takeService.Take(palletReturnEvent.StationCode);
         } catch (Exception ex) {
             _logger.LogError(ex, "出荷パレット取り寄せ処理中にエラーが発生しました");

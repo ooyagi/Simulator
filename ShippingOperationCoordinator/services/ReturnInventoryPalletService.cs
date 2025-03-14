@@ -7,20 +7,30 @@ namespace ShippingOperationCoordinator.Services;
 class ReturnInventoryPalletService: IChangeInventoryPalletService
 {
     private readonly ILogger<ReturnInventoryPalletService> _logger;
+    private readonly ITempStorageLoader _tempStorageLoader;
     private readonly IReturnInventoryPalletSelector _returnInventoryPalletSelector;
     private readonly IReturnInventoryPalletService _returnInventoryPalletService;
+    private readonly Services.ITakeInventoryPalletService _takeInventoryPalletService;
 
     public ReturnInventoryPalletService(
         ILogger<ReturnInventoryPalletService> logger,
+        ITempStorageLoader tempStorageLoader,
         IReturnInventoryPalletSelector returnInventoryPalletSelector,
-        IReturnInventoryPalletService returnInventoryPalletService
+        IReturnInventoryPalletService returnInventoryPalletService,
+        Services.ITakeInventoryPalletService takeInventoryPalletService
     ) {
         _logger = logger;
+        _tempStorageLoader = tempStorageLoader;
         _returnInventoryPalletSelector = returnInventoryPalletSelector;
         _returnInventoryPalletService = returnInventoryPalletService;
+        _takeInventoryPalletService = takeInventoryPalletService;
     }
 
     public bool Change(ShippingStationCode stationCode) {
+        if (_tempStorageLoader.GetEmptyLocationCodes(stationCode).Any()) {
+            _takeInventoryPalletService.Take(stationCode);
+            return true;
+        }
         return Return(stationCode);
     }
 

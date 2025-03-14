@@ -7,19 +7,43 @@ namespace ShippingOperationCoordinator.Services;
 class ReturnShippingPalletService: IChangeShippingPalletService
 {
     private readonly ILogger<ReturnShippingPalletService> _logger;
+    private readonly IShippingStorageLoader _shippingStorageLoader;
     private readonly IReturnShippingPalletSelector _returnShippingPalletSelector;
+    private readonly ITakeShippingPalletSelector _takeShippingPalletSelector;
     private readonly IReturnShippingPalletService _returnShippingPalletService;
+    private readonly ITakeShippingPalletService _takeShippingPalletService;
 
     public ReturnShippingPalletService(
         ILogger<ReturnShippingPalletService> logger,
+        IShippingStorageLoader shippingStorageLoader,
         IReturnShippingPalletSelector returnShippingPalletSelector,
-        IReturnShippingPalletService returnShippingPalletService
+        ITakeShippingPalletSelector takeShippingPalletSelector,
+        IReturnShippingPalletService returnShippingPalletService,
+        ITakeShippingPalletService takeShippingPalletService
     ) {
         _logger = logger;
+        _shippingStorageLoader = shippingStorageLoader;
         _returnShippingPalletSelector = returnShippingPalletSelector;
+        _takeShippingPalletSelector = takeShippingPalletSelector;
         _returnShippingPalletService = returnShippingPalletService;
+        _takeShippingPalletService = takeShippingPalletService;
     }
 
+    public bool TakeInEmptyLocation(ShippingStationCode stationCode) {
+        var emptyLocations = _shippingStorageLoader.GetEmptyLocationCodes(stationCode);
+        var empty = emptyLocations.Any();
+        if (empty && _takeShippingPalletSelector.CheckEnableShippingPalletInShikakariStorage(stationCode)) {
+            // 出荷パレット置き場に空きがあり、仕掛パレット置き場に取り寄せるべきパレットがあれば取り寄せを行う
+            _takeShippingPalletService.Take(stationCode);
+            return true;
+        } else if (empty && _takeShippingPalletSelector.SelectInitialShippingPallet(stationCode, emptyLocations).Any()) {
+            // 出荷パレット置き場に空きがあり、仕掛パレット置き場に取り寄せるべきパレットがない場合も
+            // 取り寄せ可能な取り敢えず取り寄せを行う
+            _takeShippingPalletService.TakeInitialPallets(stationCode);
+            return true;
+        }
+        return false;
+    }
     public bool Change(ShippingStationCode stationCode) {
         return Return(stationCode);
     }

@@ -23,8 +23,13 @@ public class ReturnInventoryPalletServiceTest
             mock.Setup(m => m.Request(It.IsAny<LocationCode>()));
             return mock.Object;
         }))();
-
-        return new ReturnInventoryPalletService(logger, returnInventoryPalletSelector, returnInventoryPalletService);
+        var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
+        tempStorageLoaderMock.Setup(m => m.GetEmptyLocationCodes(It.IsAny<ShippingStationCode>())).Returns(new List<LocationCode>());
+        var tempStorageLoader = tempStorageLoaderMock.Object;
+        var takeInventoryPalletServiceMock = new Mock<Services.ITakeInventoryPalletService>();
+        takeInventoryPalletServiceMock.Setup(m => m.Take(It.IsAny<ShippingStationCode>()));
+        var takeInventoryPalletService = takeInventoryPalletServiceMock.Object;
+        return new ReturnInventoryPalletService(logger, tempStorageLoader, returnInventoryPalletSelector, returnInventoryPalletService, takeInventoryPalletService);
     }
 
     public class Return

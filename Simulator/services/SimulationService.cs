@@ -40,7 +40,7 @@ public class SimulationService: ISimulationService
         var stations = _shippingStationLoader.All();
         foreach (var station in stations) {
             _logger.LogInformation($"出荷作業場所 [{station.Code}] の処理を実行します");
-
+            _ = _changeShippingPalletService.TakeInEmptyLocation(station.Code);
             bool transfer = _transferService.ExecuteTransfer(station.Code);
             if (transfer) {
                 continue;

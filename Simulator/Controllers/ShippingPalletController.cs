@@ -29,5 +29,4 @@ public class ShippingPalletController : ControllerBase
         _shippingOperationCoordinatorInitializationService.TakeInitialInventoryPallets();
         return Ok();
     }
-    record ProductionPlan(string DeliveryDate, string Line, string Size, int PalletNumber, int Priority, Hinban Hinban): WorkOrderManagement.Interfaces.IProductPlan;
 }

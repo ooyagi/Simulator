@@ -31,8 +31,8 @@ public static class AddShippingOperationCoordinatorExtensions
         services.AddSingleton<ShippingStorageEventSubscriber>();
         services.AddSingleton<TemporaryStorageEventSubscriber>();
 
-        services.AddScoped<TakeShippingPalletService>();
-        services.AddScoped<TakeInventoryPalletService>();
+        services.AddScoped<Services.ITakeShippingPalletService, TakeShippingPalletService>();
+        services.AddScoped<Services.ITakeInventoryPalletService, TakeInventoryPalletService>();
         services.AddScoped<IShippingStationManagementService, ShippingStationManagementService>();
         services.AddScoped<IDetermineTransferItemService, DetermineTransferItemService>();
         services.AddScoped<IReturnInventoryPalletSelector, ReturnInventoryPalletSelector>();

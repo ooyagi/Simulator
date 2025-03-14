@@ -105,7 +105,11 @@ class DetermineTransferItemService: IDetermineTransferItemService
             return null;
         }
         var nextTrasnferSource = emptiablePallets.OrderBy(x => x.Quantity).First();
-        var nextTransferDestination = shippingPallets.Where(shpPallet => shpPallet.NextHinban == nextTrasnferSource.Hinban).OrderBy(x => x.RemainStep).First();
+        var nextTransferDestination = shippingPallets.Where(shpPallet => shpPallet.NextHinban == nextTrasnferSource.Hinban).OrderBy(x => x.RemainStep).FirstOrDefault();
+        if (nextTransferDestination == null) {
+            _logger.LogTrace($"積替え先の出荷パレットが見つかりませんでした: 出荷作業場所 [{stationCode.Value}] 詰め替え品番 [{nextTrasnferSource.Hinban.Value}]");
+            return null;
+        }
         return new TransferDirection(nextTrasnferSource.Hinban, nextTrasnferSource.LocationCode, nextTransferDestination.LocationCode);
     }
     /// <summary>

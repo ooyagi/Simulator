@@ -33,9 +33,9 @@ class WorkOrderRegister: IWorkOrderRegister
         try {
             var priority = 0;
             var orders = plans
-                .GroupBy(x => new {x.DeliveryDate, x.Line, x.Size, x.PalletNumber})
+                .GroupBy(x => new {x.DeliveryDate, x.Line, x.Size, x.ShippingBay, x.PalletNumber})
                 .Select(x => {
-                    var id = new ShippingPalletID(x.Key.DeliveryDate, (x.Key.Line + x.Key.Size), x.Key.PalletNumber);
+                    var id = new ShippingPalletID(x.Key.DeliveryDate, (x.Key.Line + x.Key.Size + x.Key.ShippingBay), x.Key.PalletNumber);
                     var index = 0;
                     var items = x.Select(x => new OrderedItem(id, x.Hinban, index++)).ToList();
                     priority++;

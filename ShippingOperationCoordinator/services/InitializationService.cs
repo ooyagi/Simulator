@@ -12,16 +12,16 @@ class InitializationService: IInitializationService
     private readonly ShippingOperationSettings _config;
     private readonly IShippingStationLoader _shippingStationLoader;
     private readonly IShippingStationManagementService _shippingStationManagementService;
-    private readonly TakeShippingPalletService _takeShippingPalletService;
-    private readonly TakeInventoryPalletService _takeInventoryPalletService;
+    private readonly Services.ITakeShippingPalletService _takeShippingPalletService;
+    private readonly Services.ITakeInventoryPalletService _takeInventoryPalletService;
 
     public InitializationService(
         ILogger<InitializationService> logger,
         IOptions<ShippingOperationSettings> options,
         IShippingStationLoader shippingStationLoader,
         IShippingStationManagementService shippingStationManagementService,
-        TakeShippingPalletService takeShippingPalletService,
-        TakeInventoryPalletService takeInventoryPalletService
+        ITakeShippingPalletService takeShippingPalletService,
+        ITakeInventoryPalletService takeInventoryPalletService
     ) {
         _logger = logger;
         _config = options.Value;

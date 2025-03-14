@@ -13,6 +13,7 @@ public interface IProductPlan
     string DeliveryDate { get; }
     string Line { get; }
     string Size { get; }
+    string ShippingBay { get; }
     int PalletNumber { get; }
     int Priority { get; }
     Hinban Hinban { get; }

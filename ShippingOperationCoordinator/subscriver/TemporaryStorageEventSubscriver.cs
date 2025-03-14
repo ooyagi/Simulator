@@ -25,7 +25,7 @@ public class TemporaryStorageEventSubscriber: IDisposable
 
         try {
             using var scope = _serviceProvider.CreateScope();
-            var takeService = scope.ServiceProvider.GetRequiredService<TakeInventoryPalletService>();
+            var takeService = scope.ServiceProvider.GetRequiredService<ITakeInventoryPalletService>();
             takeService.Take(palletReturnEvent.StationCode);
         } catch (Exception ex) {
             _logger.LogError(ex, "在庫パレット取り寄せ処理中にエラーが発生しました");

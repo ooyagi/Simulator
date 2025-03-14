@@ -4,18 +4,18 @@ using ShippingOperationCoordinator.Interfaces;
 
 namespace ShippingOperationCoordinator.Services;
 
-class TakeInventoryPalletService
+class TakeInventoryPalletService: Services.ITakeInventoryPalletService
 {
     private readonly ILogger<TakeInventoryPalletService> _logger;
     private readonly ITempStorageLoader _tempStorageLoader;
     private readonly ITakeInventoryPalletSelector _takeInventoryPalletSelector;
-    private readonly ITakeInventoryPalletService _takeInventoryPalletService;
+    private readonly Interfaces.ITakeInventoryPalletService _takeInventoryPalletService;
 
     public TakeInventoryPalletService(
         ILogger<TakeInventoryPalletService> logger,
         ITempStorageLoader tempStorageLoader,
         ITakeInventoryPalletSelector takeInventoryPalletSelector,
-        ITakeInventoryPalletService takeInventoryPalletService
+        Interfaces.ITakeInventoryPalletService takeInventoryPalletService
     ) {
         _logger = logger;
         _tempStorageLoader = tempStorageLoader;

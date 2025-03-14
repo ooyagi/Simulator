@@ -10,7 +10,7 @@ public class TakeShippingPalletServiceTest
     private static TakeShippingPalletService CreateService(
         IShippingStorageLoader? shippingStorageLoaderParam = null,
         ITakeShippingPalletSelector? takeShippingPalletSelectorParam = null,
-        ITakeShippingPalletService? takeShippingPalletServiceParam = null
+        Interfaces.ITakeShippingPalletService? takeShippingPalletServiceParam = null
     ) {
         var logger = NullLogger<TakeShippingPalletService>.Instance;
         var shippingStorageLoader = shippingStorageLoaderParam ?? ((Func<IShippingStorageLoader>)(() => {
@@ -23,8 +23,8 @@ public class TakeShippingPalletServiceTest
             mock.Setup(x => x.SelectTakeShippingPallet(It.IsAny<ShippingStationCode>())).Returns((ShippingPalletID?)null);
             return mock.Object;
         }))();
-        var takeShippingPalletService = takeShippingPalletServiceParam ?? ((Func<ITakeShippingPalletService>)(() => {
-            var mock = new Mock<ITakeShippingPalletService>();
+        var takeShippingPalletService = takeShippingPalletServiceParam ?? ((Func<Interfaces.ITakeShippingPalletService>)(() => {
+            var mock = new Mock<Interfaces.ITakeShippingPalletService>();
             mock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<ShippingPalletID>()));
             return mock.Object;
         }))();
@@ -43,7 +43,7 @@ public class TakeShippingPalletServiceTest
             var stationCode = new ShippingStationCode("ST01");
             var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
             shippingStorageLoaderMock.Setup(x => x.GetEmptyLocationCodes(It.IsAny<ShippingStationCode>())).Returns(Enumerable.Empty<LocationCode>());
-            var takeShippingPalletServiceMock = new Mock<ITakeShippingPalletService>();
+            var takeShippingPalletServiceMock = new Mock<Interfaces.ITakeShippingPalletService>();
             takeShippingPalletServiceMock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<ShippingPalletID>()));
             var service = CreateService(
                 shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
@@ -66,7 +66,7 @@ public class TakeShippingPalletServiceTest
             shippingStorageLoaderMock.Setup(x => x.GetEmptyLocationCodes(It.IsAny<ShippingStationCode>())).Returns(emptyLocations);
             var takeShippingPalletSelectorMock = new Mock<ITakeShippingPalletSelector>();
             takeShippingPalletSelectorMock.Setup(x => x.SelectTakeShippingPallet(It.IsAny<ShippingStationCode>())).Returns((ShippingPalletID?)null);
-            var takeShippingPalletServiceMock = new Mock<ITakeShippingPalletService>();
+            var takeShippingPalletServiceMock = new Mock<Interfaces.ITakeShippingPalletService>();
             takeShippingPalletServiceMock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<ShippingPalletID>()));
             var service = CreateService(
                 shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
@@ -95,7 +95,7 @@ public class TakeShippingPalletServiceTest
             shippingStorageLoaderMock.Setup(x => x.GetEmptyLocationCodes(It.IsAny<ShippingStationCode>())).Returns(emptyLocations);
             var takeShippingPalletSelectorMock = new Mock<ITakeShippingPalletSelector>();
             takeShippingPalletSelectorMock.Setup(x => x.SelectTakeShippingPallet(It.IsAny<ShippingStationCode>())).Returns(expectedPalletId);
-            var takeShippingPalletServiceMock = new Mock<ITakeShippingPalletService>();
+            var takeShippingPalletServiceMock = new Mock<Interfaces.ITakeShippingPalletService>();
             takeShippingPalletServiceMock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<ShippingPalletID>()));
             var service = CreateService(
                 shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
@@ -128,7 +128,7 @@ public class TakeShippingPalletServiceTest
                         return (ShippingPalletID?)null;
                     }
                 });
-            var takeShippingPalletServiceMock = new Mock<ITakeShippingPalletService>();
+            var takeShippingPalletServiceMock = new Mock<Interfaces.ITakeShippingPalletService>();
             takeShippingPalletServiceMock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<ShippingPalletID>()));
             var service = CreateService(
                 shippingStorageLoaderParam: shippingStorageLoaderMock.Object,

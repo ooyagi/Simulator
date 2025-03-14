@@ -10,7 +10,7 @@ public class TakeInventoryPalletServiceTest
     private static TakeInventoryPalletService CreateService(
         ITempStorageLoader? tempStorageLoaderParam = null,
         ITakeInventoryPalletSelector? takeInventoryPalletSelectorParam = null,
-        ITakeInventoryPalletService? takeInventoryPalletServiceParam = null
+        Interfaces.ITakeInventoryPalletService? takeInventoryPalletServiceParam = null
     ) {
         var logger = NullLogger<TakeInventoryPalletService>.Instance;
         var tempStorageLoader = tempStorageLoaderParam ?? ((Func<ITempStorageLoader>)(() => {
@@ -23,8 +23,8 @@ public class TakeInventoryPalletServiceTest
             mock.Setup(x => x.SelectTakeInventoryPallet(It.IsAny<ShippingStationCode>())).Returns((Hinban?)null);
             return mock.Object;
         }))();
-        var takeInventoryPalletService = takeInventoryPalletServiceParam ?? ((Func<ITakeInventoryPalletService>)(() => {
-            var mock = new Mock<ITakeInventoryPalletService>();
+        var takeInventoryPalletService = takeInventoryPalletServiceParam ?? ((Func<Interfaces.ITakeInventoryPalletService>)(() => {
+            var mock = new Mock<Interfaces.ITakeInventoryPalletService>();
             mock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<Hinban>()));
             return mock.Object;
         }))();
@@ -43,7 +43,7 @@ public class TakeInventoryPalletServiceTest
             var stationCode = new ShippingStationCode("ST01");
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetEmptyLocationCodes(It.IsAny<ShippingStationCode>())).Returns(Enumerable.Empty<LocationCode>());
-            var takeInventoryPalletServiceMock = new Mock<ITakeInventoryPalletService>();
+            var takeInventoryPalletServiceMock = new Mock<Interfaces.ITakeInventoryPalletService>();
             takeInventoryPalletServiceMock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<Hinban>()));
             var service = CreateService(
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
@@ -65,7 +65,7 @@ public class TakeInventoryPalletServiceTest
             tempStorageLoaderMock.Setup(x => x.GetEmptyLocationCodes(It.IsAny<ShippingStationCode>())).Returns(emptyLocations);
             var takeInventoryPalletSelectorMock = new Mock<ITakeInventoryPalletSelector>();
             takeInventoryPalletSelectorMock.Setup(x => x.SelectTakeInventoryPallet(It.IsAny<ShippingStationCode>())).Returns((Hinban?)null);
-            var takeInventoryPalletServiceMock = new Mock<ITakeInventoryPalletService>();
+            var takeInventoryPalletServiceMock = new Mock<Interfaces.ITakeInventoryPalletService>();
             takeInventoryPalletServiceMock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<Hinban>()));
             var service = CreateService(
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
@@ -93,7 +93,7 @@ public class TakeInventoryPalletServiceTest
             tempStorageLoaderMock.Setup(x => x.GetEmptyLocationCodes(It.IsAny<ShippingStationCode>())).Returns(testLocations);
             var takeInventoryPalletSelectorMock = new Mock<ITakeInventoryPalletSelector>();
             takeInventoryPalletSelectorMock.Setup(x => x.SelectTakeInventoryPallet(It.IsAny<ShippingStationCode>())).Returns(hinban);
-            var takeInventoryPalletServiceMock = new Mock<ITakeInventoryPalletService>();
+            var takeInventoryPalletServiceMock = new Mock<Interfaces.ITakeInventoryPalletService>();
             takeInventoryPalletServiceMock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<Hinban>()));
             var service = CreateService(
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,
@@ -126,7 +126,7 @@ public class TakeInventoryPalletServiceTest
                         return (Hinban?)null;
                     }
                 });
-            var takeInventoryPalletServiceMock = new Mock<ITakeInventoryPalletService>();
+            var takeInventoryPalletServiceMock = new Mock<Interfaces.ITakeInventoryPalletService>();
             takeInventoryPalletServiceMock.Setup(x => x.Request(It.IsAny<LocationCode>(), It.IsAny<Hinban>()));
             var service = CreateService(
                 tempStorageLoaderParam: tempStorageLoaderMock.Object,

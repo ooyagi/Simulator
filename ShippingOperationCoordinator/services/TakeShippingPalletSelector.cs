@@ -8,6 +8,7 @@ namespace ShippingOperationCoordinator.Services;
 public class TakeShippingPalletSelector: ITakeShippingPalletSelector
 {
     private readonly ILogger<TakeShippingPalletSelector> _logger;
+    private readonly IStorableHinbanLoader _storableHinbanLoader;
     private readonly IShikakariStorageLoader _shikakariStorageLoader;
     private readonly ITempStorageLoader _tempStorageLoader;
     private readonly IInventoryStorageLoader _inventoryStorageLoader;
@@ -15,12 +16,14 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
 
     public TakeShippingPalletSelector(
         ILogger<TakeShippingPalletSelector> logger,
+        IStorableHinbanLoader storableHinbanLoader,
         IShikakariStorageLoader shikakariStorageLoader,
         ITempStorageLoader tempStorageLoader,
         IInventoryStorageLoader inventoryStorageLoader,
         IWorkOrderLoader workOrderLoader
     ) {
         _logger = logger;
+        _storableHinbanLoader = storableHinbanLoader;
         _shikakariStorageLoader = shikakariStorageLoader;
         _tempStorageLoader = tempStorageLoader;
         _inventoryStorageLoader = inventoryStorageLoader;
@@ -49,7 +52,9 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
     /// <summary>
     /// 初回出荷パレット取り寄せ候補選定
     /// 
-    /// 初回は一時置き場に在庫がないた
+    /// 初回は一時置き場に在庫がないため一時置き場の在庫を考慮せずに出荷パレットを取り寄せる
+    /// ただし、在庫パレット置き場で取り扱わない品番が次回積み込み品番となっているパレットは除外する
+    /// 
     /// 搬送数の試算では効率化の考慮をせず指示書先頭から順に取り寄せる
     /// 即座に持ち帰るパレットが発生する可能性はあるが初回のみのため許容する
     /// </summary>
@@ -57,7 +62,9 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
         _logger.LogInformation($"出荷パレット初回取り寄せ候補選定開始： 出荷作業場所 [{stationCode}]");
         try {
             var emptyLocationCodeQueue = new Queue<LocationCode>(emptyLocations);
-            var shikakariPallets = _shikakariStorageLoader.GetInitialPallets().ToList();
+            var shikakariPallets = _shikakariStorageLoader.GetInitialPallets()
+                .Where(x => x.NextHinban != null && _storableHinbanLoader.IsStorable(x.NextHinban))
+                .ToList();
             if(shikakariPallets.Count() <= emptyLocations.Count()) {
                 return shikakariPallets.Select(x => { 
                     var emptyLocation = emptyLocationCodeQueue.Dequeue();

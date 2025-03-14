@@ -60,7 +60,7 @@ class InitializationService
     }
     void loadProductionPlanAndOrder() {
         var loadedPlans = _loadProductionPlanService.LoadProductionPlans();
-        var paramPlans = loadedPlans.Select(x => new ProductionPlan(x.DeliveryDate, x.Line, x.Size, x.PalletNumber, x.Priority, x.Hinban)).ToList();
+        var paramPlans = loadedPlans.Select(x => new ProductionPlan(x.DeliveryDate, x.Line, x.Size, x.ShippingBay, x.PalletNumber, x.Priority, x.Hinban)).ToList();
         _workOrderRegister.Clear();
         _workOrderRegister.Register(paramPlans);
     }
@@ -70,5 +70,5 @@ class InitializationService
         _socInitializationService.TakeInitialInventoryPallets();
     }
         
-    record ProductionPlan(string DeliveryDate, string Line, string Size, int PalletNumber, int Priority, Hinban Hinban): WorkOrderManagement.Interfaces.IProductPlan;
+    record ProductionPlan(string DeliveryDate, string Line, string Size, string ShippingBay, int PalletNumber, int Priority, Hinban Hinban): WorkOrderManagement.Interfaces.IProductPlan;
 }

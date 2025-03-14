@@ -9,6 +9,7 @@ class ProductionPlanConverter
             record.DeliveryDate,
             record.Line,
             record.Size,
+            record.ShippingBay,
             record.PalletNumber,
             record.Priority,
             new Hinban(record.Hinban)

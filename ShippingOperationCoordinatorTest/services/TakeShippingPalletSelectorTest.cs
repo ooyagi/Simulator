@@ -31,8 +31,11 @@ public class TakeShippingPalletSelectorTest
             var mock = new Mock<IWorkOrderLoader>();
             return mock.Object;
         }))();
+        var storableHinbanLoaderMock = new Mock<IStorableHinbanLoader>();
+        var storableHinbanLoader = storableHinbanLoaderMock.Object;
         return new TakeShippingPalletSelector(
             logger,
+            storableHinbanLoader,
             shikakariStorageLoader,
             tempStorageLoader,
             inventoryStorageLoader,

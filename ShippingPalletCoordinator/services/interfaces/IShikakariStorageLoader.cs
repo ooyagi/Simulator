@@ -5,6 +5,7 @@ namespace ShippingPalletCoordinator.Services;
 
 interface IShikakariStorageLoader
 {
+    IEnumerable<ShikakariStorage> All();
     ShikakariStorage? Find(LocationCode locationCode);
     ShikakariStorage? FindEmptyLocation();
     IEnumerable<ShikakariStorage> GetEmptyLocations();

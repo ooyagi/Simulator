@@ -35,8 +35,8 @@ class DetermineTransferItemService: IDetermineTransferItemService
         try {
             var availableHinbans = _tempStorageLoader.GetAvarableHinbans(stationCode).Select(x => new TemporaryStoragePalletInfo(x.LocationCode, x.Hinban, x.Quantity)).ToList();
 # if DEBUG_LOG 
-            AvailableHinbannsLog(stationCode);
-            ShippingPalletLoadableLog(stationCode);
+            // AvailableHinbannsLog(stationCode);
+            // ShippingPalletLoadableLog(stationCode);
 # endif
             var shippingPalletCompletedCandidate = FilterShippingPalletsCompletedByTempInventory(stationCode, availableHinbans);
             if (shippingPalletCompletedCandidate != null) {
@@ -129,14 +129,18 @@ class DetermineTransferItemService: IDetermineTransferItemService
         }
         var shikakariPallets = _ShikakariStorageLoader.GetLoadableFrom(pallets);
         var notUsedPallets = pallets.Where(tmpPallet => {
-            return shikakariPallets.Any(shkPallet => shkPallet.IsLoadableQuantityGreaterThan(tmpPallet.Hinban, 0)) == false;
+            return shikakariPallets.Any(shkPallet => shkPallet.IsLoadableQuantityGreaterThan(tmpPallet.Hinban, 1)) == false;
         });
         if (!notUsedPallets.Any()) {
             _logger.LogTrace($"出荷作業場所 [{stationCode.Value}] に仕掛パレットで使用しない在庫パレットが見つかりませんでした");
             return null;
         }
         var nextTrasnferSource = notUsedPallets.OrderBy(x => x.Quantity).First();
-        var nextTransferDestination = shippingPallets.Where(shpPallet => shpPallet.NextHinban == nextTrasnferSource.Hinban).OrderBy(x => x.RemainStep).First();
+        var nextTransferDestination = shippingPallets.Where(shpPallet => shpPallet.NextHinban == nextTrasnferSource.Hinban).OrderBy(x => x.RemainStep).FirstOrDefault();
+        if (nextTransferDestination == null) {
+            _logger.LogTrace($"積替え先の出荷パレットが見つかりませんでした: 出荷作業場所 [{stationCode.Value}] 詰め替え品番 [{nextTrasnferSource.Hinban.Value}]");
+            return null;
+        }
         return  new TransferDirection(nextTrasnferSource.Hinban, nextTrasnferSource.LocationCode, nextTransferDestination.LocationCode);
     }
     /// <summary>

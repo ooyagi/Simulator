@@ -18,7 +18,7 @@ public class SimulationWorker: IHostedService, IDisposable
 
     public Task StartAsync(CancellationToken cancellationToken) {
         _logger.LogInformation("Simulator hosted service starting.");
-        _timer = new Timer(ExecuteCycle, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+        _timer = new Timer(ExecuteCycle, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
 
         // ここで初期化
 

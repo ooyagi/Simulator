@@ -7,6 +7,7 @@ namespace ShippingOperationCoordinator.Services;
 public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
 {
     private readonly ILogger<TakeInventoryPalletSelector> _logger;
+    private readonly IStorableHinbanLoader _storableHinbanLoader;
     private readonly IShippingStorageLoader _shippingStorageLoader;
     private readonly IShikakariStorageLoader _shikakariStorageLoader;
     private readonly ITempStorageLoader _tempStorageLoader;
@@ -14,12 +15,14 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
 
     public TakeInventoryPalletSelector(
         ILogger<TakeInventoryPalletSelector> logger,
+        IStorableHinbanLoader storableHinbanLoader,
         IShippingStorageLoader shippingStorageLoader,
         IShikakariStorageLoader shikakariStorageLoader,
         ITempStorageLoader tempStorageLoader,
         IInventoryStorageLoader inventoryStorageLoader
     ) {
         _logger = logger;
+        _storableHinbanLoader = storableHinbanLoader;
         _shippingStorageLoader = shippingStorageLoader;
         _shikakariStorageLoader = shikakariStorageLoader;
         _tempStorageLoader = tempStorageLoader;
@@ -50,6 +53,7 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
             var shikakariPalletLoadableInfo = _shikakariStorageLoader.GetLoadableFrom(tempStorageItems);
 
             // 積込可能な在庫パレットをフィルタリング
+            // あえて在庫がないパレットも返す（メソッド側の注釈を確認）
             candidates = FilterLoadableItems(inventoryItems, tempStorageItems, shippingPalletLoadableInfo, shikakariPalletLoadableInfo);
 
             // 出荷パレットを完了に出来る在庫パレットをフィルタリング
@@ -94,6 +98,8 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
     /// 本番では上記の動作だが、搬送回数の試算時点では適切な搬入が行われているものとそて試算する
     /// このため、在庫パレットに必要なパレットが存在しない場合はフル積載のパレットが存在するものとして選定を行う
     /// ※取り寄せ処理側でも不足しているパレットを自動作成する処理を入れる
+    /// 
+    /// 最後に在庫パレット置き場に配置する品番のみに絞り込む
     /// </summary>
     private IEnumerable<IInventoryPalletInfo> FilterLoadableItems(IEnumerable<IInventoryPalletInfo> inventoryItems, IEnumerable<IInventoryPalletInfo> tempItems, IEnumerable<IShippingPalletLoadableHinbanInfo> shippingPalletLoadableInfo, IEnumerable<IShikakariPalletLoadableHinbanInfo> shikakariPalletLoadableInfo) {
         // - 不足品番の自動補充 -
@@ -111,7 +117,9 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
                 || shikakariPalletLoadableInfo.Any(y => y.NextHinban == x.Hinban)
                 || shippingPalletLoadableInfo.Any(y => y.BlockHinban == x.Hinban)
                 || shikakariPalletLoadableInfo.Any(y => y.BlockHinban == x.Hinban)
-            );
+            )
+            .Where(x => _storableHinbanLoader.IsStorable(x.Hinban))
+            .ToList();
         return loadableItems
             .GroupBy(x => x.Hinban)
             .Select(x => x.OrderBy(y => y.Quantity).First());

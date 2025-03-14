@@ -24,8 +24,10 @@ public static class AddInventoryPalletCoordinatorExtensions
 
         // 公開
         services.AddScoped<IInitializationService, InitializationService>();
+        services.AddScoped<Interfaces.IStorableHinbanLoader, StorableHinbanLoader>();
 
         // ShippingOperatonCoordinator向け
+        services.AddScoped<ShippingOperationCoordinator.Interfaces.IStorableHinbanLoader, StorableHinbanLoader>();
         services.AddScoped<ShippingOperationCoordinator.Interfaces.IInventoryStorageLoader, InventoryStorageLoader>();
         services.AddScoped<ShippingOperationCoordinator.Interfaces.ITempStorageLoader, TemporaryStorageLoader>();
         services.AddScoped<ShippingOperationCoordinator.Interfaces.IPickupInventoryPalletItemService, PickupInventoryPalletItemService>();
@@ -33,6 +35,7 @@ public static class AddInventoryPalletCoordinatorExtensions
         services.AddScoped<ShippingOperationCoordinator.Interfaces.ITakeInventoryPalletService, TakeInventoryPalletService>();
 
         // 内部向け
+        services.AddScoped<Services.IStorableHinbanLoader, StorableHinbanLoader>();
         services.AddScoped<IInventoryPalletLoader, InventoryPalletLoader>();
         services.AddScoped<ITemporaryStorageLoader, TemporaryStorageLoader>();
         services.AddScoped<IInventoryStorageLoader, InventoryStorageLoader>();

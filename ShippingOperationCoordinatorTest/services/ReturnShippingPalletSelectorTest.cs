@@ -24,7 +24,13 @@ public class ReturnShippingPalletSelectorTest
             mock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), It.IsAny<Hinban>(), 1)).Returns(true);
             return mock.Object;
         }))();
-        return new ReturnShippingPalletSelector(logger, TempStorageLoader, shippingStorageLoader);
+        var storableHinbanLoaderMock = new Mock<IStorableHinbanLoader>();
+        storableHinbanLoaderMock.Setup(x => x.IsStorable(It.IsAny<Hinban>())).Returns(true);
+        var storableHinbanLoader = storableHinbanLoaderMock.Object;
+        var takeShippingPalletSelectorMock = new Mock<ITakeShippingPalletSelector>();
+        takeShippingPalletSelectorMock.Setup(m => m.CheckEnableShippingPalletInShikakariStorage(It.IsAny<ShippingStationCode>())).Returns(true);
+        var takeShippingPalletSelector = takeShippingPalletSelectorMock.Object;
+        return new ReturnShippingPalletSelector(logger, TempStorageLoader, shippingStorageLoader, storableHinbanLoader, takeShippingPalletSelector);
     }
 
     public class SelectReturnShippingPalletTests

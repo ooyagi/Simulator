@@ -9,18 +9,15 @@ class ReturnShippingPalletService: IChangeShippingPalletService
     private readonly ILogger<ReturnShippingPalletService> _logger;
     private readonly IReturnShippingPalletSelector _returnShippingPalletSelector;
     private readonly IReturnShippingPalletService _returnShippingPalletService;
-    private readonly ITakeShippingPalletSelector _takeShippingPalletSelector;
 
     public ReturnShippingPalletService(
         ILogger<ReturnShippingPalletService> logger,
         IReturnShippingPalletSelector returnShippingPalletSelector,
-        IReturnShippingPalletService returnShippingPalletService,
-        ITakeShippingPalletSelector takeShippingPalletSelector
+        IReturnShippingPalletService returnShippingPalletService
     ) {
         _logger = logger;
         _returnShippingPalletSelector = returnShippingPalletSelector;
         _returnShippingPalletService = returnShippingPalletService;
-        _takeShippingPalletSelector = takeShippingPalletSelector;
     }
 
     public bool Change(ShippingStationCode stationCode) {
@@ -38,10 +35,6 @@ class ReturnShippingPalletService: IChangeShippingPalletService
     public bool Return(ShippingStationCode stationCode) {
         _logger.LogInformation($"出荷パレット返却： 出荷作業場所[{stationCode}]");
 
-        if (!_takeShippingPalletSelector.CheckEnableShippingPalletInShikakariStorage(stationCode)) {
-            _logger.LogDebug("入れ替えに有効な仕掛パレット置き場に無いため在庫パレットの入れ替わりをまちます");
-            return false;
-        }
         var returnableLocation = _returnShippingPalletSelector.SelectReturnShippingPallet(stationCode);
         if (returnableLocation == null) {
             _logger.LogTrace("返却可能な出荷パレットが見つかりませんでした");

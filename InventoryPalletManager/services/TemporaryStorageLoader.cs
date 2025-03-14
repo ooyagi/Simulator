@@ -45,7 +45,7 @@ class TemporaryStorageLoader: ITemporaryStorageLoader, ShippingOperationCoordina
     public IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> GetAvarableHinbans(ShippingStationCode stationCode) {
         return _context.TemporaryStorages
             .Include(x => x.StoredPallet)
-            .Where(x => x.ShippingStationCode == stationCode && x.Status == StorageStatus.InUse)
+            .Where(x => x.ShippingStationCode == stationCode && x.Status == StorageStatus.InUse && 0 < x.StoredPallet.Quantity)
             .Select(x => new InventoryPalletInfo(x.LocationCode, x.StoredPallet.Hinban, x.StoredPallet.Quantity))
             .ToList();
     }
@@ -58,7 +58,7 @@ class TemporaryStorageLoader: ITemporaryStorageLoader, ShippingOperationCoordina
     public IEnumerable<ShippingOperationCoordinator.Interfaces.IInventoryPalletInfo> GetEmptyPallets(ShippingStationCode stationCode) {
         return _context.TemporaryStorages
             .Include(x => x.StoredPallet)
-            .Where(x => x.ShippingStationCode == stationCode && x.StoredPallet.Quantity == 0)
+            .Where(x => x.ShippingStationCode == stationCode && x.Status == StorageStatus.InUse && x.StoredPallet.Quantity == 0)
             .Select(x => new InventoryPalletInfo(x.LocationCode, x.StoredPallet.Hinban, x.StoredPallet.Quantity));
     }
 

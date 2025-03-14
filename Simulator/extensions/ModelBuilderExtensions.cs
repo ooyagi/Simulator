@@ -21,6 +21,7 @@ public static class ModelBuilderExtensions
         modelBuilder.Entity<ProductionPlan>().Property(typeof(Hinban), "Hinban").HasConversion(conversion);
 
         // InventoryPalletCoordinator
+        modelBuilder.Entity<StorableHinban>().Property(typeof(Hinban), "Hinban").HasConversion(conversion);
         modelBuilder.Entity<InventoryPallet>().Property(typeof(Hinban), "Hinban").HasConversion(conversion);
 
         // ShippingPalletCoordinator

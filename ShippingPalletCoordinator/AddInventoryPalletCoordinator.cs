@@ -24,6 +24,7 @@ public static class AddShippingPalletCoordinatorExtensions
 
         // 公開
         services.AddScoped<IInitializationService, InitializationService>();
+        services.AddScoped<IHandTransferService, HandTransferService>();
         // services.AddScoped<IInventoryStorageManagementService, InventoryStorageManagementService>();
 
         // ShippingOperatonCoordinator向け

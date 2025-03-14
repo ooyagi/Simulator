@@ -46,7 +46,7 @@ class TakeInventoryPalletService: ShippingOperationCoordinator.Interfaces.ITakeI
     public void Request(LocationCode tempLocationCode, Hinban hinban) {
         _logger.LogInformation($"在庫パレット取り寄せ要求を受け付けました: 一時置き場 [{tempLocationCode.Value}] 品番 [{hinban.Value}]");
         try {
-            var inventoryPallet = _inventoryPalletLoader.FliterByHinban(hinban).FirstOrDefault() ?? _inboundInventoryPalletServices.Inbound(hinban);
+            var inventoryPallet = _inventoryPalletLoader.FliterByHinban(hinban).Where(x => 0 < x.Quantity).OrderBy(x => x.Quantity).FirstOrDefault() ?? _inboundInventoryPalletServices.Inbound(hinban);
             var sourceLocationCode = _inventoryStorageLoader.FindStoredLocation(inventoryPallet.Id);
             if (sourceLocationCode == null) {
                 _logger.LogError($"在庫パレット [{inventoryPallet.Id.Value}] が保管されているロケーションが見つかりませんでした");

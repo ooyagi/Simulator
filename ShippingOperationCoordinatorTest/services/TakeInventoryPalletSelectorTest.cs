@@ -34,8 +34,12 @@ public class TakeInventoryPalletSelectorTest
             mock.Setup(x => x.GetStoragedItems()).Returns(Enumerable.Empty<IInventoryPalletInfo>());
             return mock.Object;
         }))();
+        var storableHinbanLoaderMock = new Mock<IStorableHinbanLoader>();
+        storableHinbanLoaderMock.Setup(x => x.IsStorable(It.IsAny<Hinban>())).Returns(true);
+        var storableHinbanLoader = storableHinbanLoaderMock.Object;
         return new TakeInventoryPalletSelector(
             logger,
+            storableHinbanLoader,
             shippingStorageLoader,
             shikakariStorageLoader,
             tempStorageLoader,

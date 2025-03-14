@@ -29,7 +29,7 @@ public interface IShippingPalletLoadableHinbanInfo
 {
     LocationCode LocationCode { get; }
     ShippingPalletID ShippingPalletID { get; }
-    Hinban NextHinban { get; }
+    Hinban? NextHinban { get; }
     Hinban? BlockHinban { get; }
     int RemainStep { get; }
     int RequiredHinbanTypeCount  { get; }  // 積み込める品番の種類数

@@ -176,6 +176,10 @@ class DetermineTransferItemService: IDetermineTransferItemService
             _logger.LogTrace($"積替え元の在庫パレットが見つかりませんでした: 出荷作業場所 [{stationCode.Value}]");
             return null;
         }
+        if (nextTransferDistination.NextHinban == null) {
+            _logger.LogWarning($"積替え先の品番が見つかりませんでした: 出荷作業場所 [{stationCode.Value}]");
+            return null;
+        }
         return new TransferDirection(nextTransferDistination.NextHinban, nextTransferSource.LocationCode, nextTransferDistination.LocationCode);
     }
 
@@ -187,9 +191,9 @@ class DetermineTransferItemService: IDetermineTransferItemService
     }
     private void ShippingPalletLoadableLog(ShippingStationCode stationCode) {
         var availableHinbans = _tempStorageLoader.GetAvarableHinbans(stationCode).Select(x => new TemporaryStoragePalletInfo(x.LocationCode, x.Hinban, x.Quantity)).ToList();
-        var shippingPallets = _shippingStorageLoader.GetLoadableFrom(stationCode, availableHinbans);
+        var shippingPallets = _shippingStorageLoader.GetLoadableFrom(stationCode, availableHinbans).Where(x => x.NextHinban != null).ToList();
         foreach (var pallet in shippingPallets) {
-            _logger.LogTrace($"積み込み可能な出荷パレット: 次回品番 {pallet.NextHinban.Value} ブロック品番 {pallet.BlockHinban?.Value} 残りステップ {pallet.RemainStep} 必要品番種類数 {pallet.RequiredHinbanTypeCount}");
+            _logger.LogTrace($"積み込み可能な出荷パレット: 次回品番 {pallet.NextHinban!.Value} ブロック品番 {pallet.BlockHinban?.Value} 残りステップ {pallet.RemainStep} 必要品番種類数 {pallet.RequiredHinbanTypeCount}");
         }
     }
 }

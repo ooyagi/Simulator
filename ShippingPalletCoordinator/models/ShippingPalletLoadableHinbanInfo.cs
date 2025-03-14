@@ -12,7 +12,7 @@ class ShippingPalletLoadableHinbanInfo: ShippingOperationCoordinator.Interfaces.
 {
     public LocationCode LocationCode { get; set; }
     public ShippingPalletID ShippingPalletID { get; set; }
-    public Hinban NextHinban => _items.FirstOrDefault(x => !x.IsCompleted)!.Hinban;
+    public Hinban? NextHinban => _items.FirstOrDefault(x => !x.IsCompleted)?.Hinban;
     public Hinban? BlockHinban => _blockHinban;
     public int RemainStep => _items.Count(x => !x.IsCompleted);
     public int RequiredHinbanTypeCount => _items.Where(x => !x.IsCompleted).Select(x => x.Hinban).Distinct().Count();

@@ -4,6 +4,6 @@ namespace ShippingOperationCoordinator.Interfaces;
 
 public interface IChangeInventoryPalletService
 {
-    void Change(ShippingStationCode stationCode);
+    bool Change(ShippingStationCode stationCode);
     bool ChangeEmptyPallet(ShippingStationCode stationCode);
 }

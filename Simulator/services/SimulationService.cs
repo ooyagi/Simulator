@@ -39,7 +39,7 @@ public class SimulationService: ISimulationService
             if (changeShippingPallet || changeEmptyPallet) {
                 continue;
             }
-            _changeInventoryPalletService.Change(station.Code);
+            _ = _changeInventoryPalletService.Change(station.Code);
         }
     }
 }

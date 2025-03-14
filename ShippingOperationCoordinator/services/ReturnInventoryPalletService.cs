@@ -45,10 +45,4 @@ class ReturnInventoryPalletService: IChangeInventoryPalletService
         _returnInventoryPalletService.Request(returnableLocation);
         return true;
     }
-
-    void IChangeInventoryPalletService.Change(ShippingStationCode stationCode)
-    {
-        // 試算中は在庫パレット置き場は無限に拡張するため
-        // 搬入・搬出は行わない
-    }
 }

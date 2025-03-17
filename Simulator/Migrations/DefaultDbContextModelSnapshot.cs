@@ -128,6 +128,9 @@ namespace Simulator.Migrations
                     b.Property<string>("Size")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ShippingBay")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("PalletNumber")
                         .HasColumnType("int");
 
@@ -138,11 +141,7 @@ namespace Simulator.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShippingBay")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DeliveryDate", "Line", "Size", "PalletNumber", "Priority");
+                    b.HasKey("DeliveryDate", "Line", "Size", "ShippingBay", "PalletNumber", "Priority");
 
                     b.HasIndex("DeliveryDate", "Line", "Size", "PalletNumber");
 

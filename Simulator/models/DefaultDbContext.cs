@@ -59,7 +59,7 @@ public class DefaultDbContext : DbContext
         modelBuilder.ApplyShippingPalletIDConversion();
         modelBuilder.ApplyInventoryPalletIDConversion();
 
-        modelBuilder.Entity<ProductionPlan>().HasKey(x => new { x.DeliveryDate, x.Line, x.Size, x.PalletNumber, x.Priority });
+        modelBuilder.Entity<ProductionPlan>().HasKey(x => new { x.DeliveryDate, x.Line, x.Size, x.ShippingBay, x.PalletNumber, x.Priority });
         modelBuilder.Entity<ProductionPlan>().HasIndex(x => new { x.DeliveryDate, x.Line, x.Size, x.PalletNumber });
         modelBuilder.Entity<WorkOrder>().HasMany(x => x.OrderedItems).WithOne().HasForeignKey(x => x.PalletID);
         modelBuilder.Entity<OrderedItem>().HasKey(x => new { x.PalletID, x.Index });

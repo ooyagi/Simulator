@@ -32,6 +32,11 @@ class TemporaryStorageLoader: ITemporaryStorageLoader, ShippingOperationCoordina
                 && quantity <= x.StoredPallet.Quantity
             );
     }
+    public bool IsTakable(ShippingStationCode stationCode, Hinban hinban) {
+        return !_context.TemporaryStorages
+            .Include(x => x.StoredPallet)
+            .Any(x => x.ShippingStationCode != stationCode && x.StoredPallet.Hinban == hinban);
+    }
     public bool InOtherStation(ShippingStationCode stationCode, Hinban hinban) {
         return _context.TemporaryStorages
             .Include(x => x.StoredPallet)

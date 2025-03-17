@@ -27,6 +27,7 @@ public class TakeInventoryPalletSelectorTest
         var tempStorageLoader = tempStorageLoaderParam ?? ((Func<ITempStorageLoader>)(() => {
             var mock = new Mock<ITempStorageLoader>();
             mock.Setup(x => x.GetAvarableHinbans(It.IsAny<ShippingStationCode>())).Returns(Enumerable.Empty<IInventoryPalletInfo>());
+            mock.Setup(x => x.IsTakable(It.IsAny<ShippingStationCode>(), It.IsAny<Hinban>())).Returns(true);
             return mock.Object;
         }))();
         var inventoryStorageLoader = inventoryStorageLoaderParam ?? ((Func<IInventoryStorageLoader>)(() => {

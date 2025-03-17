@@ -54,7 +54,7 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
 
             // 積込可能な在庫パレットをフィルタリング
             // あえて在庫がないパレットも返す（メソッド側の注釈を確認）
-            candidates = FilterLoadableItems(inventoryItems, tempStorageItems, shippingPalletLoadableInfo, shikakariPalletLoadableInfo);
+            candidates = FilterLoadableItems(stationCode, inventoryItems, tempStorageItems, shippingPalletLoadableInfo, shikakariPalletLoadableInfo);
 
             // 出荷パレットを完了に出来る在庫パレットをフィルタリング
             var itemsCanFinishWorkOnShippingPallet = FilterInventoryPalletsByShippingPalletCompletion(candidates, shippingPalletLoadableInfo);
@@ -70,6 +70,7 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
             } else if (0 < itemsCanFinishWorkOnShikakariPallet.Count()) {
                 candidates = itemsCanFinishWorkOnShikakariPallet;
             }
+            // 多くの出荷パレット／仕掛パレットをブロックしている品番の在庫パレットを選定
             var itemsMostPalletsBlockingFactor = FilterInventoryPalletsByMoreBlockingFactor(candidates, shippingPalletLoadableInfo, shikakariPalletLoadableInfo);
             if (itemsMostPalletsBlockingFactor.Count() == 1) {
                 return itemsMostPalletsBlockingFactor.First().Hinban;
@@ -101,7 +102,7 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
     /// 
     /// 最後に在庫パレット置き場に配置する品番のみに絞り込む
     /// </summary>
-    private IEnumerable<IInventoryPalletInfo> FilterLoadableItems(IEnumerable<IInventoryPalletInfo> inventoryItems, IEnumerable<IInventoryPalletInfo> tempItems, IEnumerable<IShippingPalletLoadableHinbanInfo> shippingPalletLoadableInfo, IEnumerable<IShikakariPalletLoadableHinbanInfo> shikakariPalletLoadableInfo) {
+    private IEnumerable<IInventoryPalletInfo> FilterLoadableItems(ShippingStationCode stationCode, IEnumerable<IInventoryPalletInfo> inventoryItems, IEnumerable<IInventoryPalletInfo> tempItems, IEnumerable<IShippingPalletLoadableHinbanInfo> shippingPalletLoadableInfo, IEnumerable<IShikakariPalletLoadableHinbanInfo> shikakariPalletLoadableInfo) {
         // - 不足品番の自動補充 -
         var nextItems = shippingPalletLoadableInfo.Select(x => x.NextHinban).Concat(shikakariPalletLoadableInfo.Select(x => x.NextHinban)).Distinct().ToList();
         var blockItems = shippingPalletLoadableInfo.Select(x => x.BlockHinban).Concat(shikakariPalletLoadableInfo.Select(x => x.BlockHinban)).Distinct().ToList();
@@ -118,7 +119,8 @@ public class TakeInventoryPalletSelector: ITakeInventoryPalletSelector
                 || shippingPalletLoadableInfo.Any(y => y.BlockHinban == x.Hinban)
                 || shikakariPalletLoadableInfo.Any(y => y.BlockHinban == x.Hinban)
             )
-            .Where(x => _storableHinbanLoader.IsStorable(x.Hinban))
+            .Where(x => _storableHinbanLoader.IsStorable(x.Hinban)
+                && _tempStorageLoader.IsTakable(stationCode, x.Hinban))
             .ToList();
         return loadableItems
             .GroupBy(x => x.Hinban)

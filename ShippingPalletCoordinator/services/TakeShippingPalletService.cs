@@ -9,14 +9,14 @@ namespace ShippingPalletCoordinator.Services;
 /// </summary>
 class TakeShippingPalletService: ShippingOperationCoordinator.Interfaces.ITakeShippingPalletService
 {
-    private readonly ILogger<ReturnShippingPalletService> _logger;
+    private readonly ILogger<TakeShippingPalletService> _logger;
     private readonly IShippingStorageLoader _shippingStorageLoader;
     private readonly IShikakariStorageLoader _shikakariStorageLoader;
     private readonly IShippingPalletLoader _shippingPalletLoader;
     private readonly ITransportRequestService _transportRequestService;
 
     public TakeShippingPalletService(
-        ILogger<ReturnShippingPalletService> logger,
+        ILogger<TakeShippingPalletService> logger,
         IShippingStorageLoader shippingStorageLoader,
         IShikakariStorageLoader shikakariStorageLoader,
         IShippingPalletLoader shippingPalletLoader,

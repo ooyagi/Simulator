@@ -24,6 +24,7 @@ class PickupShikakariStorageService: IPickupShikakariStorageService
     }
 
     public ShippingPalletID? Pickup(LocationCode locationCode) {
+        _logger.LogTrace($"{locationCode.Value} からパレットを取り出します");
         var shikakariStorage = _shikakariStorageLoader.Find(locationCode);
         if (shikakariStorage == null) {
             _logger.LogError($"仕掛パレット置き場 [{locationCode.Value}] が見つかりませんでした");

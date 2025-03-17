@@ -22,6 +22,7 @@ class PlaceShikakariStorageService: IPlaceShikakariStorageService
     }
 
     public void Place(LocationCode locationCode, ShippingPalletID shikakariPalletID) {
+        _logger.LogTrace($"{locationCode.Value} にパレット [{shikakariPalletID.Value}] を配置します");
         var shikakariStorage = _shikakariStorageLoader.Find(locationCode);
         if (shikakariStorage == null) {
             throw new InvalidOperationException($"仕掛ロケーション [{locationCode.Value}] が見つかりませんでした");

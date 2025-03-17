@@ -24,4 +24,8 @@ public interface ITempStorageLoader
     /// 指定された品番がピックアップ可能かどうかを判定する
     /// </summary>
     bool IsPickable(ShippingStationCode stationCode, Hinban hinban, int quantity = 1);
+    /// <summary>
+    /// 指定された品番が他の出荷作業場所に搬送されているかどうかを判定する
+    /// </summary>
+    bool InOtherStation(ShippingStationCode stationCode, Hinban hinban);
 }

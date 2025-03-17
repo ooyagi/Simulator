@@ -40,6 +40,11 @@ class ReturnShippingPalletSelector: IReturnShippingPalletSelector
         if (handTransferPallet != null) {
             return handTransferPallet.LocationCode;
         }
+        // 次の利用品番が別の出荷作業場所にあれば返却する
+        var otherStationPallet = shippingPallets.FirstOrDefault(x => x.NextHinban != null && _tempStorageLoader.InOtherStation(stationCode, x.NextHinban));
+        if (otherStationPallet != null) {
+            return otherStationPallet.LocationCode;
+        }
         // 現在の一時置き場の状況で積み込める仕掛パレットがない場合は返却しない
         if (!_takeShippingPalletSelector.CheckEnableShippingPalletInShikakariStorage(stationCode)) {
             _logger.LogDebug("入れ替えに有効な仕掛パレット置き場に無いため在庫パレットの入れ替わりをまちます");

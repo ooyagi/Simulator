@@ -22,6 +22,7 @@ public class ReturnShippingPalletSelectorTest
         var TempStorageLoader = TempStorageLoaderParam ?? ((Func<ITempStorageLoader>)(() => {
             var mock = new Mock<ITempStorageLoader>();
             mock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), It.IsAny<Hinban>(), 1)).Returns(true);
+            mock.Setup(m => m.InOtherStation(It.IsAny<ShippingStationCode>(), It.IsAny<Hinban>())).Returns(false);
             return mock.Object;
         }))();
         var storableHinbanLoaderMock = new Mock<IStorableHinbanLoader>();
@@ -103,6 +104,7 @@ public class ReturnShippingPalletSelectorTest
             var TempStorageLoaderMock = new Mock<ITempStorageLoader>();
             TempStorageLoaderMock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), testHinban1, It.IsAny<int>())).Returns(IsPickable1);
             TempStorageLoaderMock.Setup(m => m.IsPickable(It.IsAny<ShippingStationCode>(), testHinban2, It.IsAny<int>())).Returns(IsPickable2);
+            TempStorageLoaderMock.Setup(m => m.InOtherStation(It.IsAny<ShippingStationCode>(), It.IsAny<Hinban>())).Returns(false);
             var selector = CreateService(shippingStorageLoaderMock.Object, TempStorageLoaderMock.Object);
 
             var result = selector.SelectReturnShippingPallet(stationCode);

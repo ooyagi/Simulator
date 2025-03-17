@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using CommonItems.Models;
 using ShippingPalletCoordinator.Interfaces;
-using ShippingPalletCoordinator.Models;
 
 namespace ShippingPalletCoordinator.Services;
 
@@ -27,9 +26,9 @@ class PlaceShippingStorageService: IPlaceShippingStorageService
         if (shippingStorage == null) {
             throw new InvalidOperationException($"出荷パレット置き場 [{locationCode.Value}] が見つかりませんでした");
         }
-        if (shippingStorage.Status != StorageStatus.Empty) {
-            throw new InvalidOperationException($"出荷パレット置き場 [{locationCode.Value}] は空きではありません");
-        }
+        // if (shippingStorage.Status != StorageStatus.Empty) {
+        //     throw new InvalidOperationException($"出荷パレット置き場 [{locationCode.Value}] は空きではありません");
+        // }
         shippingStorage.Place(inventoryPalletID);
         _context.SaveChanges();
     }

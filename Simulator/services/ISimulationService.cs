@@ -2,5 +2,5 @@ namespace Simulator.Services;
 
 interface ISimulationService
 {
-    void Step();
+    void Step(int count);
 }

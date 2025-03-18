@@ -8,7 +8,7 @@ namespace ShippingPalletCoordinator.Models;
 /// 
 /// _items には出荷パレットに積み込むことが出来る品番情報が格納されている
 /// </summary>
-class ShippingPalletLoadableHinbanInfo: ShippingOperationCoordinator.Interfaces.IShippingPalletLoadableHinbanInfo, ShippingOperationCoordinator.Interfaces.IShikakariPalletLoadableHinbanInfo
+class ShippingPalletLoadableHinbanInfo: ShippingOperationCoordinator.Interfaces.IShippingPalletLoadableHinbanInfo, ShippingOperationCoordinator.Interfaces.IShikakariPalletLoadableHinbanInfo, ShippingOperationCoordinator.Interfaces.IShippingPalletLoadableHinbanInfoNoLocation
 {
     public LocationCode LocationCode { get; set; }
     public ShippingPalletID ShippingPalletID { get; set; }

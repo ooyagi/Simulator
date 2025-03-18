@@ -9,20 +9,14 @@ namespace ShippingOperationCoordinator.Services.Tests;
 public class ReturnInventoryPalletSelectorTest
 {
     private static ReturnInventoryPalletSelector CreateService(
-        IShippingStorageLoader? shippingStorageLoaderParam = null,
-        IShikakariStorageLoader? shikakariStorageLoaderParam = null,
+        IShippingPalletLoader? shippingPalletLoaderParam = null,
         ITempStorageLoader? tempStorageLoaderParam = null
     ) {
         var logger = new NullLogger<ReturnInventoryPalletSelector>();
 
-        var shippingStorageLoader = shippingStorageLoaderParam ?? ((Func<IShippingStorageLoader>)(() => {
-            var mock = new Mock<IShippingStorageLoader>();
-            mock.Setup(m => m.GetLoadableFrom(It.IsAny<ShippingStationCode>(), It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(new List<IShippingPalletLoadableHinbanInfo>());
-            return mock.Object;
-        }))();
-        var shikakariStorageLoader = shikakariStorageLoaderParam ?? ((Func<IShikakariStorageLoader>)(() => {
-            var mock = new Mock<IShikakariStorageLoader>();
-            mock.Setup(m => m.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(new List<IShikakariPalletLoadableHinbanInfo>());
+        var shippingPalletLoader = shippingPalletLoaderParam ?? ((Func<IShippingPalletLoader>)(() => {
+            var mock = new Mock<IShippingPalletLoader>();
+            mock.Setup(m => m.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(new List<IShippingPalletLoadableHinbanInfoNoLocation>());
             return mock.Object;
         }))();
         var tempStorageLoader = tempStorageLoaderParam ?? ((Func<ITempStorageLoader>)(() => {
@@ -31,7 +25,7 @@ public class ReturnInventoryPalletSelectorTest
             mock.Setup(m => m.GetAvarableHinbans(It.IsAny<ShippingStationCode>())).Returns(new List<IInventoryPalletInfo>());
             return mock.Object;
         }))();
-        return new ReturnInventoryPalletSelector(logger, tempStorageLoader, shippingStorageLoader, shikakariStorageLoader);
+        return new ReturnInventoryPalletSelector(logger, tempStorageLoader, shippingPalletLoader);
     }
 
     public class SelectReturnInventoryPalletTests
@@ -58,7 +52,7 @@ public class ReturnInventoryPalletSelectorTest
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
-        public void 出荷パレット置き場で利用しない在庫パレットのロケーションコードが返される(
+        public void 利用しない在庫パレットのロケーションコードが返される(
             int expected
         ) {
             // 各種コードの生成
@@ -72,63 +66,18 @@ public class ReturnInventoryPalletSelectorTest
             var tempStorageItems = new List<IInventoryPalletInfo> { tempStorageItem1, tempStorageItem2 };
             var loadableHinban = expected == 1 ? testHinban2 : testHinban1; // exceptedで指定されていない側の品番が積み込み可能
 
-            var shippingMock1 = new Mock<IShippingPalletLoadableHinbanInfo>();
+            var shippingMock1 = new Mock<IShippingPalletLoadableHinbanInfoNoLocation>();
             shippingMock1.Setup(x => x.IsLoadableQuantityGreaterThan(It.IsAny<Hinban>(), 1)).Returns((Hinban hinban, int _) => hinban == loadableHinban);
-            var shippingMock2 = new Mock<IShippingPalletLoadableHinbanInfo>();
+            var shippingMock2 = new Mock<IShippingPalletLoadableHinbanInfoNoLocation>();
             shippingMock2.Setup(x => x.IsLoadableQuantityGreaterThan(It.IsAny<Hinban>(), 1)).Returns(false);
-            var shippingPalletLoadableInfos = new List<IShippingPalletLoadableHinbanInfo> { shippingMock1.Object, shippingMock2.Object };
+            var shippingPalletLoadableInfos = new List<IShippingPalletLoadableHinbanInfoNoLocation> { shippingMock1.Object, shippingMock2.Object };
         
             var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
             tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(tempStorageItems);
-            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
-            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(shippingPalletLoadableInfos);
+            var shippingPalletLoaderMock = new Mock<IShippingPalletLoader>();
+            shippingPalletLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(shippingPalletLoadableInfos);
             var service = CreateService(
-                shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
-                tempStorageLoaderParam: tempStorageLoaderMock.Object
-            );
-        
-            var result = service.SelectReturnInventoryPallet(stationCode);
-
-            var expectedLocation = expected == 1 ? tempLocation1 : tempLocation2;
-            Assert.Equal(expectedLocation.Value, result?.Value);
-        }
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void 仕掛パレット置き場で利用しない在庫パレットのロケーションコードが返される(
-            int expected
-        ) {
-            // 各種コードの生成
-            var stationCode = new ShippingStationCode("ST01");
-            var testHinban1 = new Hinban("FA-1609P(8)BV/U61");
-            var testHinban2 = new Hinban("FA-1611P(6)BV/Y71");
-            var tempLocation1 = new LocationCode("T01");
-            var tempLocation2 = new LocationCode("T02");
-            var tempStorageItem1 = new TestInventoryPalletInfo(tempLocation1, testHinban1, 10);
-            var tempStorageItem2 = new TestInventoryPalletInfo(tempLocation2, testHinban2, 8);
-            var tempStorageItems = new List<IInventoryPalletInfo> { tempStorageItem1, tempStorageItem2 };
-            var loadableHinban = expected == 1 ? testHinban2 : testHinban1; // exceptedで指定されていない側の品番が積み込み可能
-
-            var shippingMock1 = new Mock<IShippingPalletLoadableHinbanInfo>();
-            shippingMock1.Setup(x => x.IsLoadableQuantityGreaterThan(It.IsAny<Hinban>(), 1)).Returns(false);
-            var shippingMock2 = new Mock<IShippingPalletLoadableHinbanInfo>();
-            shippingMock2.Setup(x => x.IsLoadableQuantityGreaterThan(It.IsAny<Hinban>(), 1)).Returns(false);
-            var shippingPalletLoadableInfos = new List<IShippingPalletLoadableHinbanInfo> { shippingMock1.Object, shippingMock2.Object };
-            var shikakariMock1 = new Mock<IShikakariPalletLoadableHinbanInfo>();
-            shikakariMock1.Setup(x => x.IsLoadableQuantityGreaterThan(It.IsAny<Hinban>(), 1)).Returns((Hinban hinban, int _) => hinban == loadableHinban);
-            var shikakariMock2 = new Mock<IShikakariPalletLoadableHinbanInfo>();
-            shikakariMock2.Setup(x => x.IsLoadableQuantityGreaterThan(It.IsAny<Hinban>(), 1)).Returns(false);
-            var shikakariPalletLoadableInfos = new List<IShikakariPalletLoadableHinbanInfo> { shikakariMock1.Object, shikakariMock2.Object };
-        
-            var tempStorageLoaderMock = new Mock<ITempStorageLoader>();
-            tempStorageLoaderMock.Setup(x => x.GetAvarableHinbans(stationCode)).Returns(tempStorageItems);
-            var shippingStorageLoaderMock = new Mock<IShippingStorageLoader>();
-            shippingStorageLoaderMock.Setup(x => x.GetLoadableFrom(stationCode, It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(shippingPalletLoadableInfos);
-            var shikakariStorageLoaderMock = new Mock<IShikakariStorageLoader>();
-            shikakariStorageLoaderMock.Setup(x => x.GetLoadableFrom(It.IsAny<IEnumerable<IInventoryPalletInfo>>())).Returns(shikakariPalletLoadableInfos);
-            var service = CreateService(
-                shippingStorageLoaderParam: shippingStorageLoaderMock.Object,
-                shikakariStorageLoaderParam: shikakariStorageLoaderMock.Object,
+                shippingPalletLoaderParam: shippingPalletLoaderMock.Object,
                 tempStorageLoaderParam: tempStorageLoaderMock.Object
             );
         

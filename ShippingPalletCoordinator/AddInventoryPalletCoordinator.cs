@@ -30,6 +30,7 @@ public static class AddShippingPalletCoordinatorExtensions
         // ShippingOperatonCoordinator向け
         services.AddScoped<ShippingOperationCoordinator.Interfaces.IShippingStorageLoader, ShippingStorageLoader>();
         services.AddScoped<ShippingOperationCoordinator.Interfaces.IShikakariStorageLoader, ShikakariStorageLoader>();
+        services.AddScoped<ShippingOperationCoordinator.Interfaces.IShippingPalletLoader, ShippingPalletLoader>();
         services.AddScoped<ShippingOperationCoordinator.Interfaces.IPutonShippingPalletItemService, PutonShippingPalletItemService>();
         services.AddScoped<ShippingOperationCoordinator.Interfaces.IReturnShippingPalletService, ReturnShippingPalletService>();
         services.AddScoped<ShippingOperationCoordinator.Interfaces.ITakeShippingPalletService, TakeShippingPalletService>();

@@ -8,19 +8,16 @@ class ReturnInventoryPalletSelector: IReturnInventoryPalletSelector
 {
     private readonly ILogger<ReturnInventoryPalletSelector> _logger;
     private readonly ITempStorageLoader _tempStorageLoader;
-    private readonly IShippingStorageLoader _shippingStorageLoader;
-    private readonly IShikakariStorageLoader _shikakariStorageLoader;
+    private readonly IShippingPalletLoader _shippingPalletLoader;
 
     public ReturnInventoryPalletSelector(
         ILogger<ReturnInventoryPalletSelector> logger,
         ITempStorageLoader tempStorageLoader,
-        IShippingStorageLoader shippingStorageLoader,
-        IShikakariStorageLoader shikakariStorageLoader
+        IShippingPalletLoader shippingPalletLoader
     ) {
         _logger = logger;
         _tempStorageLoader = tempStorageLoader;
-        _shippingStorageLoader = shippingStorageLoader;
-        _shikakariStorageLoader = shikakariStorageLoader;
+        _shippingPalletLoader = shippingPalletLoader;
     }
 
     /// <summary>
@@ -42,13 +39,16 @@ class ReturnInventoryPalletSelector: IReturnInventoryPalletSelector
         if (!tempStorageItems.Any()) {
             return null;
         }
-        var shippingPalletsLoadebleInfos = _shippingStorageLoader.GetLoadableFrom(stationCode, tempStorageItems);
+        // 全体の積載可能情報を取得
+        // 他の出荷作業場所にあるパレットは、他の出荷作業場所にある在庫＋現在の出荷作業場所の在庫で判断する必要があるため
+        // 他の出荷作業場所の在庫を渡す必要がある
+        // 現在は行っていないため、精度を落として検証している
+        var shippingPalletsLoadebleInfos = _shippingPalletLoader.GetLoadableFrom(tempStorageItems);
         var unuseableItems = tempStorageItems.Where(x => !shippingPalletsLoadebleInfos.Any(y => y.IsLoadableQuantityGreaterThan(x.Hinban, 1)));
         if (!unuseableItems.Any()) {
             return null;
         }
-        var shikakariPAlletsLoadebleInfos = _shikakariStorageLoader.GetLoadableFrom(tempStorageItems);
-        return  unuseableItems.Where(x => !shikakariPAlletsLoadebleInfos.Any(y => y.IsLoadableQuantityGreaterThan(x.Hinban, 1)))
+        return  unuseableItems
             .OrderBy(x => x.LocationCode.Value)
             .FirstOrDefault()?
             .LocationCode;

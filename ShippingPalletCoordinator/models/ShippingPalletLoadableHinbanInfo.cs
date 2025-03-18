@@ -30,7 +30,10 @@ class ShippingPalletLoadableHinbanInfo: ShippingOperationCoordinator.Interfaces.
         IEnumerable<ILoadableItem> loadableItems
     ) {
         LocationCode = locationCode;
-        ShippingPalletID = shippingPallet.Id;
+        ShippingPalletID = shippingPallet?.Id ?? ShippingPalletID.CustomPaletteID;
+        if (shippingPallet == null) {
+            return;
+        }
         _items = shippingPallet.Items.Select(x => new ShippingPalletItem(x.PalletID, x.Hinban, x.Index, x.IsCompleted)).ToList();
         _loadableItems = loadableItems.Select(x => new LocalLoadableItem(x.Hinban, x.Quantity)).ToList();
         (_blockHinban, _blockHinbanLoadableCount) = CheckBlockItem.GetBlockHinban(_items, _loadableItems);

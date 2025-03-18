@@ -229,7 +229,7 @@ public class TakeShippingPalletSelector: ITakeShippingPalletSelector
     /// </summary>
     private ShippingPalletID? FilterShippingPalletWithNextHinbanUsedInOtherStationTempStorage(ShippingStationCode stationCode, IEnumerable<IShikakariPalletLoadableHinbanInfo> shikakariPallets) {
         var tempStorageItemsInOtherStation = _tempStorageLoader.GetAvarableHinbansInOtherStation(stationCode);
-        var targetPallets = shikakariPallets.Where(x => tempStorageItemsInOtherStation.Any(y => x.BlockHinban == y.Hinban));
+        var targetPallets = shikakariPallets.Where(x => x.BlockHinban != null && tempStorageItemsInOtherStation.Any(y => x.BlockHinban == y.Hinban));
         if (!targetPallets.Any()) {
             return null;
         }

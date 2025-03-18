@@ -30,6 +30,7 @@ class PlaceShikakariStorageService: IPlaceShikakariStorageService
         //     throw new InvalidOperationException($"仕掛ロケーション [{locationCode.Value}] は空きではありません: {shikakariStorage.Status} / {shikakariStorage.ShippingPalletID}");
         // }
         shikakariStorage.Place(shikakariPalletID);
+        shikakariStorage.Release();
         _context.SaveChanges();
     }
 }

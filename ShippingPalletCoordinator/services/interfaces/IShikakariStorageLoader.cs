@@ -10,4 +10,7 @@ interface IShikakariStorageLoader
     ShikakariStorage? FindEmptyLocation();
     IEnumerable<ShikakariStorage> GetEmptyLocations();
     LocationCode? FindStoredLocation(ShippingPalletID palletId);
+
+    // ReserveをLoaderに入れるのは変だが試算かつ最後の調整なのでここに入れてしまう。
+    ShikakariStorage? ReserveEmptyLocation();
 }

@@ -52,7 +52,7 @@ class ReturnShippingPalletService: ShippingOperationCoordinator.Interfaces.IRetu
                 _logger.LogError($"出荷パレット [{shippingStorageInfo.ShippingPalletID.Value}] が見つかりませんでした");
                 return;
             }
-            var emptyLocationCode = _shikakariStorageLoader.FindEmptyLocation()?.LocationCode;
+            var emptyLocationCode = _shikakariStorageLoader.ReserveEmptyLocation()?.LocationCode;
             if (emptyLocationCode == null) {
                 _logger.LogError("空きロケーションが見つかりませんでした");
                 return;

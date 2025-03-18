@@ -9,6 +9,7 @@ public class ShikakariStorage
     public LocationCode LocationCode { get; set; } = LocationCode.Default;
     public StorageStatus Status { get; set; } = StorageStatus.Empty;
     public ShippingPalletID? ShippingPalletID { get; set; }
+    public bool Reserved { get; set; } = false;
 
     # nullable disable
     public ShippingPallet StoredPallet { get; set; } 
@@ -30,5 +31,11 @@ public class ShikakariStorage
     public void Place(ShippingPalletID shippingPalletID) {
         Status = StorageStatus.InUse;
         ShippingPalletID = shippingPalletID;
+    }
+    public void Reserve() {
+        Reserved = true;
+    }
+    public void Release() {
+        Reserved = false;
     }
 }

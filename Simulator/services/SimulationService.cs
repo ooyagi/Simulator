@@ -45,8 +45,9 @@ public class SimulationService: ISimulationService
         // このため、一回の呼び出し毎に1つの作業場所のみを処理する
         _logger.LogInformation($"出荷作業場所 [{station.Code}] の処理を実行します");
         _ = _changeShippingPalletService.TakeInEmptyLocation(station.Code);
-        while(_transferService.ExecuteTransfer(station.Code)) {
-            // 処理が続く限り繰り返す
+        bool transfer = _transferService.ExecuteTransfer(station.Code);
+        if (transfer) {
+            return;
         }
         bool changeShippingPallet = _changeShippingPalletService.Change(station.Code);
         bool changeEmptyPallet = _changeInventoryPalletService.ChangeEmptyPallet(station.Code);

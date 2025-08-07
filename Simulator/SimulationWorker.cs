@@ -20,7 +20,7 @@ public class SimulationWorker: IHostedService, IDisposable
     public Task StartAsync(CancellationToken cancellationToken) {
         _logger.LogInformation("Simulator hosted service starting.");
         Thread.Sleep(1000);
-        _timer = new Timer(ExecuteCycle, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(800));
+        _timer = new Timer(ExecuteCycle, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
         return Task.CompletedTask;
     }
     private void ExecuteCycle(object? state) {
